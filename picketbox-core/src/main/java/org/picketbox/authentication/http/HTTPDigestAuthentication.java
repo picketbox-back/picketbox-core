@@ -34,9 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
 
-import org.picketbox.authentication.AuthenticationManager;
 import org.picketbox.authentication.DigestHolder;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.exceptions.AuthenticationException;
@@ -49,11 +47,7 @@ import org.picketbox.util.HTTPDigestUtil;
  * @author anil saldhana
  * @since Jul 6, 2012
  */
-public class HTTPDigestAuthentication implements HttpSessionListener {
-    protected AuthenticationManager authManager;
-
-    protected String realmName = "PicketBox Realm";
-
+public class HTTPDigestAuthentication extends AbstractHTTPAuthentication{
     protected String opaque;
 
     protected String qop = PicketBoxConstants.HTTP_DIGEST_QOP_AUTH;
@@ -67,22 +61,6 @@ public class HTTPDigestAuthentication implements HttpSessionListener {
      * A simple lookup map of session id versus the nonces issued
      */
     protected ConcurrentMap<String,List<String>> idVersusNonce = new ConcurrentHashMap<String,List<String>>();
-
-    public AuthenticationManager getAuthManager() {
-        return authManager;
-    }
-
-    public void setAuthManager(AuthenticationManager authManager) {
-        this.authManager = authManager;
-    }
-
-    public String getRealmName() {
-        return realmName;
-    }
-
-    public void setRealmName(String realmName) {
-        this.realmName = realmName;
-    }
 
     public NonceGenerator getNonceGenerator() {
         return nonceGenerator;

@@ -29,8 +29,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
 
-import org.picketbox.authentication.AuthenticationManager;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.exceptions.AuthenticationException;
 import org.picketbox.util.Base64;
@@ -40,32 +40,7 @@ import org.picketbox.util.Base64;
  * @author anil saldhana
  * @since July 5, 2012
  */
-public class HTTPBasicAuthentication {
-    /**
-     * Injectable instance of Authentication Manager
-     */
-    protected AuthenticationManager authManager;
-
-    /**
-     * Injectable realm name
-     */
-    protected String realmName = "PicketBox Realm";
-
-    public AuthenticationManager getAuthManager() {
-        return authManager;
-    }
-
-    public void setAuthManager(AuthenticationManager authManager) {
-        this.authManager = authManager;
-    }
-
-    public String getRealmName() {
-        return realmName;
-    }
-
-    public void setRealmName(String realmName) {
-        this.realmName = realmName;
-    }
+public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
 
     /**
      * Authenticate an user
@@ -123,5 +98,13 @@ public class HTTPBasicAuthentication {
             throw new AuthenticationException(e);
         }
         return false;
+    }
+
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
     }
 }
