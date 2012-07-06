@@ -19,32 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.authentication;
+package org.picketbox.test.nonce;
 
-import java.security.Principal;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.picketbox.exceptions.AuthenticationException;
+import org.junit.Test;
+import org.picketbox.nonce.UUIDNonceGenerator;
 
 /**
- * Interface used for authentication
+ * Unit test the {@link UUIDNonceGenerator}
  * @author anil saldhana
- * @since July 5, 2012
+ * @since Jul 6, 2012
  */
-public interface AuthenticationManager {
-    /**
-     * Authenticate an user based on a Credential
-     * @param username
-     * @param credential
-     * @return
-     * @throws AuthenticationException
-     */
-    Principal authenticate( String username, Object credential) throws AuthenticationException;
+public class UUIDNonceGeneratorTestCase {
     
     /**
-     * Authenticate an user using the HTTP/Digest Mechanism
-     * @param digest
-     * @return
-     * @throws AuthenticationException
+     * Test the expiration of the uuid based nonce
+     * @throws Exception
      */
-    Principal authenticate(DigestHolder digest) throws AuthenticationException;
+    @Test
+    public void testExpiry() throws Exception {
+       UUIDNonceGenerator uuid = new UUIDNonceGenerator();
+       String nonce = uuid.get();
+       assertTrue( uuid.hasExpired(nonce, 1));
+       assertFalse( uuid.hasExpired(nonce, 1000));
+    }
 }

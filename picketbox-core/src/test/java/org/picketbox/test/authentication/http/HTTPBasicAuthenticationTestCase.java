@@ -34,6 +34,7 @@ import java.security.Principal;
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.authentication.AuthenticationManager;
+import org.picketbox.authentication.DigestHolder;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.authentication.http.HTTPBasicAuthentication;
 import org.picketbox.exceptions.AuthenticationException;
@@ -44,6 +45,7 @@ import org.picketbox.util.Base64;
 /**
  * Unit test the {@link HTTPBasicAuthentication} class
  * @author anil saldhana
+ * @since July 5, 2012
  */
 public class HTTPBasicAuthenticationTestCase {
 
@@ -65,6 +67,11 @@ public class HTTPBasicAuthenticationTestCase {
                         }
                     };
                 }
+                return null;
+            }
+
+            @Override
+            public Principal authenticate(DigestHolder digest) throws AuthenticationException {
                 return null;
             }
         });
@@ -107,8 +114,7 @@ public class HTTPBasicAuthenticationTestCase {
         String encoded = Base64.encodeBytes(str.getBytes());
         assertEquals("QWxhZGRpbjpvcGVuIHNlc2FtZQ==", encoded);
         return encoded;
-    }
-    
+    } 
 
     private String getNegative(){
         String str =  "Aladdin:Bad sesame";

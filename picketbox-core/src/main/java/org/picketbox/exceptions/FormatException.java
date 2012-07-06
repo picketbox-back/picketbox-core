@@ -19,32 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.authentication;
+package org.picketbox.exceptions;
 
-import java.security.Principal;
-
-import org.picketbox.exceptions.AuthenticationException;
+import java.security.GeneralSecurityException;
 
 /**
- * Interface used for authentication
+ * An exception to indicate a format issue
  * @author anil saldhana
- * @since July 5, 2012
+ * @since July 6, 2012
  */
-public interface AuthenticationManager {
-    /**
-     * Authenticate an user based on a Credential
-     * @param username
-     * @param credential
-     * @return
-     * @throws AuthenticationException
-     */
-    Principal authenticate( String username, Object credential) throws AuthenticationException;
-    
-    /**
-     * Authenticate an user using the HTTP/Digest Mechanism
-     * @param digest
-     * @return
-     * @throws AuthenticationException
-     */
-    Principal authenticate(DigestHolder digest) throws AuthenticationException;
+public class FormatException extends GeneralSecurityException {
+    private static final long serialVersionUID = 1L;
+
+    public FormatException() {
+        super(); 
+    }
+
+    public FormatException(String message, Throwable cause) {
+        super(message, cause); 
+    }
+
+    public FormatException(String msg) {
+        super(msg); 
+    }
+
+    public FormatException(Throwable cause) {
+        super(cause); 
+    }
 }

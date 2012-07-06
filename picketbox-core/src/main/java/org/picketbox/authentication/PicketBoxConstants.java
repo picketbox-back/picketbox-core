@@ -24,14 +24,23 @@ package org.picketbox.authentication;
 /**
  * Define all constants
  * @author anil saldhana
+ * @since July 5, 2012
  */
 public interface PicketBoxConstants {
-
-    String HTTP_BASIC = "Basic";
     
     String HTTP_AUTHORIZATION_HEADER = "Authorization";
     
+    String HTTP_BASIC = "Basic";
+
+    String HTTP_DIGEST = "Digest";
+    
+    String HTTP_DIGEST_QOP_AUTH = "auth";
+    
     String HTTP_WWW_AUTHENTICATE = "WWW-Authenticate";
     
+    String MD5 = "MD5";
+    
     String PRINCIPAL = "PRINCIPAL";
+    
+    String UTF8 = "UTF-8";
 }

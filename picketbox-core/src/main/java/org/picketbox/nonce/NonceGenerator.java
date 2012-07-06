@@ -19,32 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.authentication;
-
-import java.security.Principal;
-
-import org.picketbox.exceptions.AuthenticationException;
+package org.picketbox.nonce;
 
 /**
- * Interface used for authentication
+ * Interface for generating server side nonces
  * @author anil saldhana
- * @since July 5, 2012
  */
-public interface AuthenticationManager {
+public interface NonceGenerator {
     /**
-     * Authenticate an user based on a Credential
-     * @param username
-     * @param credential
+     * Construct a nonce
      * @return
-     * @throws AuthenticationException
      */
-    Principal authenticate( String username, Object credential) throws AuthenticationException;
+    String get();
     
     /**
-     * Authenticate an user using the HTTP/Digest Mechanism
-     * @param digest
+     * Verify if the nonce has expired
+     * @param nonceValue
+     * @param maxValue max value for expiry
      * @return
-     * @throws AuthenticationException
      */
-    Principal authenticate(DigestHolder digest) throws AuthenticationException;
+    boolean hasExpired(String nonceValue, long maxValue);
 }

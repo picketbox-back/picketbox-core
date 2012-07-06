@@ -59,6 +59,8 @@ public class TestServletRequest implements HttpServletRequest {
     
     private Map<String,String> headers = new HashMap<String,String>();
 
+    private String method;
+
     public TestServletRequest(InputStream is) {
         super();
         this.is = new BufferedInputStream(is);
@@ -97,7 +99,11 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public String getMethod() {
-        return null;
+        return this.method;
+    }
+    
+    public void setMethod(String m){
+        this.method = m;
     }
 
     public String getPathInfo() {
@@ -133,11 +139,11 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public HttpSession getSession() {
-        return null;
+        return new TestHttpSession();
     }
 
     public HttpSession getSession(boolean create) {
-        return null;
+        return new TestHttpSession();
     }
 
     public Principal getUserPrincipal() {
