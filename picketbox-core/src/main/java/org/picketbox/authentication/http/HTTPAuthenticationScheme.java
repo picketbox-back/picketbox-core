@@ -21,37 +21,24 @@
  */
 package org.picketbox.authentication.http;
 
-import org.picketbox.authentication.AuthenticationManager;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpSessionListener;
+
+import org.picketbox.exceptions.AuthenticationException;
 
 /**
- * Base class for all the HTTP authentication schemes
+ * HTTP Authentication Scheme
  * @author anil saldhana
  * @since Jul 6, 2012
  */
-public abstract class AbstractHTTPAuthentication  implements HTTPAuthenticationScheme {
+public interface HTTPAuthenticationScheme extends HttpSessionListener {
     /**
-     * Injectable instance of Authentication Manager
+     * Authenticate an user
+     * @param servletReq
+     * @param servletResp
+     * @return
+     * @throws AuthenticationException
      */
-    protected AuthenticationManager authManager;
-
-    /**
-     * Injectable realm name
-     */
-    protected String realmName = "PicketBox Realm";
-
-    public AuthenticationManager getAuthManager() {
-        return authManager;
-    }
-
-    public void setAuthManager(AuthenticationManager authManager) {
-        this.authManager = authManager;
-    }
-
-    public String getRealmName() {
-        return realmName;
-    }
-
-    public void setRealmName(String realmName) {
-        this.realmName = realmName;
-    }
+    boolean authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException;
 }
