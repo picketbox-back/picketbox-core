@@ -29,30 +29,31 @@ import org.picketbox.util.HTTPDigestUtil;
 
 /**
  * Unit Test the {@link HTTPDigestUtil} class
+ * 
  * @author anil saldhana
  * @since July 5, 2012
  */
 public class HTTPDigestUtilTestCase {
-    
-    String val = "Digest username=\"Mufasa\",realm=\"testrealm@host.com\"," +
-            "nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\"," +
-            "uri=\"/dir/index.html\",qop=auth,nc=00000001,cnonce=\"0a4f113b\"," +
-            "response=\"6629fae49393a05397450978507c4ef1\",opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"";
+
+    String val = "Digest username=\"Mufasa\",realm=\"testrealm@host.com\"," + "nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\","
+            + "uri=\"/dir/index.html\",qop=auth,nc=00000001,cnonce=\"0a4f113b\","
+            + "response=\"6629fae49393a05397450978507c4ef1\",opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"";
+
     @Test
-    public void testQuoteTokenize() throws Exception{
+    public void testQuoteTokenize() throws Exception {
         String[] tokens = HTTPDigestUtil.quoteTokenize(val);
         validateTokens(tokens);
     }
-    
+
     @Test
     public void testExtract() throws Exception {
         String[] tokens = HTTPDigestUtil.quoteTokenize(val);
-        assertTrue(tokens.length > 0 );
+        assertTrue(tokens.length > 0);
         validateExtractedTokens(tokens);
     }
-    
-    private void validateTokens(String[] tokens){
-        assertTrue(tokens.length > 0 );
+
+    private void validateTokens(String[] tokens) {
+        assertTrue(tokens.length > 0);
         assertEquals("Digest username=\"Mufasa\"", tokens[0]);
         assertEquals("realm=\"testrealm@host.com\"", tokens[1]);
         assertEquals("nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\"", tokens[2]);
@@ -63,8 +64,8 @@ public class HTTPDigestUtilTestCase {
         assertEquals("response=\"6629fae49393a05397450978507c4ef1\"", tokens[7]);
         assertEquals("opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"", tokens[8]);
     }
-    
-    private void validateExtractedTokens(String[] tokens){ 
+
+    private void validateExtractedTokens(String[] tokens) {
         assertEquals("Mufasa", HTTPDigestUtil.userName(tokens[0]));
         assertEquals("testrealm@host.com", HTTPDigestUtil.extract(tokens[1], "realm="));
         assertEquals("dcd98b7102dd2f0e8b11d0f600bfb0c093", HTTPDigestUtil.extract(tokens[2], "nonce="));

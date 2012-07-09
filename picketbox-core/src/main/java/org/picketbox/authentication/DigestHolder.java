@@ -28,13 +28,13 @@ package org.picketbox.authentication;
  * <p>
  * Refer to RFC 2069 and 2617 for the meaning.
  * </p>
- *  
+ * 
  * @author anil saldhana
  * @since July 6, 2012
  */
 public class DigestHolder {
     private String username, realm, nonce, uri, qop, nc, cnonce, clientResponse, opaque, domain, stale, requestMethod;
-    
+
     public DigestHolder setUsername(String username) {
         this.username = username;
         return this;
@@ -79,6 +79,7 @@ public class DigestHolder {
         this.opaque = opaque;
         return this;
     }
+
     public String getUsername() {
         return username;
     }
@@ -86,24 +87,31 @@ public class DigestHolder {
     public String getRealm() {
         return realm;
     }
+
     public String getNonce() {
         return nonce;
     }
+
     public String getUri() {
         return uri;
     }
+
     public String getQop() {
         return qop;
     }
+
     public String getNc() {
         return nc;
     }
+
     public String getCnonce() {
         return cnonce;
     }
+
     public String getClientResponse() {
         return clientResponse;
     }
+
     public String getOpaque() {
         return opaque;
     }
@@ -133,5 +141,5 @@ public class DigestHolder {
     public DigestHolder setRequestMethod(String requestMethod) {
         this.requestMethod = requestMethod;
         return this;
-    } 
+    }
 }

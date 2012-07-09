@@ -50,16 +50,21 @@ import javax.servlet.http.Part;
 
 /**
  * A Test Instance of {@link HttpServletRequest}
+ * 
  * @author anil saldhana
  * @since Jan 28, 2009
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class TestServletRequest implements HttpServletRequest {
     private BufferedInputStream is = null;
-    
-    private Map<String,String> headers = new HashMap<String,String>();
+
+    private Map<String, String> headers = new HashMap<String, String>();
 
     private String method;
+
+    private Map<String, String> parameters = new HashMap<String, String>();
+
+    private String requestURI;
 
     public TestServletRequest(InputStream is) {
         super();
@@ -101,8 +106,8 @@ public class TestServletRequest implements HttpServletRequest {
     public String getMethod() {
         return this.method;
     }
-    
-    public void setMethod(String m){
+
+    public void setMethod(String m) {
         this.method = m;
     }
 
@@ -123,7 +128,11 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public String getRequestURI() {
-        return null;
+        return this.requestURI;
+    }
+
+    public void setRequestURI(String sr) {
+        this.requestURI = sr;
     }
 
     public StringBuffer getRequestURL() {
@@ -220,7 +229,7 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public String getParameter(String name) {
-        return null;
+        return parameters.get(name);
     }
 
     public Map getParameterMap() {
@@ -323,10 +332,10 @@ public class TestServletRequest implements HttpServletRequest {
         return null;
     }
 
-    public void addHeader(String key, String val){
+    public void addHeader(String key, String val) {
         headers.put(key, val);
     }
-    
+
     @Override
     public boolean authenticate(HttpServletResponse response) throws IOException, ServletException {
         return false;
@@ -349,8 +358,12 @@ public class TestServletRequest implements HttpServletRequest {
     public Part getPart(String name) throws IOException, ServletException {
         return null;
     }
-    
-    public void clearHeaders(){
+
+    public void clearHeaders() {
         headers.clear();
+    }
+
+    public void setParameter(String key, String val) {
+        this.parameters.put(key, val);
     }
 }

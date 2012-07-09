@@ -29,33 +29,37 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Principal;
+import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.authentication.AuthenticationManager;
 import org.picketbox.authentication.DigestHolder;
 import org.picketbox.authentication.PicketBoxConstants;
-import org.picketbox.authentication.http.HTTPBasicAuthentication;
+import org.picketbox.authentication.http.HTTPFormAuthentication;
 import org.picketbox.exceptions.AuthenticationException;
+import org.picketbox.test.http.TestServletContext;
+import org.picketbox.test.http.TestServletContext.TestRequestDispatcher;
 import org.picketbox.test.http.TestServletRequest;
 import org.picketbox.test.http.TestServletResponse;
-import org.picketbox.util.Base64;
 
 /**
- * Unit test the {@link HTTPBasicAuthentication} class
+ * Unit test the {@link HTTPFormAuthentication} class
  * 
  * @author anil saldhana
- * @since July 5, 2012
+ * @since July 9, 2012
  */
-public class HTTPBasicAuthenticationTestCase {
+public class HTTPFormAuthenticationTestCase {
 
-    private HTTPBasicAuthentication httpBasic = null;
+    private HTTPFormAuthentication httpForm = null;
+
+    private TestServletContext sc = new TestServletContext(new HashMap<String, String>());
 
     @Before
     public void setup() throws Exception {
-        httpBasic = new HTTPBasicAuthentication();
+        httpForm = new HTTPFormAuthentication();
 
-        httpBasic.setAuthManager(new AuthenticationManager() {
+        httpForm.setAuthManager(new AuthenticationManager() {
 
             @Override
             public Principal authenticate(final String username, Object credential) throws AuthenticationException {
@@ -75,10 +79,12 @@ public class HTTPBasicAuthenticationTestCase {
                 return null;
             }
         });
+
+        httpForm.setServletContext(sc);
     }
 
     @Test
-    public void testHttpBasic() throws Exception {
+    public void testHttpForm() throws Exception {
         TestServletRequest req = new TestServletRequest(new InputStream() {
             @Override
             public int read() throws IOException {
@@ -94,33 +100,38 @@ public class HTTPBasicAuthenticationTestCase {
             }
         });
 
-        // Get Positive Authentication
-        req.addHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER, "Basic " + getPositive());
-        boolean result = httpBasic.authenticate(req, resp);
+        req.setMethod("GET");
 
-        assertTrue(result);
+        // Original URI
+        String orig = "http://msite/someurl";
 
-        req.clearHeaders();
+        req.setRequestURI(orig);
 
-        // Get Negative Authentication
-        req.addHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER, "Basic " + getNegative());
-        result = httpBasic.authenticate(req, resp);
+        // Call the server to get the digest challenge
+        boolean result = httpForm.authenticate(req, resp);
         assertFalse(result);
 
-        String basicHeader = resp.getHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE);
-        assertTrue(basicHeader.startsWith("basic realm="));
-    }
+        // We will test that the request dispatcher is set on the form login page
+        TestRequestDispatcher rd = sc.getLast();
+        assertEquals(rd.getRequest(), req);
 
-    private String getPositive() {
-        String str = "Aladdin:open sesame";
-        String encoded = Base64.encodeBytes(str.getBytes());
-        assertEquals("QWxhZGRpbjpvcGVuIHNlc2FtZQ==", encoded);
-        return encoded;
-    }
+        assertEquals("/login.jsp", rd.getRequestUri());
 
-    private String getNegative() {
-        String str = "Aladdin:Bad sesame";
-        String encoded = Base64.encodeBytes(str.getBytes());
-        return encoded;
+        // Now assume we have the login page. Lets post
+        TestServletRequest newReq = new TestServletRequest(new InputStream() {
+            @Override
+            public int read() throws IOException {
+                return 0;
+            }
+        });
+        newReq.setRequestURI("http://msite" + PicketBoxConstants.HTTP_FORM_J_SECURITY_CHECK);
+        newReq.setParameter(PicketBoxConstants.HTTP_FORM_J_USERNAME, "Aladdin");
+        newReq.setParameter(PicketBoxConstants.HTTP_FORM_J_PASSWORD, "Open Sesame");
+
+        result = httpForm.authenticate(newReq, resp);
+        assertTrue(result);
+
+        // After authentication, we should be redirected to the original url
+        assertTrue(resp.getSendRedirectedURI().equals(orig));
     }
 }

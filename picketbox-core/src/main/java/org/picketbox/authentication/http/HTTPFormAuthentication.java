@@ -23,7 +23,10 @@ package org.picketbox.authentication.http;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +38,38 @@ import org.picketbox.exceptions.AuthenticationException;
 import org.picketbox.util.Base64;
 
 /**
- * Perform HTTP Basic Authentication
+ * Perform HTTP Form Authentication
  * 
  * @author anil saldhana
- * @since July 5, 2012
+ * @since July 9, 2012
  */
-public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
+public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
+
+    /**
+     * The FORM login page. It should always start with a '/'
+     */
+    protected String formAuthPage = "/login.jsp";
+
+    /**
+     * The FORM error page. It should always start with a '/'
+     */
+    protected String formErrorPage = "/error.jsp";
+
+    /**
+     * The FORM login page. It should always start with a '/'
+     */
+    public void setFormAuthPage(String formAuthPage) {
+        this.formAuthPage = formAuthPage;
+    }
+
+    /**
+     * The FORM error page. It should always start with a '/'
+     */
+    public void setFormErrorPage(String formErrorPage) {
+        this.formErrorPage = formErrorPage;
+    }
+
+    private ConcurrentMap<String, HttpServletRequest> requestcache = new ConcurrentHashMap<String, HttpServletRequest>();
 
     /**
      * Authenticate an user
@@ -56,6 +85,33 @@ public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
         HttpServletRequest request = (HttpServletRequest) servletReq;
         HttpServletResponse response = (HttpServletResponse) servletResp;
         HttpSession session = request.getSession(true);
+
+        String sessionId = session.getId();
+
+        boolean jSecurityCheck = request.getRequestURI().contains(PicketBoxConstants.HTTP_FORM_J_SECURITY_CHECK);
+
+        username = request.getParameter(PicketBoxConstants.HTTP_FORM_J_USERNAME);
+        password = request.getParameter(PicketBoxConstants.HTTP_FORM_J_PASSWORD);
+
+        if (jSecurityCheck == false && principalExists(session) == false) {
+            saveRequest(sessionId, request);
+            challengeClient(request, response);
+            return false;
+        }
+
+        if (username != null && password != null) {
+            if (authManager == null) {
+                throw new AuthenticationException("Auth Manager is not injected");
+            }
+
+            Principal principal = authManager.authenticate(username, password);
+            if (principal != null) {
+                session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);
+                restoreRequest(sessionId, response);
+                return true;
+            }
+        }
+
         // Get the Authorization Header
         String authorizationHeader = request.getHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER);
 
@@ -88,14 +144,44 @@ public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
             }
         }
 
+        // Save the original request if not already present
+        saveRequest(sessionId, request);
         return challengeClient(request, response);
     }
 
-    private boolean challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        response.setHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE, "basic realm=\"" + realmName + '"');
+    private void saveRequest(String id, HttpServletRequest request) {
+        if (requestcache.get(id) == null) {
+            requestcache.put(id, request);
+        }
+    }
+
+    private void restoreRequest(String id, HttpServletResponse response) throws AuthenticationException {
+        HttpServletRequest request = requestcache.remove(id);
+        if (request == null)
+            throw new AuthenticationException("Unable to forward to cached request");
+
         try {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendRedirect(request.getRequestURI());
         } catch (IOException e) {
+            throw new AuthenticationException(e);
+        }
+    }
+
+    private boolean principalExists(HttpSession session) {
+        return session.getAttribute(PicketBoxConstants.PRINCIPAL) != null;
+    }
+
+    private boolean challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        if (servletContext == null)
+            throw new AuthenticationException("Servlet Context is not injected");
+
+        RequestDispatcher rd = servletContext.getRequestDispatcher(formAuthPage);
+        if (rd == null)
+            throw new AuthenticationException("Request Dispatcher could not be found");
+
+        try {
+            rd.forward(request, response);
+        } catch (Exception e) {
             throw new AuthenticationException(e);
         }
         return false;

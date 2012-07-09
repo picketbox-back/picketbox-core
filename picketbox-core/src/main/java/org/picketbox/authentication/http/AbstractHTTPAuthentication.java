@@ -21,14 +21,18 @@
  */
 package org.picketbox.authentication.http;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSessionEvent;
+
 import org.picketbox.authentication.AuthenticationManager;
 
 /**
  * Base class for all the HTTP authentication schemes
+ * 
  * @author anil saldhana
  * @since Jul 6, 2012
  */
-public abstract class AbstractHTTPAuthentication  implements HTTPAuthenticationScheme {
+public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationScheme {
     /**
      * Injectable instance of Authentication Manager
      */
@@ -38,6 +42,11 @@ public abstract class AbstractHTTPAuthentication  implements HTTPAuthenticationS
      * Injectable realm name
      */
     protected String realmName = "PicketBox Realm";
+
+    /**
+     * An instance of {@link ServletContext}
+     */
+    protected ServletContext servletContext = null;
 
     public AuthenticationManager getAuthManager() {
         return authManager;
@@ -53,5 +62,17 @@ public abstract class AbstractHTTPAuthentication  implements HTTPAuthenticationS
 
     public void setRealmName(String realmName) {
         this.realmName = realmName;
+    }
+
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
+
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
     }
 }

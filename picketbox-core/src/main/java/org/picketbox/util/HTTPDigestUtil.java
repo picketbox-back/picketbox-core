@@ -33,18 +33,19 @@ import org.picketbox.exceptions.FormatException;
 
 /**
  * Utility class to support HTTP Digest Authentication
+ * 
  * @author anil saldhana
  * @since July 5, 2012
  */
 public class HTTPDigestUtil {
     /**
-     * Given the standard client response in HTTP/Digest mechanism, generate
-     * a set of string tokens that retains the quotes
+     * Given the standard client response in HTTP/Digest mechanism, generate a set of string tokens that retains the quotes
+     * 
      * @param val
      * @return
      */
-    public static String[] quoteTokenize(String val){
-        if(val == null)
+    public static String[] quoteTokenize(String val) {
+        if (val == null)
             throw new IllegalArgumentException("val is null");
 
         // Derived from http://issues.apache.org/bugzilla/show_bug.cgi?id=37132
@@ -52,12 +53,12 @@ public class HTTPDigestUtil {
     }
 
     /**
-     *  
+     * 
      * @param token
      * @return
      */
-    public static String userName(String token){
-        if(token.startsWith("Digest")){
+    public static String userName(String token) {
+        if (token.startsWith("Digest")) {
             token = token.substring(7).trim();
         }
 
@@ -66,70 +67,70 @@ public class HTTPDigestUtil {
 
     /**
      * Given a digest token, extract the value
+     * 
      * @param token
      * @param key
      * @return
      */
-    public static String extract(String token, String key){
+    public static String extract(String token, String key) {
         String result = null;
-        if(token.startsWith(key)){
+        if (token.startsWith(key)) {
 
             int eq = token.indexOf("=");
             result = token.substring(eq + 1);
-            if(result.startsWith("\"")){
+            if (result.startsWith("\"")) {
                 result = result.substring(1);
             }
-            if(result.endsWith("\"")){
-                int len  = result.length();
-                result = result.substring(0, len -1);
-            }   
+            if (result.endsWith("\"")) {
+                int len = result.length();
+                result = result.substring(0, len - 1);
+            }
         }
         return result;
     }
 
     /**
      * Construct a {@link DigestHolder} from the tokens
+     * 
      * @param tokens
      * @return
      */
-    public static DigestHolder digest(String[] tokens){
-        String username = null, realm = null, nonce = null, 
-                uri = null, qop = null, nc = null, cnonce = null, clientResponse = null, opaque = null,
-                domain = null, stale = "false";
+    public static DigestHolder digest(String[] tokens) {
+        String username = null, realm = null, nonce = null, uri = null, qop = null, nc = null, cnonce = null, clientResponse = null, opaque = null, domain = null, stale = "false";
 
         int len = tokens.length;
 
-        for(int i = 0; i < len; i++){
+        for (int i = 0; i < len; i++) {
             String token = tokens[i];
 
-            if(token.startsWith("Digest") || token.startsWith("username=")){
+            if (token.startsWith("Digest") || token.startsWith("username=")) {
                 username = HTTPDigestUtil.userName(token);
-            } else if(token.startsWith("realm")){
+            } else if (token.startsWith("realm")) {
                 realm = HTTPDigestUtil.extract(token, "realm=");
-            } else if(token.startsWith("nonce")){
+            } else if (token.startsWith("nonce")) {
                 nonce = HTTPDigestUtil.extract(token, "nonce=");
-            } else if(token.startsWith("uri")){
+            } else if (token.startsWith("uri")) {
                 uri = HTTPDigestUtil.extract(token, "uri=");
-            } else if(token.startsWith("qop")){
+            } else if (token.startsWith("qop")) {
                 qop = HTTPDigestUtil.extract(token, "qop=");
-            } else if(token.startsWith("nc")){
+            } else if (token.startsWith("nc")) {
                 nc = HTTPDigestUtil.extract(token, "nc=");
-            } else if(token.startsWith("cnonce")){
+            } else if (token.startsWith("cnonce")) {
                 cnonce = HTTPDigestUtil.extract(token, "cnonce=");
-            } else if(token.startsWith("response")){
+            } else if (token.startsWith("response")) {
                 clientResponse = HTTPDigestUtil.extract(token, "response=");
-            } else if(token.startsWith("opaque")){
+            } else if (token.startsWith("opaque")) {
                 opaque = HTTPDigestUtil.extract(token, "opaque=");
-            } else if(token.startsWith("domain")){
+            } else if (token.startsWith("domain")) {
                 domain = HTTPDigestUtil.extract(token, "domain=");
-            } else if(token.startsWith("stale")){
+            } else if (token.startsWith("stale")) {
                 stale = HTTPDigestUtil.extract(token, "stale=");
             }
         }
-        //Construct a digest holder
+        // Construct a digest holder
         DigestHolder digestHolder = new DigestHolder();
-        digestHolder.setUsername(username).setRealm(realm).setNonce(nonce)
-        .setUri(uri).setQop(qop).setNc(nc).setCnonce(cnonce).setClientResponse(clientResponse).setOpaque(opaque);
+        digestHolder.setUsername(username).setRealm(realm).setNonce(nonce).setUri(uri).setQop(qop).setNc(nc).setCnonce(cnonce)
+                .setClientResponse(clientResponse).setOpaque(opaque);
 
         digestHolder.setStale(stale).setDomain(domain);
 
@@ -138,11 +139,12 @@ public class HTTPDigestUtil {
 
     /**
      * Determine the message digest
+     * 
      * @param str
      * @return
      * @throws FormatException
      */
-    public static byte[] md5(String str) throws FormatException{
+    public static byte[] md5(String str) throws FormatException {
         try {
             MessageDigest md = MessageDigest.getInstance(PicketBoxConstants.MD5);
             return md.digest(str.getBytes(UTF8));
@@ -155,12 +157,13 @@ public class HTTPDigestUtil {
 
     /**
      * Given the digest, construct the client response value
+     * 
      * @param digest
      * @param password
      * @return
      * @throws FormatException
      */
-    public static String clientResponseValue(DigestHolder digest, char[] password) throws FormatException{
+    public static String clientResponseValue(DigestHolder digest, char[] password) throws FormatException {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(PicketBoxConstants.MD5);
             byte[] ha1;
@@ -172,7 +175,7 @@ public class HTTPDigestUtil {
             messageDigest.update(new String(password).getBytes(UTF8));
             ha1 = messageDigest.digest();
 
-            //A2 digest
+            // A2 digest
             messageDigest.reset();
             messageDigest.update(digest.getRequestMethod().getBytes(UTF8));
             messageDigest.update((byte) ':');
@@ -193,7 +196,7 @@ public class HTTPDigestUtil {
             byte[] digestedValue = messageDigest.digest();
 
             return convertBytesToHex(digestedValue);
-        }catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new FormatException(e);
         } catch (UnsupportedEncodingException e) {
             throw new FormatException(e);
@@ -202,6 +205,7 @@ public class HTTPDigestUtil {
 
     /**
      * Match the Client Response value with a generated digest based on the password
+     * 
      * @param digest
      * @param password
      * @return
@@ -213,26 +217,27 @@ public class HTTPDigestUtil {
 
     /**
      * Convert a byte array to hex
+     * 
      * @param bytes
      * @return
      */
-    public static String convertBytesToHex(byte[] bytes)
-    {
+    public static String convertBytesToHex(byte[] bytes) {
         int base = 16;
-        
+
         int ALL_ON = 0xff;
-        
+
         StringBuilder buf = new StringBuilder();
-        for (byte byteValue : bytes)
-        {
-            int  bit = ALL_ON & byteValue;
-            int c = '0' + ( bit / base ) % base;
-            if (c > '9')  c= 'a' + ( c - '0'-10);
-            buf.append((char)c);
-            c= '0' + bit%base;
-            if (c > '9') c= 'a'+(c-'0'-10);
-            buf.append((char)c);
+        for (byte byteValue : bytes) {
+            int bit = ALL_ON & byteValue;
+            int c = '0' + (bit / base) % base;
+            if (c > '9')
+                c = 'a' + (c - '0' - 10);
+            buf.append((char) c);
+            c = '0' + bit % base;
+            if (c > '9')
+                c = 'a' + (c - '0' - 10);
+            buf.append((char) c);
         }
         return buf.toString();
-    }   
+    }
 }

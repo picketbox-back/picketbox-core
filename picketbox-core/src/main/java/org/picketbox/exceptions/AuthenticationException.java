@@ -25,24 +25,25 @@ import java.security.GeneralSecurityException;
 
 /**
  * An exception to indicate a failure during authentication process
+ * 
  * @author anil saldhana
  */
 public class AuthenticationException extends GeneralSecurityException {
     private static final long serialVersionUID = 1L;
 
     public AuthenticationException() {
-        super(); 
+        super();
     }
 
     public AuthenticationException(String message, Throwable cause) {
-        super(message, cause); 
+        super(message, cause);
     }
 
     public AuthenticationException(String msg) {
-        super(msg); 
+        super(msg);
     }
 
     public AuthenticationException(Throwable cause) {
-        super(cause); 
+        super(cause);
     }
 }

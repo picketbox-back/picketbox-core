@@ -36,13 +36,16 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * A Test Instance of {@link HttpServletResponse}
+ * 
  * @author anil saldhana
  * @since Jan 28, 2009
- */ 
+ */
 public class TestServletResponse implements HttpServletResponse {
     private BufferedOutputStream bos = null;
-    
-    private Map<String,String> headers = new HashMap<String,String>();
+
+    private Map<String, String> headers = new HashMap<String, String>();
+
+    private String sendRedirectedURI = null;
 
     public TestServletResponse(OutputStream os) {
         super();
@@ -87,7 +90,12 @@ public class TestServletResponse implements HttpServletResponse {
     public void sendError(int sc, String msg) throws IOException {
     }
 
+    public String getSendRedirectedURI() {
+        return sendRedirectedURI;
+    }
+
     public void sendRedirect(String location) throws IOException {
+        this.sendRedirectedURI = location;
     }
 
     public void setDateHeader(String name, long date) {

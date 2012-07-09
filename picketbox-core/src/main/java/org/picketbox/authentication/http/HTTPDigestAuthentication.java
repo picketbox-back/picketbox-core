@@ -44,23 +44,24 @@ import org.picketbox.util.HTTPDigestUtil;
 
 /**
  * Class that handles HTTP/Digest Authentication
+ * 
  * @author anil saldhana
  * @since Jul 6, 2012
  */
-public class HTTPDigestAuthentication extends AbstractHTTPAuthentication{
+public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
     protected String opaque;
 
     protected String qop = PicketBoxConstants.HTTP_DIGEST_QOP_AUTH;
 
-    //How long is the nonce valid? By default, it is set at 3 minutes
+    // How long is the nonce valid? By default, it is set at 3 minutes
     protected long nonceMaxValid = 3 * 60 * 1000;
 
     protected NonceGenerator nonceGenerator = new UUIDNonceGenerator();
-    
+
     /**
      * A simple lookup map of session id versus the nonces issued
      */
-    protected ConcurrentMap<String,List<String>> idVersusNonce = new ConcurrentHashMap<String,List<String>>();
+    protected ConcurrentMap<String, List<String>> idVersusNonce = new ConcurrentHashMap<String, List<String>>();
 
     public NonceGenerator getNonceGenerator() {
         return nonceGenerator;
@@ -72,7 +73,7 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication{
 
     public void setNonceMaxValid(String nonceMaxValidStr) {
         this.nonceMaxValid = Long.parseLong(nonceMaxValidStr);
-    } 
+    }
 
     public String getOpaque() {
         return opaque;
@@ -82,10 +83,13 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication{
         this.opaque = opaque;
     }
 
-    private static enum NONCE_VALIDATION_RESULT { INVALID, STALE, VALID};
+    private static enum NONCE_VALIDATION_RESULT {
+        INVALID, STALE, VALID
+    };
 
     /**
      * Authenticate an user
+     * 
      * @param servletReq
      * @param servletResp
      * @return
@@ -95,54 +99,54 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication{
         HttpServletRequest request = (HttpServletRequest) servletReq;
         HttpServletResponse response = (HttpServletResponse) servletResp;
         HttpSession session = request.getSession(true);
-        
+
         String sessionId = session.getId();
-                
+
         // Get the Authorization Header
         String authorizationHeader = request.getHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER);
 
         if (authorizationHeader != null && authorizationHeader.isEmpty() == false) {
 
-            if(authorizationHeader.startsWith(PicketBoxConstants.HTTP_DIGEST)){
+            if (authorizationHeader.startsWith(PicketBoxConstants.HTTP_DIGEST)) {
                 authorizationHeader = authorizationHeader.substring(7).trim();
             }
             String[] tokens = HTTPDigestUtil.quoteTokenize(authorizationHeader);
 
             int len = tokens.length;
-            if(len == 0 ) {
+            if (len == 0) {
                 return challengeClient(request, response, false);
-            } 
+            }
 
             DigestHolder digest = HTTPDigestUtil.digest(tokens);
 
-            //Pre-verify the client response
-            if ( digest.getUsername() == null || digest.getRealm() == null || 
-                    digest.getNonce() == null  || digest.getUri() == null || digest.getClientResponse() == null ) {
+            // Pre-verify the client response
+            if (digest.getUsername() == null || digest.getRealm() == null || digest.getNonce() == null
+                    || digest.getUri() == null || digest.getClientResponse() == null) {
                 return challengeClient(request, response, false);
             }
 
-            //Validate Opaque
-            if(digest.getOpaque().equals(this.opaque) == false){
+            // Validate Opaque
+            if (digest.getOpaque().equals(this.opaque) == false) {
                 return challengeClient(request, response, false);
             }
 
-            //Validate realm
-            if(digest.getRealm().equals(this.realmName) == false){
+            // Validate realm
+            if (digest.getRealm().equals(this.realmName) == false) {
                 return challengeClient(request, response, false);
             }
 
-            //Validate qop
-            if(digest.getQop().equals(this.qop) == false){
+            // Validate qop
+            if (digest.getQop().equals(this.qop) == false) {
                 return challengeClient(request, response, false);
             }
-            
+
             digest.setRequestMethod(request.getMethod());
 
-            //Validate the nonce
+            // Validate the nonce
             NONCE_VALIDATION_RESULT nonceResult = validateNonce(digest, sessionId);
 
-            if(nonceResult == NONCE_VALIDATION_RESULT.VALID) {
-                if(authManager == null){
+            if (nonceResult == NONCE_VALIDATION_RESULT.VALID) {
+                if (authManager == null) {
                     throw new AuthenticationException("Auth Manager is not injected");
                 }
                 Principal principal = authManager.authenticate(digest);
@@ -156,18 +160,19 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication{
         return challengeClient(request, response, false);
     }
 
-    private boolean challengeClient(HttpServletRequest request, HttpServletResponse response, boolean isStale ) throws AuthenticationException{
+    private boolean challengeClient(HttpServletRequest request, HttpServletResponse response, boolean isStale)
+            throws AuthenticationException {
         HttpSession session = request.getSession();
         String sessionId = session.getId();
-        
+
         String domain = request.getContextPath();
-        if (domain == null) 
+        if (domain == null)
             domain = "/";
 
         String newNonce = nonceGenerator.get();
-        
+
         List<String> storedNonces = idVersusNonce.get(sessionId);
-        if(storedNonces == null){
+        if (storedNonces == null) {
             storedNonces = new ArrayList<String>();
             idVersusNonce.put(sessionId, storedNonces);
         }
@@ -182,7 +187,7 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication{
         str.append("opaque=\"").append(this.opaque).append("\",");
         str.append("stale=\"").append(isStale).append("\"");
 
-        response.setHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE,  str.toString());
+        response.setHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE, str.toString());
 
         try {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -192,26 +197,22 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication{
         return false;
     }
 
-    private NONCE_VALIDATION_RESULT validateNonce(DigestHolder digest, String sessionId){
+    private NONCE_VALIDATION_RESULT validateNonce(DigestHolder digest, String sessionId) {
         String nonce = digest.getNonce();
-        
-        List<String> storedNonces = idVersusNonce.get(sessionId);
-        if(storedNonces == null){
-            return NONCE_VALIDATION_RESULT.INVALID;
-        }
-        if(storedNonces.contains(nonce) == false) {
-            return NONCE_VALIDATION_RESULT.INVALID;
-        }
-        
-        boolean hasExpired = nonceGenerator.hasExpired(nonce, nonceMaxValid);
-        if(hasExpired)
-            return NONCE_VALIDATION_RESULT.STALE;
-        
-        return NONCE_VALIDATION_RESULT.VALID;
-    }
 
-    @Override
-    public void sessionCreated(HttpSessionEvent se) {
+        List<String> storedNonces = idVersusNonce.get(sessionId);
+        if (storedNonces == null) {
+            return NONCE_VALIDATION_RESULT.INVALID;
+        }
+        if (storedNonces.contains(nonce) == false) {
+            return NONCE_VALIDATION_RESULT.INVALID;
+        }
+
+        boolean hasExpired = nonceGenerator.hasExpired(nonce, nonceMaxValid);
+        if (hasExpired)
+            return NONCE_VALIDATION_RESULT.STALE;
+
+        return NONCE_VALIDATION_RESULT.VALID;
     }
 
     @Override

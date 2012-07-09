@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 
 /**
  * An exception to indicate a format issue
+ * 
  * @author anil saldhana
  * @since July 6, 2012
  */
@@ -32,18 +33,18 @@ public class FormatException extends GeneralSecurityException {
     private static final long serialVersionUID = 1L;
 
     public FormatException() {
-        super(); 
+        super();
     }
 
     public FormatException(String message, Throwable cause) {
-        super(message, cause); 
+        super(message, cause);
     }
 
     public FormatException(String msg) {
-        super(msg); 
+        super(msg);
     }
 
     public FormatException(Throwable cause) {
-        super(cause); 
+        super(cause);
     }
 }

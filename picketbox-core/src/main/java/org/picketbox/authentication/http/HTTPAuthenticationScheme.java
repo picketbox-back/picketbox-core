@@ -29,12 +29,14 @@ import org.picketbox.exceptions.AuthenticationException;
 
 /**
  * HTTP Authentication Scheme
+ * 
  * @author anil saldhana
  * @since Jul 6, 2012
  */
 public interface HTTPAuthenticationScheme extends HttpSessionListener {
     /**
      * Authenticate an user
+     * 
      * @param servletReq
      * @param servletResp
      * @return

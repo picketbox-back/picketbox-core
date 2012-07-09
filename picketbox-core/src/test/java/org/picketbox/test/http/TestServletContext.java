@@ -21,6 +21,7 @@
  */
 package org.picketbox.test.http;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,21 +39,64 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import javax.servlet.ServletRegistration.Dynamic;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.SessionCookieConfig;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.descriptor.JspConfigDescriptor;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * A test instance of {@link ServletContext}
+ * 
  * @author anil saldhana
  * @since Jan 28, 2009
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class TestServletContext implements ServletContext {
+
+    public class TestRequestDispatcher implements RequestDispatcher {
+        private HttpServletRequest request = null;
+        private ServletResponse response = null;
+        private String requestUri;
+
+        public String getRequestUri() {
+            return requestUri;
+        }
+
+        public void setRequestUri(String requestUri) {
+            this.requestUri = requestUri;
+        }
+
+        public HttpServletRequest getRequest() {
+            return request;
+        }
+
+        public ServletResponse getResponse() {
+            return response;
+        }
+
+        @Override
+        public void include(ServletRequest request, ServletResponse response) throws ServletException, IOException {
+        }
+
+        @Override
+        public void forward(ServletRequest request, ServletResponse response) throws ServletException, IOException {
+            this.request = (HttpServletRequest) request;
+            this.response = response;
+        }
+    };
+
+    private TestRequestDispatcher rd = new TestRequestDispatcher();
+
     private HashMap<String, String> params = new HashMap<String, String>();
 
     public TestServletContext(HashMap<String, String> map) {
         this.params = map;
+    }
+
+    public TestRequestDispatcher getLast() {
+        return rd;
     }
 
     public Object getAttribute(String name) {
@@ -100,7 +144,8 @@ public class TestServletContext implements ServletContext {
     }
 
     public RequestDispatcher getRequestDispatcher(String path) {
-        return null;
+        rd.setRequestUri(path);
+        return rd;
     }
 
     public URL getResource(String path) throws MalformedURLException {
@@ -249,7 +294,7 @@ public class TestServletContext implements ServletContext {
     @Override
     public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -267,19 +312,19 @@ public class TestServletContext implements ServletContext {
     @Override
     public void addListener(String className) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public <T extends EventListener> void addListener(T t) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void addListener(Class<? extends EventListener> listenerClass) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -303,6 +348,6 @@ public class TestServletContext implements ServletContext {
     @Override
     public void declareRoles(String... roleNames) {
         // TODO Auto-generated method stub
-        
+
     }
 }

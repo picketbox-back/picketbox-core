@@ -27,15 +27,17 @@ import org.picketbox.util.Base64;
 
 /**
  * An instance of {@link NonceGenerator} that uses {@link UUID} level 4
+ * 
  * @author anil saldhana
  */
 public class UUIDNonceGenerator implements NonceGenerator {
     /*
      * Returns a nonce that is base64 encoded version of {current_time:uuid-level4}
+     * 
      * @see org.picketbox.nonce.NonceGenerator#get()
      */
     @Override
-    public String get() { 
+    public String get() {
         StringBuilder sb = new StringBuilder(System.currentTimeMillis() + ":");
         sb.append(UUID.randomUUID().toString());
         return Base64.encodeBytes(sb.toString().getBytes());
@@ -43,18 +45,19 @@ public class UUIDNonceGenerator implements NonceGenerator {
 
     /*
      * The nonceValue should be base64 encoded version of {current_time:uuid-level4}
+     * 
      * @see org.picketbox.nonce.NonceGenerator#hasExpired(java.lang.String, long)
      */
     @Override
     public boolean hasExpired(String nonceValue, long maxValue) {
         nonceValue = new String(Base64.decode(nonceValue));
         int colonIndex = nonceValue.indexOf(":");
-        if(colonIndex < 0 )
+        if (colonIndex < 0)
             return true;
-        String timeValue = nonceValue.substring(0,colonIndex);
+        String timeValue = nonceValue.substring(0, colonIndex);
         long parsedTimeValue = Long.parseLong(timeValue);
         long ms = System.currentTimeMillis() - parsedTimeValue;
-        if(ms > maxValue) {
+        if (ms > maxValue) {
             return true;
         }
         return false;

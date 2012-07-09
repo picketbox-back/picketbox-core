@@ -29,20 +29,22 @@ import org.picketbox.nonce.UUIDNonceGenerator;
 
 /**
  * Unit test the {@link UUIDNonceGenerator}
+ * 
  * @author anil saldhana
  * @since Jul 6, 2012
  */
 public class UUIDNonceGeneratorTestCase {
-    
+
     /**
      * Test the expiration of the uuid based nonce
+     * 
      * @throws Exception
      */
     @Test
     public void testExpiry() throws Exception {
-       UUIDNonceGenerator uuid = new UUIDNonceGenerator();
-       String nonce = uuid.get();
-       assertTrue( uuid.hasExpired(nonce, 1));
-       assertFalse( uuid.hasExpired(nonce, 1000));
+        UUIDNonceGenerator uuid = new UUIDNonceGenerator();
+        String nonce = uuid.get();
+        assertTrue(uuid.hasExpired(nonce, 1));
+        assertFalse(uuid.hasExpired(nonce, 1000));
     }
 }
