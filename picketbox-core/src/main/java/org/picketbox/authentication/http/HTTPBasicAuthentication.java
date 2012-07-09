@@ -36,7 +36,7 @@ import org.picketbox.util.Base64;
 
 /**
  * Perform HTTP Basic Authentication
- * 
+ *
  * @author anil saldhana
  * @since July 5, 2012
  */
@@ -44,7 +44,7 @@ public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
 
     /**
      * Authenticate an user
-     * 
+     *
      * @param servletReq
      * @param servletResp
      * @return

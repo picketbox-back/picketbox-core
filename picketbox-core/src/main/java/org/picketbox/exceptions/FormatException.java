@@ -25,7 +25,7 @@ import java.security.GeneralSecurityException;
 
 /**
  * An exception to indicate a format issue
- * 
+ *
  * @author anil saldhana
  * @since July 6, 2012
  */

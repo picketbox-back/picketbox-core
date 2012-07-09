@@ -28,7 +28,7 @@ import javax.servlet.ServletContext;
 
 /**
  * A test instance of {@link ServletConfig}
- * 
+ *
  * @author Anil.Saldhana@redhat.com
  * @since Jan 28, 2009
  */

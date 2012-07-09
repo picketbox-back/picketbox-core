@@ -28,7 +28,7 @@ package org.picketbox.authentication;
  * <p>
  * Refer to RFC 2069 and 2617 for the meaning.
  * </p>
- * 
+ *
  * @author anil saldhana
  * @since July 6, 2012
  */

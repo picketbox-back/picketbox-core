@@ -33,14 +33,14 @@ import org.picketbox.exceptions.FormatException;
 
 /**
  * Utility class to support HTTP Digest Authentication
- * 
+ *
  * @author anil saldhana
  * @since July 5, 2012
  */
 public class HTTPDigestUtil {
     /**
      * Given the standard client response in HTTP/Digest mechanism, generate a set of string tokens that retains the quotes
-     * 
+     *
      * @param val
      * @return
      */
@@ -53,7 +53,7 @@ public class HTTPDigestUtil {
     }
 
     /**
-     * 
+     *
      * @param token
      * @return
      */
@@ -67,7 +67,7 @@ public class HTTPDigestUtil {
 
     /**
      * Given a digest token, extract the value
-     * 
+     *
      * @param token
      * @param key
      * @return
@@ -91,7 +91,7 @@ public class HTTPDigestUtil {
 
     /**
      * Construct a {@link DigestHolder} from the tokens
-     * 
+     *
      * @param tokens
      * @return
      */
@@ -139,7 +139,7 @@ public class HTTPDigestUtil {
 
     /**
      * Determine the message digest
-     * 
+     *
      * @param str
      * @return
      * @throws FormatException
@@ -157,7 +157,7 @@ public class HTTPDigestUtil {
 
     /**
      * Given the digest, construct the client response value
-     * 
+     *
      * @param digest
      * @param password
      * @return
@@ -205,7 +205,7 @@ public class HTTPDigestUtil {
 
     /**
      * Match the Client Response value with a generated digest based on the password
-     * 
+     *
      * @param digest
      * @param password
      * @return
@@ -217,7 +217,7 @@ public class HTTPDigestUtil {
 
     /**
      * Convert a byte array to hex
-     * 
+     *
      * @param bytes
      * @return
      */

@@ -39,7 +39,7 @@ import org.picketbox.util.Base64;
 
 /**
  * Perform HTTP Form Authentication
- * 
+ *
  * @author anil saldhana
  * @since July 9, 2012
  */
@@ -73,7 +73,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
 
     /**
      * Authenticate an user
-     * 
+     *
      * @param servletReq
      * @param servletResp
      * @return

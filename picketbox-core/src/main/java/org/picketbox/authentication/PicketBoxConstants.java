@@ -23,7 +23,7 @@ package org.picketbox.authentication;
 
 /**
  * Define all constants
- * 
+ *
  * @author anil saldhana
  * @since July 5, 2012
  */
@@ -32,6 +32,8 @@ public interface PicketBoxConstants {
     String HTTP_AUTHORIZATION_HEADER = "Authorization";
 
     String HTTP_BASIC = "Basic";
+
+    String HTTP_CERTIFICATE = "javax.servlet.request.X509Certificate";
 
     String HTTP_DIGEST = "Digest";
 

@@ -25,7 +25,7 @@ import java.security.GeneralSecurityException;
 
 /**
  * An exception to indicate a failure during authentication process
- * 
+ *
  * @author anil saldhana
  */
 public class AuthenticationException extends GeneralSecurityException {

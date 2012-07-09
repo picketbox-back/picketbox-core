@@ -27,13 +27,13 @@ import org.picketbox.util.Base64;
 
 /**
  * An instance of {@link NonceGenerator} that uses {@link UUID} level 4
- * 
+ *
  * @author anil saldhana
  */
 public class UUIDNonceGenerator implements NonceGenerator {
     /*
      * Returns a nonce that is base64 encoded version of {current_time:uuid-level4}
-     * 
+     *
      * @see org.picketbox.nonce.NonceGenerator#get()
      */
     @Override
@@ -45,7 +45,7 @@ public class UUIDNonceGenerator implements NonceGenerator {
 
     /*
      * The nonceValue should be base64 encoded version of {current_time:uuid-level4}
-     * 
+     *
      * @see org.picketbox.nonce.NonceGenerator#hasExpired(java.lang.String, long)
      */
     @Override

@@ -44,7 +44,7 @@ import org.picketbox.util.HTTPDigestUtil;
 
 /**
  * Class that handles HTTP/Digest Authentication
- * 
+ *
  * @author anil saldhana
  * @since Jul 6, 2012
  */
@@ -89,7 +89,7 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
 
     /**
      * Authenticate an user
-     * 
+     *
      * @param servletReq
      * @param servletResp
      * @return

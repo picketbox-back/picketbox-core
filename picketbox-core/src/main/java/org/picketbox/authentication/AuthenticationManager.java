@@ -27,14 +27,14 @@ import org.picketbox.exceptions.AuthenticationException;
 
 /**
  * Interface used for authentication
- * 
+ *
  * @author anil saldhana
  * @since July 5, 2012
  */
 public interface AuthenticationManager {
     /**
      * Authenticate an user based on a Credential
-     * 
+     *
      * @param username
      * @param credential
      * @return
@@ -44,7 +44,7 @@ public interface AuthenticationManager {
 
     /**
      * Authenticate an user using the HTTP/Digest Mechanism
-     * 
+     *
      * @param digest
      * @return
      * @throws AuthenticationException

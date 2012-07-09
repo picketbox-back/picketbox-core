@@ -50,7 +50,7 @@ import javax.servlet.http.Part;
 
 /**
  * A Test Instance of {@link HttpServletRequest}
- * 
+ *
  * @author anil saldhana
  * @since Jan 28, 2009
  */
@@ -63,6 +63,8 @@ public class TestServletRequest implements HttpServletRequest {
     private String method;
 
     private Map<String, String> parameters = new HashMap<String, String>();
+
+    private Map<String, Object> attributes = new HashMap<String, Object>();
 
     private String requestURI;
 
@@ -180,7 +182,7 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public Object getAttribute(String name) {
-        return null;
+        return attributes.get(name);
     }
 
     public Enumeration getAttributeNames() {
@@ -292,6 +294,7 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public void setAttribute(String name, Object o) {
+        attributes.put(name, o);
     }
 
     public void setCharacterEncoding(String env) throws UnsupportedEncodingException {

@@ -23,20 +23,20 @@ package org.picketbox.nonce;
 
 /**
  * Interface for generating server side nonces
- * 
+ *
  * @author anil saldhana
  */
 public interface NonceGenerator {
     /**
      * Construct a nonce
-     * 
+     *
      * @return
      */
     String get();
 
     /**
      * Verify if the nonce has expired
-     * 
+     *
      * @param nonceValue
      * @param maxValue max value for expiry
      * @return

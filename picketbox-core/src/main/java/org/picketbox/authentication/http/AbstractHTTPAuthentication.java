@@ -28,7 +28,7 @@ import org.picketbox.authentication.AuthenticationManager;
 
 /**
  * Base class for all the HTTP authentication schemes
- * 
+ *
  * @author anil saldhana
  * @since Jul 6, 2012
  */

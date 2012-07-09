@@ -29,7 +29,7 @@ import org.picketbox.nonce.UUIDNonceGenerator;
 
 /**
  * Unit test the {@link UUIDNonceGenerator}
- * 
+ *
  * @author anil saldhana
  * @since Jul 6, 2012
  */
@@ -37,7 +37,7 @@ public class UUIDNonceGeneratorTestCase {
 
     /**
      * Test the expiration of the uuid based nonce
-     * 
+     *
      * @throws Exception
      */
     @Test
