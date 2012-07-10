@@ -45,7 +45,7 @@ import org.picketbox.test.http.TestServletResponse;
 
 /**
  * Unit test the {@link HTTPClientCertAuthentication} class
- *
+ * 
  * @author anil saldhana
  * @since July 9, 2012
  */
@@ -54,12 +54,11 @@ public class HTTPClientCertAuthenticationTestCase {
     private HTTPClientCertAuthentication httpClientCert = null;
 
     private TestServletContext sc = new TestServletContext(new HashMap<String, String>());
-    
-    private class HTTPClientCertAuthenticationTestCaseAM extends AbstractAuthenticationManager{
+
+    private class HTTPClientCertAuthenticationTestCaseAM extends AbstractAuthenticationManager {
         @Override
         public Principal authenticate(final String username, Object credential) throws AuthenticationException {
-            if ("CN=jbid test, OU=JBoss, O=JBoss, C=US".equalsIgnoreCase(username)
-                    && ((String) credential).startsWith("W2G")) {
+            if ("CN=jbid test, OU=JBoss, O=JBoss, C=US".equalsIgnoreCase(username) && ((String) credential).startsWith("W2G")) {
                 return new Principal() {
                     @Override
                     public String getName() {
@@ -70,7 +69,7 @@ public class HTTPClientCertAuthenticationTestCase {
             return null;
         }
     }
-    
+
     @Before
     public void setup() throws Exception {
         httpClientCert = new HTTPClientCertAuthentication();

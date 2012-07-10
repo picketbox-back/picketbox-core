@@ -34,6 +34,8 @@ import org.picketbox.exceptions.AuthenticationException;
  * @since Jul 6, 2012
  */
 public interface HTTPAuthenticationScheme extends HttpSessionListener {
+    String REALM = "PicketBox Realm";
+
     /**
      * Authenticate an user
      *

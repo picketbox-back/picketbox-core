@@ -101,7 +101,7 @@ public class HTTPDigestUtil {
         int len = tokens.length;
 
         for (int i = 0; i < len; i++) {
-            String token = tokens[i];
+            String token = tokens[i].trim();
 
             if (token.startsWith("Digest") || token.startsWith("username=")) {
                 username = HTTPDigestUtil.userName(token);

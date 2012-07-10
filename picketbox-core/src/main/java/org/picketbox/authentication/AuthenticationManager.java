@@ -51,9 +51,10 @@ public interface AuthenticationManager {
      * @throws AuthenticationException
      */
     Principal authenticate(DigestHolder digest) throws AuthenticationException;
-    
+
     /**
      * Authenticate using {@link X509Certificate}
+     *
      * @param certs
      * @return
      * @throws AuthenticationException

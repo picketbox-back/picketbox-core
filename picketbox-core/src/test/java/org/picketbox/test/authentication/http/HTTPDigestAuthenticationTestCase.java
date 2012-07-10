@@ -44,7 +44,7 @@ import org.picketbox.util.HTTPDigestUtil;
 
 /**
  * Unit test the {@link HTTPDigestAuthentication} class
- *
+ * 
  * @author anil saldhana
  * @since July 6, 2012
  */
@@ -52,7 +52,7 @@ public class HTTPDigestAuthenticationTestCase {
 
     private HTTPDigestAuthentication httpDigest = null;
 
-    private class HTTPDigestAuthenticationTestCaseAM extends AbstractAuthenticationManager{
+    private class HTTPDigestAuthenticationTestCaseAM extends AbstractAuthenticationManager {
         @Override
         public Principal authenticate(final DigestHolder digest) throws AuthenticationException {
             String storedPassword = "Circle Of Life";
@@ -73,7 +73,7 @@ public class HTTPDigestAuthenticationTestCase {
             return null;
         }
     }
-    
+
     @Before
     public void setup() throws Exception {
         httpDigest = new HTTPDigestAuthentication();

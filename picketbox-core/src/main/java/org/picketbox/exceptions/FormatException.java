@@ -21,15 +21,13 @@
  */
 package org.picketbox.exceptions;
 
-import java.security.GeneralSecurityException;
-
 /**
  * An exception to indicate a format issue
  *
  * @author anil saldhana
  * @since July 6, 2012
  */
-public class FormatException extends GeneralSecurityException {
+public class FormatException extends AuthenticationException {
     private static final long serialVersionUID = 1L;
 
     public FormatException() {
