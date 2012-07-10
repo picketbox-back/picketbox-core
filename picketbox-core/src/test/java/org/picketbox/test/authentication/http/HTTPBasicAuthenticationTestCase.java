@@ -42,7 +42,7 @@ import org.picketbox.util.Base64;
 
 /**
  * Unit test the {@link HTTPBasicAuthentication} class
- * 
+ *
  * @author anil saldhana
  * @since July 5, 2012
  */

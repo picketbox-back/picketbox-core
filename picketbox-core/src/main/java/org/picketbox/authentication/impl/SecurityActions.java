@@ -32,6 +32,14 @@ import java.security.PrivilegedAction;
  */
 class SecurityActions {
 
+    static ClassLoader getClassLoader(final Class<?> theClass) {
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+            public ClassLoader run() {
+                return theClass.getClassLoader();
+            }
+        });
+    }
+
     static Object instance(final Class<?> theClass, final String fqn) {
         try {
             Class<?> clazz = loadClass(theClass, fqn);
