@@ -21,19 +21,24 @@
  */
 package org.picketbox.authentication.http;
 
-import javax.servlet.ServletException;
+import java.util.Map;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 /**
  * An interface that can load {@link HTTPAuthenticationScheme} from a DI/IOC environment
+ *
  * @author anil saldhana
  * @since Jul 10, 2012
  */
 public interface HTTPAuthenticationSchemeLoader {
     /**
      * Get the {@link HTTPAuthenticationScheme}
+     *
      * @return an instance of {@link HTTPAuthenticationScheme}
+     * @param contextData contextual data such as {@link ServletContext}
      * @throws {@link ServletException}
      */
-    HTTPAuthenticationScheme get() throws ServletException;
+    HTTPAuthenticationScheme get(Map<String, Object> contextData) throws ServletException;
 }

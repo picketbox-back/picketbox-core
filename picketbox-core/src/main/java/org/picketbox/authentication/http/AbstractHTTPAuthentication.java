@@ -41,7 +41,7 @@ public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationSc
     /**
      * Injectable realm name
      */
-    protected String realmName = "PicketBox Realm";
+    protected String realmName = HTTPAuthenticationScheme.REALM;
 
     /**
      * An instance of {@link ServletContext}

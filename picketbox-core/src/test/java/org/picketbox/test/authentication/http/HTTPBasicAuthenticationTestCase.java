@@ -42,15 +42,18 @@ import org.picketbox.util.Base64;
 
 /**
  * Unit test the {@link HTTPBasicAuthentication} class
- *
+ * 
  * @author anil saldhana
  * @since July 5, 2012
  */
 public class HTTPBasicAuthenticationTestCase {
 
     private HTTPBasicAuthentication httpBasic = null;
-    
-    private class HTTPBasicAuthenticationTestCaseAM extends AbstractAuthenticationManager{
+
+    public class HTTPBasicAuthenticationTestCaseAM extends AbstractAuthenticationManager {
+        public HTTPBasicAuthenticationTestCaseAM() {
+        }
+
         @Override
         public Principal authenticate(final String username, Object credential) throws AuthenticationException {
             if ("Aladdin".equalsIgnoreCase(username) && "Open Sesame".equalsIgnoreCase((String) credential)) {

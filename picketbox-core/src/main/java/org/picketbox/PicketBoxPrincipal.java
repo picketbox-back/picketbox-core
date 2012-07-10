@@ -19,32 +19,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.nonce;
+package org.picketbox;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.picketbox.nonce.UUIDNonceGenerator;
+import java.security.Principal;
 
 /**
- * Unit test the {@link UUIDNonceGenerator}
- * 
+ * A simple {@link Principal}
+ *
  * @author anil saldhana
- * @since Jul 6, 2012
+ * @since Jul 10, 2012
+ *
  */
-public class UUIDNonceGeneratorTestCase {
+public class PicketBoxPrincipal implements Principal {
 
-    /**
-     * Test the expiration of the uuid based nonce
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testExpiry() throws Exception {
-        UUIDNonceGenerator uuid = new UUIDNonceGenerator();
-        String nonce = uuid.get();
-        assertTrue(uuid.hasExpired(nonce, 1));
-        assertFalse(uuid.hasExpired(nonce, 1000));
+    protected String name;
+
+    public PicketBoxPrincipal(String name) {
+        this.name = name;
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
 }
