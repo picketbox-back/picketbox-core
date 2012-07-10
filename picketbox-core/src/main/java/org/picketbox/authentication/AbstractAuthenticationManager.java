@@ -27,36 +27,27 @@ import java.security.cert.X509Certificate;
 import org.picketbox.exceptions.AuthenticationException;
 
 /**
- * Interface used for authentication
- *
+ * An abstract instance of {@link AuthenticationManager}
+ * This class exists primarily for subclasses to just override the methods
+ * they intend to implement.
+ * 
  * @author anil saldhana
- * @since July 5, 2012
+ * @since Jul 10, 2012
+ *
  */
-public interface AuthenticationManager {
-    /**
-     * Authenticate an user based on a Credential
-     *
-     * @param username
-     * @param credential
-     * @return
-     * @throws AuthenticationException
-     */
-    Principal authenticate(String username, Object credential) throws AuthenticationException;
+public abstract class AbstractAuthenticationManager implements AuthenticationManager {
+    @Override
+    public Principal authenticate(String username, Object credential) throws AuthenticationException {
+        throw new RuntimeException();
+    }
 
-    /**
-     * Authenticate an user using the HTTP/Digest Mechanism
-     *
-     * @param digest
-     * @return
-     * @throws AuthenticationException
-     */
-    Principal authenticate(DigestHolder digest) throws AuthenticationException;
-    
-    /**
-     * Authenticate using {@link X509Certificate}
-     * @param certs
-     * @return
-     * @throws AuthenticationException
-     */
-    Principal authenticate(X509Certificate[] certs) throws AuthenticationException;
+    @Override
+    public Principal authenticate(DigestHolder digest) throws AuthenticationException {
+        throw new RuntimeException();
+    }
+
+    @Override
+    public Principal authenticate(X509Certificate[] certs) throws AuthenticationException {
+        throw new RuntimeException();
+    }
 }
