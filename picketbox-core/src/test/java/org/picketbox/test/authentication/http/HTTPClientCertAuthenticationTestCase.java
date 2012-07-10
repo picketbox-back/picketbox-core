@@ -45,7 +45,7 @@ import org.picketbox.test.http.TestServletResponse;
 
 /**
  * Unit test the {@link HTTPClientCertAuthentication} class
- * 
+ *
  * @author anil saldhana
  * @since July 9, 2012
  */

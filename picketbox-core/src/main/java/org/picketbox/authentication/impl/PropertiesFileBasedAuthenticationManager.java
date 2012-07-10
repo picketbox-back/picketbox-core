@@ -21,9 +21,10 @@
  */
 package org.picketbox.authentication.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
 
 import org.picketbox.PicketBoxPrincipal;
 import org.picketbox.authentication.AbstractAuthenticationManager;
@@ -34,49 +35,30 @@ import org.picketbox.exceptions.AuthenticationException;
 import org.picketbox.util.HTTPDigestUtil;
 
 /**
- * A simple username/password based {@link AuthenticationManager}
+ * An instance of {@link AuthenticationManager} that uses a properties files users.properties for authentication
  *
  * @author anil saldhana
  * @since Jul 10, 2012
  */
-public class SimpleCredentialAuthenticationManager extends AbstractAuthenticationManager {
+public class PropertiesFileBasedAuthenticationManager extends AbstractAuthenticationManager {
+    private Properties properties = new Properties();
 
-    private Map<String, String> passMap = new HashMap<String, String>();
-
-    /**
-     * Default construction creates one entry (username,password) in the internal map using two system properties.
-     * picketbox.username and picketbox.credential
-     */
-    public SimpleCredentialAuthenticationManager() {
-        String username = SecurityActions.getSystemProperty(PicketBoxConstants.USERNAME, null);
-        String pass = SecurityActions.getSystemProperty(PicketBoxConstants.CREDENTIAL, null);
-        if (username != null && pass != null) {
-            passMap.put(username, pass);
+    public PropertiesFileBasedAuthenticationManager() {
+        InputStream is = SecurityActions.getClassLoader(getClass()).getResourceAsStream(PicketBoxConstants.USERS_PROPERTIES);
+        if (is == null)
+            throw new RuntimeException("properties file not found");
+        try {
+            properties.load(is);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            safeClose(is);
         }
-    }
-
-    /**
-     * Pass in a map of username,password entries
-     *
-     * @param theMap
-     */
-    public SimpleCredentialAuthenticationManager(Map<String, String> theMap) {
-        this.passMap.putAll(theMap);
-    }
-
-    /**
-     * Set a {@link Map} of username/password
-     *
-     * @param pm
-     */
-    public void setPassMap(Map<String, String> pm) {
-        this.passMap.clear();
-        passMap.putAll(pm);
     }
 
     @Override
     public Principal authenticate(String username, Object credential) throws AuthenticationException {
-        String pass = passMap.get(username);
+        String pass = properties.getProperty(username);
         if (pass != null && pass.equals(credential)) {
             return new PicketBoxPrincipal(username);
         }
@@ -86,12 +68,19 @@ public class SimpleCredentialAuthenticationManager extends AbstractAuthenticatio
     @Override
     public Principal authenticate(DigestHolder digest) throws AuthenticationException {
         String username = digest.getUsername();
-        String storedPass = passMap.get(username);
+        String storedPass = properties.getProperty(username);
         if (storedPass != null) {
             if (HTTPDigestUtil.matchCredential(digest, storedPass.toCharArray())) {
                 return new PicketBoxPrincipal(username);
             }
         }
         return null;
+    }
+
+    private void safeClose(InputStream is) {
+        try {
+            is.close();
+        } catch (Exception e) {
+        }
     }
 }

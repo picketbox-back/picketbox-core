@@ -44,7 +44,7 @@ import org.picketbox.util.HTTPDigestUtil;
 
 /**
  * Unit test the {@link HTTPDigestAuthentication} class
- * 
+ *
  * @author anil saldhana
  * @since July 6, 2012
  */
