@@ -29,6 +29,8 @@ package org.picketbox.authentication;
  */
 public interface PicketBoxConstants {
 
+    String CREDENTIAL = "picketbox.credential";
+    
     String HTTP_AUTHORIZATION_HEADER = "Authorization";
 
     String HTTP_BASIC = "Basic";
@@ -52,4 +54,6 @@ public interface PicketBoxConstants {
     String PRINCIPAL = "PRINCIPAL";
 
     String UTF8 = "UTF-8";
+    
+    String USERNAME = "picketbox.username";
 }

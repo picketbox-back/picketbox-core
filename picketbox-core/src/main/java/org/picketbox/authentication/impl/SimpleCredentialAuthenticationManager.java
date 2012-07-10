@@ -29,6 +29,7 @@ import org.picketbox.PicketBoxPrincipal;
 import org.picketbox.authentication.AbstractAuthenticationManager;
 import org.picketbox.authentication.AuthenticationManager;
 import org.picketbox.authentication.DigestHolder;
+import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.exceptions.AuthenticationException;
 import org.picketbox.util.HTTPDigestUtil;
 
@@ -42,18 +43,30 @@ public class SimpleCredentialAuthenticationManager extends AbstractAuthenticatio
 
     private Map<String, String> passMap = new HashMap<String, String>();
 
+    /**
+     * Default construction creates one entry (username,password) in the internal
+     * map using two system properties. picketbox.username and picketbox.credential
+     */
     public SimpleCredentialAuthenticationManager() {
-        String username = SecurityActions.getSystemProperty("username", null);
-        String pass = SecurityActions.getSystemProperty("pass", null);
+        String username = SecurityActions.getSystemProperty(PicketBoxConstants.USERNAME, null);
+        String pass = SecurityActions.getSystemProperty(PicketBoxConstants.CREDENTIAL, null);
         if (username != null && pass != null) {
             passMap.put(username, pass);
         }
     }
 
+    /**
+     * Pass in a map of username,password entries
+     * @param theMap
+     */
     public SimpleCredentialAuthenticationManager(Map<String, String> theMap) {
         this.passMap.putAll(theMap);
     }
 
+    /**
+     * Set a {@link Map} of username/password
+     * @param pm
+     */
     public void setPassMap(Map<String, String> pm) {
         this.passMap.clear();
         passMap.putAll(pm);
