@@ -21,43 +21,45 @@
  */
 package org.picketbox.test.authentication.http;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Principal;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.authentication.AbstractAuthenticationManager;
 import org.picketbox.authentication.PicketBoxConstants;
-import org.picketbox.authentication.http.HTTPFormAuthentication;
+import org.picketbox.authentication.http.HTTPClientCertAuthentication;
 import org.picketbox.exceptions.AuthenticationException;
 import org.picketbox.test.http.TestServletContext;
-import org.picketbox.test.http.TestServletContext.TestRequestDispatcher;
 import org.picketbox.test.http.TestServletRequest;
 import org.picketbox.test.http.TestServletResponse;
 
 /**
- * Unit test the {@link HTTPFormAuthentication} class
+ * Unit test the {@link HTTPClientCertAuthentication} class
  *
  * @author anil saldhana
  * @since July 9, 2012
  */
-public class HTTPFormAuthenticationTestCase {
+public class HTTPClientCertAuthenticationTestCase {
 
-    private HTTPFormAuthentication httpForm = null;
+    private HTTPClientCertAuthentication httpClientCert = null;
 
     private TestServletContext sc = new TestServletContext(new HashMap<String, String>());
-
-    private class HTTPFormAuthenticationTestCaseAM extends AbstractAuthenticationManager{
+    
+    private class HTTPClientCertAuthenticationTestCaseAM extends AbstractAuthenticationManager{
         @Override
         public Principal authenticate(final String username, Object credential) throws AuthenticationException {
-            if ("Aladdin".equalsIgnoreCase(username) && "Open Sesame".equalsIgnoreCase((String) credential)) {
+            if ("CN=jbid test, OU=JBoss, O=JBoss, C=US".equalsIgnoreCase(username)
+                    && ((String) credential).startsWith("W2G")) {
                 return new Principal() {
                     @Override
                     public String getName() {
@@ -71,11 +73,11 @@ public class HTTPFormAuthenticationTestCase {
     
     @Before
     public void setup() throws Exception {
-        httpForm = new HTTPFormAuthentication();
+        httpClientCert = new HTTPClientCertAuthentication();
 
-        httpForm.setAuthManager(new HTTPFormAuthenticationTestCaseAM());
+        httpClientCert.setAuthManager(new HTTPClientCertAuthenticationTestCaseAM());
 
-        httpForm.setServletContext(sc);
+        httpClientCert.setServletContext(sc);
     }
 
     @Test
@@ -95,38 +97,22 @@ public class HTTPFormAuthenticationTestCase {
             }
         });
 
-        req.setMethod("GET");
+        InputStream bis = getClass().getClassLoader().getResourceAsStream("cert/servercert.txt");
 
-        // Original URI
-        String orig = "http://msite/someurl";
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        X509Certificate cert = (X509Certificate) cf.generateCertificate(bis);
+        bis.close();
 
-        req.setRequestURI(orig);
+        assertNotNull(cert);
 
         // Call the server to get the digest challenge
-        boolean result = httpForm.authenticate(req, resp);
+        boolean result = httpClientCert.authenticate(req, resp);
         assertFalse(result);
 
-        // We will test that the request dispatcher is set on the form login page
-        TestRequestDispatcher rd = sc.getLast();
-        assertEquals(rd.getRequest(), req);
+        // Now set the certificate
+        req.setAttribute(PicketBoxConstants.HTTP_CERTIFICATE, new X509Certificate[] { cert });
 
-        assertEquals("/login.jsp", rd.getRequestUri());
-
-        // Now assume we have the login page. Lets post
-        TestServletRequest newReq = new TestServletRequest(new InputStream() {
-            @Override
-            public int read() throws IOException {
-                return 0;
-            }
-        });
-        newReq.setRequestURI("http://msite" + PicketBoxConstants.HTTP_FORM_J_SECURITY_CHECK);
-        newReq.setParameter(PicketBoxConstants.HTTP_FORM_J_USERNAME, "Aladdin");
-        newReq.setParameter(PicketBoxConstants.HTTP_FORM_J_PASSWORD, "Open Sesame");
-
-        result = httpForm.authenticate(newReq, resp);
+        result = httpClientCert.authenticate(req, resp);
         assertTrue(result);
-
-        // After authentication, we should be redirected to the original url
-        assertTrue(resp.getSendRedirectedURI().equals(orig));
     }
 }

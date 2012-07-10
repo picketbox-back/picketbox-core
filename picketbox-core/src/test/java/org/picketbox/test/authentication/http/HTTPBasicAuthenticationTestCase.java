@@ -32,8 +32,7 @@ import java.security.Principal;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.authentication.AuthenticationManager;
-import org.picketbox.authentication.DigestHolder;
+import org.picketbox.authentication.AbstractAuthenticationManager;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.authentication.http.HTTPBasicAuthentication;
 import org.picketbox.exceptions.AuthenticationException;
@@ -50,31 +49,26 @@ import org.picketbox.util.Base64;
 public class HTTPBasicAuthenticationTestCase {
 
     private HTTPBasicAuthentication httpBasic = null;
+    
+    private class HTTPBasicAuthenticationTestCaseAM extends AbstractAuthenticationManager{
+        @Override
+        public Principal authenticate(final String username, Object credential) throws AuthenticationException {
+            if ("Aladdin".equalsIgnoreCase(username) && "Open Sesame".equalsIgnoreCase((String) credential)) {
+                return new Principal() {
+                    @Override
+                    public String getName() {
+                        return username;
+                    }
+                };
+            }
+            return null;
+        }
+    }
 
     @Before
     public void setup() throws Exception {
         httpBasic = new HTTPBasicAuthentication();
-
-        httpBasic.setAuthManager(new AuthenticationManager() {
-
-            @Override
-            public Principal authenticate(final String username, Object credential) throws AuthenticationException {
-                if ("Aladdin".equalsIgnoreCase(username) && "Open Sesame".equalsIgnoreCase((String) credential)) {
-                    return new Principal() {
-                        @Override
-                        public String getName() {
-                            return username;
-                        }
-                    };
-                }
-                return null;
-            }
-
-            @Override
-            public Principal authenticate(DigestHolder digest) throws AuthenticationException {
-                return null;
-            }
-        });
+        httpBasic.setAuthManager(new HTTPBasicAuthenticationTestCaseAM());
     }
 
     @Test
