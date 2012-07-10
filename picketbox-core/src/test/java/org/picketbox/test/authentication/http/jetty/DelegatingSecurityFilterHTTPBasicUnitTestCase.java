@@ -46,7 +46,7 @@ import org.picketbox.test.http.jetty.EmbeddedWebServerBase;
 
 /**
  * Unit test the {@link DelegatingSecurityFilter} for {@link HTTPBasicAuthentication}
- * 
+ *
  * @author anil saldhana
  * @since Jul 10, 2012
  */

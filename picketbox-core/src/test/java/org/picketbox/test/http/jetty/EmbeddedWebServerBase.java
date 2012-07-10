@@ -29,7 +29,7 @@ import org.mortbay.jetty.bio.SocketConnector;
 
 /**
  * Base class for embedded web server based tests
- * 
+ *
  * @author Anil Saldhana
  * @since Jul 8, 2009
  */
@@ -60,7 +60,7 @@ public abstract class EmbeddedWebServerBase {
 
     /**
      * Return the connectors that need to be configured on the server. Subclasses can create as many connectors as they want
-     * 
+     *
      * @return
      */
     protected Connector[] getConnectors() {
