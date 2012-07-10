@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -49,7 +50,7 @@ import org.picketbox.util.HTTPDigestUtil;
  * @since Jul 6, 2012
  */
 public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
-    protected String opaque;
+    protected String opaque = UUID.randomUUID().toString();
 
     protected String qop = PicketBoxConstants.HTTP_DIGEST_QOP_AUTH;
 
@@ -126,7 +127,7 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
             }
 
             // Validate Opaque
-            if (digest.getOpaque().equals(this.opaque) == false) {
+            if (digest.getOpaque() != null && digest.getOpaque().equals(this.opaque) == false) {
                 return challengeClient(request, response, false);
             }
 

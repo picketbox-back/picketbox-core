@@ -44,7 +44,7 @@ import org.picketbox.test.http.TestServletResponse;
 
 /**
  * Unit test the {@link HTTPFormAuthentication} class
- *
+ * 
  * @author anil saldhana
  * @since July 9, 2012
  */
@@ -54,7 +54,7 @@ public class HTTPFormAuthenticationTestCase {
 
     private TestServletContext sc = new TestServletContext(new HashMap<String, String>());
 
-    private class HTTPFormAuthenticationTestCaseAM extends AbstractAuthenticationManager{
+    private class HTTPFormAuthenticationTestCaseAM extends AbstractAuthenticationManager {
         @Override
         public Principal authenticate(final String username, Object credential) throws AuthenticationException {
             if ("Aladdin".equalsIgnoreCase(username) && "Open Sesame".equalsIgnoreCase((String) credential)) {
@@ -68,7 +68,7 @@ public class HTTPFormAuthenticationTestCase {
             return null;
         }
     }
-    
+
     @Before
     public void setup() throws Exception {
         httpForm = new HTTPFormAuthentication();

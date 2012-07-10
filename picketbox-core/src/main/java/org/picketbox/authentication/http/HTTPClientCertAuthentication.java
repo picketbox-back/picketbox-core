@@ -42,17 +42,16 @@ import org.picketbox.util.Base64;
  * @since July 9, 2012
  */
 public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
-    
+
     /**
      * Use Certificate validation directly rather than username/cred model
      */
     protected boolean useCertificateValidation = false;
 
     /**
-     * 
-     * Use Certificate validation directly rather than username/cred model.
-     * Default is false.
-     * 
+     *
+     * Use Certificate validation directly rather than username/cred model. Default is false.
+     *
      * @param useCertificateValidation
      */
     public void setUseCertificateValidation(boolean useCertificateValidation) {
@@ -77,7 +76,7 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
         X509Certificate[] certs = (X509Certificate[]) request.getAttribute(PicketBoxConstants.HTTP_CERTIFICATE);
 
         if (certs != null) {
-            if(useCertificateValidation){
+            if (useCertificateValidation) {
                 Principal principal = authManager.authenticate(certs);
                 if (principal != null) {
                     session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);

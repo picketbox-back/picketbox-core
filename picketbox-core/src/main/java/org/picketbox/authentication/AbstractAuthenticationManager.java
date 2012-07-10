@@ -27,10 +27,9 @@ import java.security.cert.X509Certificate;
 import org.picketbox.exceptions.AuthenticationException;
 
 /**
- * An abstract instance of {@link AuthenticationManager}
- * This class exists primarily for subclasses to just override the methods
+ * An abstract instance of {@link AuthenticationManager} This class exists primarily for subclasses to just override the methods
  * they intend to implement.
- * 
+ *
  * @author anil saldhana
  * @since Jul 10, 2012
  *
