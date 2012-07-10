@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
+import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.authentication.http.HTTPBasicAuthentication;
 import org.picketbox.authentication.http.impl.HTTPBasicAuthenticationSchemeLoader;
 import org.picketbox.authentication.impl.SimpleCredentialAuthenticationManager;
@@ -70,8 +71,8 @@ public class DelegatingSecurityFilterHTTPBasicUnitTestCase extends EmbeddedWebSe
 
         Thread.currentThread().setContextClassLoader(context.getClassLoader());
 
-        System.setProperty("username", "Aladdin");
-        System.setProperty("pass", "Open Sesame");
+        System.setProperty(PicketBoxConstants.USERNAME, "Aladdin");
+        System.setProperty(PicketBoxConstants.CREDENTIAL, "Open Sesame");
 
         FilterHolder filterHolder = new FilterHolder(DelegatingSecurityFilter.class);
         filterHolder.setInitParameter(DelegatingSecurityFilter.authManager,

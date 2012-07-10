@@ -74,8 +74,8 @@ public class DelegatingSecurityFilterHTTPDigestUnitTestCase extends EmbeddedWebS
 
         Thread.currentThread().setContextClassLoader(context.getClassLoader());
 
-        System.setProperty("username", "Aladdin");
-        System.setProperty("pass", "Open Sesame");
+        System.setProperty(PicketBoxConstants.USERNAME, "Aladdin");
+        System.setProperty(PicketBoxConstants.CREDENTIAL, "Open Sesame");
 
         FilterHolder filterHolder = new FilterHolder(DelegatingSecurityFilter.class);
         filterHolder.setInitParameter(DelegatingSecurityFilter.authManager,
