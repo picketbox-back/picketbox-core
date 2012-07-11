@@ -29,6 +29,10 @@ package org.picketbox.authentication;
  */
 public interface PicketBoxConstants {
 
+    String AUTH_SCHEME_LOADER = "authSchemeLoader";
+    
+    String AUTH_MGR = "authMgr";
+    
     String CREDENTIAL = "picketbox.credential";
 
     String HTTP_AUTHORIZATION_HEADER = "Authorization";
@@ -52,6 +56,8 @@ public interface PicketBoxConstants {
     String MD5 = "MD5";
 
     String PRINCIPAL = "PRINCIPAL";
+    
+    String SERVLET_CONTEXT = "servletContext";
 
     String USERS_PROPERTIES = "users.properties";
 

@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.picketbox.authentication.AuthenticationManager;
+import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.authentication.http.HTTPAuthenticationScheme;
 import org.picketbox.authentication.http.HTTPAuthenticationSchemeLoader;
 import org.picketbox.authentication.http.HTTPFormAuthentication;
@@ -42,9 +43,9 @@ public class HTTPFormAuthenticationSchemeLoader implements HTTPAuthenticationSch
     @Override
     public HTTPAuthenticationScheme get(Map<String, Object> contextData) throws ServletException {
         HTTPFormAuthentication ba = new HTTPFormAuthentication();
-        ServletContext sc = (ServletContext) contextData.get("servletContext");
+        ServletContext sc = (ServletContext) contextData.get(PicketBoxConstants.SERVLET_CONTEXT);
         ba.setServletContext(sc);
-        ba.setAuthManager((AuthenticationManager) contextData.get("authManager"));
+        ba.setAuthManager((AuthenticationManager) contextData.get(PicketBoxConstants.AUTH_MGR));
         return ba;
     }
 }
