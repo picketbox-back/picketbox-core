@@ -50,9 +50,9 @@ import org.picketbox.exceptions.AuthenticationException;
  *
  */
 public class DelegatingSecurityFilter implements Filter {
-    public static final String authenticationSchemeLoader = "authSchemeLoader";
-    public static final String servletContext = "servletContext";
-    public static final String authManager = "authManager";
+    public static final String authenticationSchemeLoader = PicketBoxConstants.AUTH_SCHEME_LOADER;
+    public static final String servletContext = PicketBoxConstants.SERVLET_CONTEXT;
+    public static final String authManager = PicketBoxConstants.AUTH_MGR;
 
     private HTTPAuthenticationScheme authenticationScheme;
     private FilterConfig filterConfig;
