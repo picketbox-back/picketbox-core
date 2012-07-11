@@ -35,6 +35,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.picketbox.PicketBoxMessages;
 import org.picketbox.authentication.AuthenticationManager;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.authentication.http.HTTPAuthenticationScheme;
@@ -74,7 +75,7 @@ public class DelegatingSecurityFilter implements Filter {
 
         String loader = filterConfig.getInitParameter(authenticationSchemeLoader);
         if (loader == null) {
-            throw new ServletException(authenticationSchemeLoader + " init param missing");
+            throw PicketBoxMessages.MESSAGES.missingRequiredInitParameter(authenticationSchemeLoader);
         }
         String authManagerStr = filterConfig.getInitParameter(authManager);
         if (authManagerStr != null && authManagerStr.isEmpty() == false) {

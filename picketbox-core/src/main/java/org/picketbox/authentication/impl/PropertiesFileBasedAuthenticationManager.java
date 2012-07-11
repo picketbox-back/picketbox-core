@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.security.Principal;
 import java.util.Properties;
 
+import org.picketbox.PicketBoxMessages;
 import org.picketbox.PicketBoxPrincipal;
 import org.picketbox.authentication.AbstractAuthenticationManager;
 import org.picketbox.authentication.AuthenticationManager;
@@ -46,7 +47,7 @@ public class PropertiesFileBasedAuthenticationManager extends AbstractAuthentica
     public PropertiesFileBasedAuthenticationManager() {
         InputStream is = SecurityActions.getClassLoader(getClass()).getResourceAsStream(PicketBoxConstants.USERS_PROPERTIES);
         if (is == null)
-            throw new RuntimeException("properties file not found");
+            throw PicketBoxMessages.MESSAGES.unableToFindPropertiesFile(PicketBoxConstants.USERS_PROPERTIES);
         try {
             properties.load(is);
         } catch (IOException e) {

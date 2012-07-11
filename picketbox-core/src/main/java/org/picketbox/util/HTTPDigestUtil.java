@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.picketbox.PicketBoxMessages;
 import org.picketbox.authentication.DigestHolder;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.exceptions.FormatException;
@@ -46,7 +47,7 @@ public class HTTPDigestUtil {
      */
     public static String[] quoteTokenize(String val) {
         if (val == null)
-            throw new IllegalArgumentException("val is null");
+            throw PicketBoxMessages.MESSAGES.invalidNullArgument("val");
 
         // Derived from http://issues.apache.org/bugzilla/show_bug.cgi?id=37132
         return val.split(",(?=(?:[^\"]*\"[^\"]*\")+$)");
