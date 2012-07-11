@@ -27,15 +27,13 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.Principal;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.authentication.AbstractAuthenticationManager;
 import org.picketbox.authentication.DigestHolder;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.authentication.http.HTTPDigestAuthentication;
-import org.picketbox.exceptions.AuthenticationException;
+import org.picketbox.authentication.impl.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.exceptions.FormatException;
 import org.picketbox.test.http.TestServletRequest;
 import org.picketbox.test.http.TestServletResponse;
@@ -52,33 +50,11 @@ public class HTTPDigestAuthenticationTestCase {
 
     private HTTPDigestAuthentication httpDigest = null;
 
-    private class HTTPDigestAuthenticationTestCaseAM extends AbstractAuthenticationManager {
-        @Override
-        public Principal authenticate(final DigestHolder digest) throws AuthenticationException {
-            String storedPassword = "Circle Of Life";
-
-            try {
-                if (HTTPDigestUtil.matchCredential(digest, storedPassword.toCharArray())) {
-                    return new Principal() {
-                        @Override
-                        public String getName() {
-                            return digest.getUsername();
-                        }
-                    };
-                }
-            } catch (FormatException e1) {
-                throw new AuthenticationException(e1);
-            }
-
-            return null;
-        }
-    }
-
     @Before
     public void setup() throws Exception {
         httpDigest = new HTTPDigestAuthentication();
 
-        httpDigest.setAuthManager(new HTTPDigestAuthenticationTestCaseAM());
+        httpDigest.setAuthManager(new PropertiesFileBasedAuthenticationManager());
 
         httpDigest.setRealmName("testrealm@host.com");
         httpDigest.setOpaque("5ccc069c403ebaf9f0171e9517f40e41");

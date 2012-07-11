@@ -21,21 +21,18 @@
  */
 package org.picketbox.test.authentication.http;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.Principal;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.authentication.AbstractAuthenticationManager;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.authentication.http.HTTPBasicAuthentication;
-import org.picketbox.exceptions.AuthenticationException;
+import org.picketbox.authentication.impl.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.test.http.TestServletRequest;
 import org.picketbox.test.http.TestServletResponse;
 import org.picketbox.util.Base64;
@@ -50,28 +47,10 @@ public class HTTPBasicAuthenticationTestCase {
 
     private HTTPBasicAuthentication httpBasic = null;
 
-    public class HTTPBasicAuthenticationTestCaseAM extends AbstractAuthenticationManager {
-        public HTTPBasicAuthenticationTestCaseAM() {
-        }
-
-        @Override
-        public Principal authenticate(final String username, Object credential) throws AuthenticationException {
-            if ("Aladdin".equalsIgnoreCase(username) && "Open Sesame".equalsIgnoreCase((String) credential)) {
-                return new Principal() {
-                    @Override
-                    public String getName() {
-                        return username;
-                    }
-                };
-            }
-            return null;
-        }
-    }
-
     @Before
     public void setup() throws Exception {
         httpBasic = new HTTPBasicAuthentication();
-        httpBasic.setAuthManager(new HTTPBasicAuthenticationTestCaseAM());
+        httpBasic.setAuthManager(new PropertiesFileBasedAuthenticationManager());
     }
 
     @Test
@@ -109,9 +88,8 @@ public class HTTPBasicAuthenticationTestCase {
     }
 
     private String getPositive() {
-        String str = "Aladdin:open sesame";
+        String str = "Aladdin:Open Sesame";
         String encoded = Base64.encodeBytes(str.getBytes());
-        assertEquals("QWxhZGRpbjpvcGVuIHNlc2FtZQ==", encoded);
         return encoded;
     }
 

@@ -28,15 +28,13 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.Principal;
 import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.authentication.AbstractAuthenticationManager;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.authentication.http.HTTPFormAuthentication;
-import org.picketbox.exceptions.AuthenticationException;
+import org.picketbox.authentication.impl.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.test.http.TestServletContext;
 import org.picketbox.test.http.TestServletContext.TestRequestDispatcher;
 import org.picketbox.test.http.TestServletRequest;
@@ -54,26 +52,11 @@ public class HTTPFormAuthenticationTestCase {
 
     private TestServletContext sc = new TestServletContext(new HashMap<String, String>());
 
-    private class HTTPFormAuthenticationTestCaseAM extends AbstractAuthenticationManager {
-        @Override
-        public Principal authenticate(final String username, Object credential) throws AuthenticationException {
-            if ("Aladdin".equalsIgnoreCase(username) && "Open Sesame".equalsIgnoreCase((String) credential)) {
-                return new Principal() {
-                    @Override
-                    public String getName() {
-                        return username;
-                    }
-                };
-            }
-            return null;
-        }
-    }
-
     @Before
     public void setup() throws Exception {
         httpForm = new HTTPFormAuthentication();
 
-        httpForm.setAuthManager(new HTTPFormAuthenticationTestCaseAM());
+        httpForm.setAuthManager(new PropertiesFileBasedAuthenticationManager());
 
         httpForm.setServletContext(sc);
     }
