@@ -21,10 +21,10 @@
  */
 package org.picketbox.authentication.http;
 
+import static org.picketbox.PicketBoxMessages.MESSAGES;
+
 import java.io.IOException;
 import java.security.Principal;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletRequest;
@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.picketbox.PicketBoxMessages;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.exceptions.AuthenticationException;
 import org.picketbox.util.Base64;
@@ -45,7 +44,12 @@ import org.picketbox.util.Base64;
  * @since July 9, 2012
  */
 public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
-
+    
+    /**
+     * The page used to redirect the user after a succesful authentication.
+     */
+    protected String defaultPage = "/";
+    
     /**
      * The FORM login page. It should always start with a '/'
      */
@@ -70,7 +74,12 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
         this.formErrorPage = formErrorPage;
     }
 
-    private ConcurrentMap<String, HttpServletRequest> requestcache = new ConcurrentHashMap<String, HttpServletRequest>();
+    /**
+     * The default page. It should always start with a '/'
+     */
+    public void setDefaultPage(String defaultPage) {
+        this.defaultPage = defaultPage;
+    }
 
     /**
      * Authenticate an user
@@ -87,28 +96,25 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
         HttpServletResponse response = (HttpServletResponse) servletResp;
         HttpSession session = request.getSession(true);
 
-        String sessionId = session.getId();
-
         boolean jSecurityCheck = request.getRequestURI().contains(PicketBoxConstants.HTTP_FORM_J_SECURITY_CHECK);
 
         username = request.getParameter(PicketBoxConstants.HTTP_FORM_J_USERNAME);
         password = request.getParameter(PicketBoxConstants.HTTP_FORM_J_PASSWORD);
 
         if (jSecurityCheck == false && principalExists(session) == false) {
-            saveRequest(sessionId, request);
             challengeClient(request, response);
             return false;
         }
 
         if (username != null && password != null) {
             if (authManager == null) {
-                throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
+                throw MESSAGES.invalidNullAuthenticationManager();
             }
 
             Principal principal = authManager.authenticate(username, password);
             if (principal != null) {
                 session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);
-                restoreRequest(sessionId, response);
+                redirectToDefaultPage(request, response);
                 return true;
             }
         }
@@ -132,7 +138,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
                         password = authorizationHeader.substring(indexOfColon + 1);
 
                         if (authManager == null) {
-                            throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
+                            throw MESSAGES.invalidNullAuthenticationManager();
                         }
 
                         Principal principal = authManager.authenticate(username, password);
@@ -145,26 +151,22 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
             }
         }
 
-        // Save the original request if not already present
-        saveRequest(sessionId, request);
         return challengeClient(request, response);
     }
 
-    private void saveRequest(String id, HttpServletRequest request) {
-        if (requestcache.get(id) == null) {
-            requestcache.put(id, request);
-        }
-    }
-
-    private void restoreRequest(String id, HttpServletResponse response) throws AuthenticationException {
-        HttpServletRequest request = requestcache.remove(id);
-        if (request == null)
-            throw PicketBoxMessages.MESSAGES.unableToForwardToCachedRequest();
-
+    /**
+     * <p>Redirects the user to the <code>defaultPage</code>.</p>
+     * 
+     * @throws AuthenticationException
+     */
+    private void redirectToDefaultPage(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException {
+        String redirectUrl = request.getContextPath() + this.defaultPage;
+        
         try {
-            response.sendRedirect(request.getRequestURI());
+            response.sendRedirect(redirectUrl);
         } catch (IOException e) {
-            throw new AuthenticationException(e);
+            throw MESSAGES.failRedirectToDefaultPage(redirectUrl, e);
         }
     }
 
@@ -174,17 +176,23 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
 
     private boolean challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (servletContext == null)
-            throw PicketBoxMessages.MESSAGES.invalidNullServletContext();
+            throw MESSAGES.invalidNullServletContext();
 
-        RequestDispatcher rd = servletContext.getRequestDispatcher(formAuthPage);
+        forwardRequest(request, response, formAuthPage);
+        
+        return false;
+    }
+
+    protected void forwardRequest(HttpServletRequest request, HttpServletResponse response, String formAuthPage2)
+            throws AuthenticationException {
+        RequestDispatcher rd = servletContext.getRequestDispatcher(formAuthPage2);
         if (rd == null)
-            throw PicketBoxMessages.MESSAGES.unableToFindRequestDispatcher();
+            throw MESSAGES.unableToFindRequestDispatcher();
 
         try {
             rd.forward(request, response);
         } catch (Exception e) {
             throw new AuthenticationException(e);
         }
-        return false;
     }
 }

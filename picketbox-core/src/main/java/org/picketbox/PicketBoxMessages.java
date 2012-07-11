@@ -83,4 +83,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 14, value = "Unable to find properties file: %s")
     RuntimeException unableToFindPropertiesFile(String fileName);
+
+    @Message(id = 15, value = "Unable to redirect user to default page: %s")
+    AuthenticationException failRedirectToDefaultPage(String page, @Cause Throwable t);
 }
