@@ -29,11 +29,21 @@ package org.picketbox.authentication;
  */
 public interface PicketBoxConstants {
 
+    String AUTHENTICATION_KEY = "org.picketbox.authentication";
+    
     String AUTH_SCHEME_LOADER = "authSchemeLoader";
     
     String AUTH_MGR = "authMgr";
     
+    String BASIC = "BASIC";
+    
+    String CLIENT_CERT = "CLIENT_CERT";
+    
     String CREDENTIAL = "picketbox.credential";
+    
+    String DIGEST = "DIGEST";
+    
+    String FORM = "FORM";
 
     String HTTP_AUTHORIZATION_HEADER = "Authorization";
 
