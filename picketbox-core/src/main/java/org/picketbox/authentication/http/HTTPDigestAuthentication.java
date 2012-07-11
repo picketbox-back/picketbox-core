@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 
+import org.picketbox.PicketBoxMessages;
 import org.picketbox.authentication.DigestHolder;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.exceptions.AuthenticationException;
@@ -148,7 +149,7 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
 
             if (nonceResult == NONCE_VALIDATION_RESULT.VALID) {
                 if (authManager == null) {
-                    throw new AuthenticationException("Auth Manager is not injected");
+                    throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
                 }
                 Principal principal = authManager.authenticate(digest);
                 if (principal != null) {

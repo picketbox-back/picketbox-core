@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.picketbox.PicketBoxMessages;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.exceptions.AuthenticationException;
 import org.picketbox.util.Base64;
@@ -75,6 +76,9 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
 
         X509Certificate[] certs = (X509Certificate[]) request.getAttribute(PicketBoxConstants.HTTP_CERTIFICATE);
 
+        if (authManager == null)
+            throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
+
         if (certs != null) {
             if (useCertificateValidation) {
                 Principal principal = authManager.authenticate(certs);
@@ -91,7 +95,7 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
                     certprincipal = cert.getIssuerDN();
                 }
                 if (certprincipal == null)
-                    throw new AuthenticationException("Unable to identify the principal");
+                    throw PicketBoxMessages.MESSAGES.unableToIdentifyCertPrincipal();
 
                 username = certprincipal.getName();
 

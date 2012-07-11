@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.picketbox.PicketBoxMessages;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.exceptions.AuthenticationException;
 import org.picketbox.util.Base64;
@@ -101,7 +102,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
 
         if (username != null && password != null) {
             if (authManager == null) {
-                throw new AuthenticationException("Auth Manager is not injected");
+                throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
             }
 
             Principal principal = authManager.authenticate(username, password);
@@ -131,7 +132,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
                         password = authorizationHeader.substring(indexOfColon + 1);
 
                         if (authManager == null) {
-                            throw new AuthenticationException("Auth Manager is not injected");
+                            throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
                         }
 
                         Principal principal = authManager.authenticate(username, password);
@@ -158,7 +159,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
     private void restoreRequest(String id, HttpServletResponse response) throws AuthenticationException {
         HttpServletRequest request = requestcache.remove(id);
         if (request == null)
-            throw new AuthenticationException("Unable to forward to cached request");
+            throw PicketBoxMessages.MESSAGES.unableToForwardToCachedRequest();
 
         try {
             response.sendRedirect(request.getRequestURI());
@@ -173,11 +174,11 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
 
     private boolean challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (servletContext == null)
-            throw new AuthenticationException("Servlet Context is not injected");
+            throw PicketBoxMessages.MESSAGES.invalidNullServletContext();
 
         RequestDispatcher rd = servletContext.getRequestDispatcher(formAuthPage);
         if (rd == null)
-            throw new AuthenticationException("Request Dispatcher could not be found");
+            throw PicketBoxMessages.MESSAGES.unableToFindRequestDispatcher();
 
         try {
             rd.forward(request, response);

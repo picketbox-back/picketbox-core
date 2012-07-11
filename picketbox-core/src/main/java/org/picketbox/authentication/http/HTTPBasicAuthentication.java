@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.picketbox.PicketBoxMessages;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.exceptions.AuthenticationException;
 import org.picketbox.util.Base64;
@@ -75,7 +76,7 @@ public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
                         password = authorizationHeader.substring(indexOfColon + 1);
 
                         if (authManager == null) {
-                            throw new AuthenticationException("Auth Manager is not injected");
+                            throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
                         }
 
                         Principal principal = authManager.authenticate(username, password);

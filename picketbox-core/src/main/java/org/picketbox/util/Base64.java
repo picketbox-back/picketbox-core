@@ -22,8 +22,9 @@
 package org.picketbox.util;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.picketbox.PicketBoxLogger;
+import org.picketbox.PicketBoxMessages;
 
 /**
  * Encodes and decodes to and from Base64 notation.
@@ -64,7 +65,6 @@ import java.util.logging.Logger;
  * @version 2.1
  */
 public class Base64 {
-    private static Logger logger = Logger.getLogger(Base64.class.getCanonicalName());
 
     /* ******** P U B L I C F I E L D S ******** */
 
@@ -559,10 +559,10 @@ public class Base64 {
 
                 return 3;
             } catch (Exception e) {
-                logger.log(Level.FINE, "" + source[srcOffset] + ": " + (DECODABET[source[srcOffset]]));
-                logger.log(Level.FINE, "" + source[srcOffset + 1] + ": " + (DECODABET[source[srcOffset + 1]]));
-                logger.log(Level.FINE, "" + source[srcOffset + 2] + ": " + (DECODABET[source[srcOffset + 2]]));
-                logger.log(Level.FINE, "" + source[srcOffset + 3] + ": " + (DECODABET[source[srcOffset + 3]]));
+                PicketBoxLogger.LOGGER.debug(source[srcOffset] + ": " + (DECODABET[source[srcOffset]]));
+                PicketBoxLogger.LOGGER.debug(source[srcOffset + 1] + ": " + (DECODABET[source[srcOffset + 1]]));
+                PicketBoxLogger.LOGGER.debug(source[srcOffset + 2] + ": " + (DECODABET[source[srcOffset + 2]]));
+                PicketBoxLogger.LOGGER.debug(source[srcOffset + 3] + ": " + (DECODABET[source[srcOffset + 3]]));
                 return -1;
             } // end catch
         }
@@ -609,7 +609,7 @@ public class Base64 {
 
             } // end if: white space, equals sign or better
             else {
-                throw new IllegalStateException("Bad Base64 input character at " + i + ": " + source[i] + "(decimal)");
+                throw new IllegalStateException(PicketBoxMessages.MESSAGES.invalidBase64CharacterMessage(source[i]));
             } // end else:
         } // each input character
 
@@ -811,7 +811,7 @@ public class Base64 {
 
             // Check for size of file
             if (file.length() > Integer.MAX_VALUE) {
-                throw new IllegalStateException("File is too big for this convenience method (" + file.length() + " bytes).");
+                throw PicketBoxMessages.MESSAGES.errorDecodingFromBigInputFile(filename, file.length());
             } // end if: file too big for int index
             buffer = new byte[(int) file.length()];
 
@@ -828,7 +828,7 @@ public class Base64 {
 
         } // end try
         catch (java.io.IOException e) {
-            throw new IllegalStateException("Error decoding from file " + filename);
+            throw PicketBoxMessages.MESSAGES.errorDecodingFromFile(filename, e);
         } // end catch: IOException
         finally {
             try {
@@ -870,7 +870,7 @@ public class Base64 {
 
         } // end try
         catch (java.io.IOException e) {
-            throw new IllegalStateException("Error encoding from file " + filename);
+            throw PicketBoxMessages.MESSAGES.errorEncodingFromFile(filename, e);
         } // end catch: IOException
         finally {
             try {
@@ -1009,7 +1009,7 @@ public class Base64 {
                     } // end else if: also padded correctly
                     else {
                         // Must have broken out from above.
-                        throw new java.io.IOException("Improperly padded Base64 input.");
+                        throw PicketBoxMessages.MESSAGES.invalidBase64Padding();
                     } // end
 
                 } // end else: decode
@@ -1043,7 +1043,7 @@ public class Base64 {
             // Else error
             else {
                 // When JDK1.4 is more accepted, use an assertion here.
-                throw new java.io.IOException("Error in Base64 code reading stream.");
+                throw PicketBoxMessages.MESSAGES.errorReadingBase64Stream();
             } // end else
         } // end read
 
@@ -1186,7 +1186,7 @@ public class Base64 {
                     } // end if: enough to output
                 } // end if: meaningful base64 character
                 else if (DECODABET[theByte & 0x7f] != WHITE_SPACE_ENC) {
-                    throw new java.io.IOException("Invalid character in Base64 data.");
+                    throw new java.io.IOException(PicketBoxMessages.MESSAGES.invalidBase64CharacterMessage((byte) theByte));
                 } // end else: not white space either
             } // end else: decoding
         } // end write
@@ -1224,7 +1224,7 @@ public class Base64 {
                     position = 0;
                 } // end if: encoding
                 else {
-                    throw new java.io.IOException("Base64 input not properly padded.");
+                    throw PicketBoxMessages.MESSAGES.invalidBase64Padding();
                 } // end else: decoding
             } // end if: buffer partially full
 
