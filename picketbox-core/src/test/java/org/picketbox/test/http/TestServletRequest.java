@@ -68,6 +68,8 @@ public class TestServletRequest implements HttpServletRequest {
 
     private String requestURI;
 
+    private String contextPath;
+
     public TestServletRequest(InputStream is) {
         super();
         this.is = new BufferedInputStream(is);
@@ -78,7 +80,11 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public String getContextPath() {
-        return null;
+        return this.contextPath;
+    }
+    
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     public Cookie[] getCookies() {

@@ -41,10 +41,10 @@ import org.picketbox.authentication.AuthenticationManager;
 import org.picketbox.authentication.PicketBoxConstants;
 import org.picketbox.authentication.http.HTTPAuthenticationScheme;
 import org.picketbox.authentication.http.HTTPAuthenticationSchemeLoader;
-import org.picketbox.authentication.http.HTTPBasicAuthentication;
-import org.picketbox.authentication.http.HTTPClientCertAuthentication;
-import org.picketbox.authentication.http.HTTPDigestAuthentication;
-import org.picketbox.authentication.http.HTTPFormAuthentication;
+import org.picketbox.authentication.http.impl.HTTPBasicAuthenticationSchemeLoader;
+import org.picketbox.authentication.http.impl.HTTPClientCertAuthenticationSchemeLoader;
+import org.picketbox.authentication.http.impl.HTTPDigestAuthenticationSchemeLoader;
+import org.picketbox.authentication.http.impl.HTTPFormAuthenticationSchemeLoader;
 import org.picketbox.authentication.impl.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.authentication.impl.SimpleCredentialAuthenticationManager;
 import org.picketbox.exceptions.AuthenticationException;
@@ -85,16 +85,12 @@ public class DelegatingSecurityFilter implements Filter {
         //Let us try the servlet context
         String authValue = sc.getInitParameter(PicketBoxConstants.AUTHENTICATION_KEY);
         if(authValue != null && authValue.isEmpty() == false){
-            authenticationScheme = getAuthenticationScheme(authValue);
-            
             //Look for auth mgr also
             String authMgrStr = sc.getInitParameter(PicketBoxConstants.AUTH_MGR);
-            if(authMgrStr != null && authMgrStr.isEmpty() == false){
-                AuthenticationManager authMgr = getAuthMgr(authMgrStr);
-                if(authMgr != null && authenticationScheme != null){
-                    authenticationScheme.setAuthManager(getAuthMgr(authMgrStr));
-                }
-            }
+            
+            contextData.put(authManager, getAuthMgr(authMgrStr));
+            
+            authenticationScheme = getAuthenticationScheme(authValue, contextData);
         }
         else {
             String loader = filterConfig.getInitParameter(authenticationSchemeLoader);
@@ -128,9 +124,9 @@ public class DelegatingSecurityFilter implements Filter {
                 throw new ServletException(e);
             }
         }
-
-        chain.doFilter(httpRequest, response);
-        return;
+        if (!response.isCommitted()) {
+            chain.doFilter(httpRequest, response);    
+        }
     }
 
     @Override
@@ -138,17 +134,18 @@ public class DelegatingSecurityFilter implements Filter {
         this.filterConfig = null;
     }
     
-    private HTTPAuthenticationScheme getAuthenticationScheme(String value){
+    private HTTPAuthenticationScheme getAuthenticationScheme(String value, Map<String, Object> contextData) throws ServletException{
         if(value.equals(PicketBoxConstants.BASIC)){
-            return new HTTPBasicAuthentication();
+            return new HTTPBasicAuthenticationSchemeLoader().get(contextData);
         }
         if(value.equals(PicketBoxConstants.DIGEST)){
-            return new HTTPDigestAuthentication();
+            return new HTTPDigestAuthenticationSchemeLoader().get(contextData);
         }
         if(value.equals(PicketBoxConstants.CLIENT_CERT)){
-            return new HTTPClientCertAuthentication();
+            return new HTTPClientCertAuthenticationSchemeLoader().get(contextData);
         }
-        return new HTTPFormAuthentication();
+
+        return new HTTPFormAuthenticationSchemeLoader().get(contextData);
     }
     
     private AuthenticationManager getAuthMgr(String value){
@@ -158,6 +155,11 @@ public class DelegatingSecurityFilter implements Filter {
         if(value.equalsIgnoreCase("Properties")){
             return new PropertiesFileBasedAuthenticationManager();
         }
-        return new PropertiesFileBasedAuthenticationManager();
+        
+        if (value == null || value.isEmpty()) {
+            return new PropertiesFileBasedAuthenticationManager();
+        }
+        
+        return (AuthenticationManager) SecurityActions.instance(getClass(), value);
     }
 }

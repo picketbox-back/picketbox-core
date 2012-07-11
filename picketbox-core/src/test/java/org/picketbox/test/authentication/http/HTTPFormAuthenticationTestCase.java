@@ -103,13 +103,14 @@ public class HTTPFormAuthenticationTestCase {
             }
         });
         newReq.setRequestURI("http://msite" + PicketBoxConstants.HTTP_FORM_J_SECURITY_CHECK);
+        newReq.setContextPath("/msite");
         newReq.setParameter(PicketBoxConstants.HTTP_FORM_J_USERNAME, "Aladdin");
         newReq.setParameter(PicketBoxConstants.HTTP_FORM_J_PASSWORD, "Open Sesame");
 
         result = httpForm.authenticate(newReq, resp);
         assertTrue(result);
 
-        // After authentication, we should be redirected to the original url
-        assertTrue(resp.getSendRedirectedURI().equals(orig));
+        // After authentication, we should be redirected to the default page
+        assertEquals("/msite/", resp.getSendRedirectedURI());
     }
 }
