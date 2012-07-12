@@ -45,10 +45,14 @@ import org.picketbox.util.Base64;
  */
 public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
     
+    private static final String DEFAULT_PAGE_URL = "/";
+
+    private RequestCache requestCache = new RequestCache();
+    
     /**
      * The page used to redirect the user after a succesful authentication.
      */
-    protected String defaultPage = "/";
+    protected String defaultPage = DEFAULT_PAGE_URL;
     
     /**
      * The FORM login page. It should always start with a '/'
@@ -114,7 +118,17 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
             Principal principal = authManager.authenticate(username, password);
             if (principal != null) {
                 session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);
-                redirectToDefaultPage(request, response);
+                
+                // remove from the cache the saved request and store it in the session for further use.
+                String savedRequest = this.requestCache.removeAndStoreSavedRequestInSession(request).getRequestURI();
+                
+                // if the user has explicit defined a default page url, use it to redirect the user after a successful authentication. 
+                if (!this.defaultPage.equals(DEFAULT_PAGE_URL)) {
+                    sendRedirect(response, request.getContextPath() + this.defaultPage);    
+                } else {
+                    sendRedirect(response, savedRequest);
+                }
+                
                 return true;
             }
         }
@@ -154,15 +168,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
         return challengeClient(request, response);
     }
 
-    /**
-     * <p>Redirects the user to the <code>defaultPage</code>.</p>
-     * 
-     * @throws AuthenticationException
-     */
-    private void redirectToDefaultPage(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
-        String redirectUrl = request.getContextPath() + this.defaultPage;
-        
+    protected void sendRedirect(HttpServletResponse response, String redirectUrl) throws AuthenticationException {
         try {
             response.sendRedirect(redirectUrl);
         } catch (IOException e) {
@@ -178,6 +184,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
         if (servletContext == null)
             throw MESSAGES.invalidNullServletContext();
 
+        this.requestCache.saveRequest(request);
         forwardRequest(request, response, formAuthPage);
         
         return false;
