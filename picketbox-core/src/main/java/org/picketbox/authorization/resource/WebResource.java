@@ -19,38 +19,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.authorization;
+package org.picketbox.authorization.resource;
 
-import org.picketbox.core.PicketBoxLifecycle;
-import org.picketbox.core.PicketBoxSubject;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+import org.picketbox.authorization.Resource;
 
 /**
- * Deals with enforcement and entitlements.
+ * An instance of {@link Resource} that represents a web resource
  * @author anil saldhana
- * @since Jul 10, 2012
+ * @since Jul 12, 2012
  */
-public interface AuthorizationManager extends PicketBoxLifecycle {
-    /**
-     * Enforcement API
-     * @param resource resource for which we need to check access decision
-     * @param subject subject (user/process) that is performing an action on the resource
-     * @return
-     */
-    boolean authorize(Resource resource, PicketBoxSubject subject);
+public class WebResource extends AbstractPicketBoxResource {
+    private static final long serialVersionUID = 1L;
     
-    /**
-     * Entitlement API
-     * @param resource resource for which we need to check entitlements
-     * @param subject subject (user/process) that is performing an action on the resource
-     * @return
-     */
-    Entitlement[] entitlements(Resource resource, PicketBoxSubject subject);
+    protected ServletRequest request;
+    protected ServletResponse response;
+    protected ServletContext context;
     
-    /**
-     * Marker interface to indicate an entitlement
-     * @author anil saldhana
-     * @since Jul 10, 2012
-     */
-    public interface Entitlement{
+    public ServletRequest getRequest() {
+        return request;
+    }
+    public void setRequest(ServletRequest request) {
+        this.request = request;
+    }
+    public ServletResponse getResponse() {
+        return response;
+    }
+    public void setResponse(ServletResponse response) {
+        this.response = response;
+    }
+    public ServletContext getContext() {
+        return context;
+    }
+    public void setContext(ServletContext context) {
+        this.context = context;
     }
 }

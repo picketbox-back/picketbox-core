@@ -60,6 +60,9 @@ public class DelegatingSecurityFilterHTTPDigestUnitTestCase extends EmbeddedWebS
     @Override
     protected void establishUserApps() {
         ClassLoader tcl = Thread.currentThread().getContextClassLoader();
+        if(tcl == null){
+            tcl = getClass().getClassLoader();
+        }   
 
         final String WEBAPPDIR = "auth/webapp";
 
@@ -78,9 +81,9 @@ public class DelegatingSecurityFilterHTTPDigestUnitTestCase extends EmbeddedWebS
         System.setProperty(PicketBoxConstants.CREDENTIAL, "Open Sesame");
 
         FilterHolder filterHolder = new FilterHolder(DelegatingSecurityFilter.class);
-        filterHolder.setInitParameter(DelegatingSecurityFilter.authManager,
+        filterHolder.setInitParameter(PicketBoxConstants.AUTH_MGR,
                 SimpleCredentialAuthenticationManager.class.getName());
-        filterHolder.setInitParameter(DelegatingSecurityFilter.authenticationSchemeLoader,
+        filterHolder.setInitParameter(PicketBoxConstants.AUTH_SCHEME_LOADER,
                 HTTPDigestAuthenticationSchemeLoader.class.getName());
         context.addFilter(filterHolder, "/", 1);
     }
