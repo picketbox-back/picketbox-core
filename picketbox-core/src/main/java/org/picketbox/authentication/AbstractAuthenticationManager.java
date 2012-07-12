@@ -35,6 +35,8 @@ import org.picketbox.exceptions.AuthenticationException;
  *
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
+    protected boolean started = false, stopped = false;
+    
     @Override
     public Principal authenticate(String username, Object credential) throws AuthenticationException {
         throw new RuntimeException();
@@ -48,5 +50,26 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     @Override
     public Principal authenticate(X509Certificate[] certs) throws AuthenticationException {
         throw new RuntimeException();
+    }
+
+
+    @Override
+    public boolean started() {
+        return started;
+    }
+
+    @Override
+    public void start() {
+        started = true;
+    }
+
+    @Override
+    public boolean stopped() {
+        return stopped;
+    }
+
+    @Override
+    public void stop() {
+        stopped = true;
     }
 }

@@ -19,25 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.authorization;
-
-import java.io.Serializable;
+package org.picketbox.core;
 
 /**
- * A interface to indicate an enforceable resource
+ * Define a simple lifecycle.
+ * Two states are possible - started and stopped.
+ * 
  * @author anil saldhana
- * @since Jul 10, 2012
+ * @since Jul 12, 2012
  */
-public interface Resource extends Serializable {
-    /**
-     * Authorized to perform operation?
-     * @return
-     */
-    boolean isAuthorized();
+public interface PicketBoxLifecycle {    
+   /**
+    * Whether we have started.
+    * @return true - started
+    */
+    boolean started();
     
     /**
-     * Set the flag indicating that this resource is authorized
-     * @param authorize
+     * Start
      */
-    void setAuthorized(boolean authorize);
+    void start();
+    
+    /**
+     * Whether we have stopped
+     * @return
+     */
+    boolean stopped();
+    
+    /**
+     * Stop
+     */
+    void stop();
 }

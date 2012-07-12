@@ -19,25 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.authorization;
+package org.picketbox.core;
 
-import java.io.Serializable;
+import java.security.Principal;
 
 /**
- * A interface to indicate an enforceable resource
+ * Class representing security context for applications
  * @author anil saldhana
- * @since Jul 10, 2012
+ * @since Jul 12, 2012
  */
-public interface Resource extends Serializable {
-    /**
-     * Authorized to perform operation?
-     * @return
-     */
-    boolean isAuthorized();
+public class PicketBoxSecurityContext {
+    protected Principal principal;
     
     /**
-     * Set the flag indicating that this resource is authorized
-     * @param authorize
+     * Set the authenticated {@link Principal}
+     * @param principal
      */
-    void setAuthorized(boolean authorize);
+    public void setPrincipal(Principal principal){
+        this.principal = principal;
+    }
+    /**
+     * Return the authenticated {@link Principal}
+     * @return
+     */
+    Principal getPrincipal(){
+        return principal;
+    }
 }
