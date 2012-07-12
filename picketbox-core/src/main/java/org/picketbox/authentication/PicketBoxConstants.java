@@ -21,10 +21,6 @@
  */
 package org.picketbox.authentication;
 
-import javax.servlet.http.HttpSession;
-
-import org.picketbox.authentication.http.SavedRequest;
-
 /**
  * Define all constants
  *
