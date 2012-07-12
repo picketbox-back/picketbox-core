@@ -98,9 +98,13 @@ public class DelegatingSecurityFilter implements Filter {
             //Look for auth mgr also
             String authzMgrStr = sc.getInitParameter(PicketBoxConstants.AUTHZ_MGR);
             
-            authorizationManager =  getAuthzMgr(authzMgrStr);
+            if (authzMgrStr != null) {
+                authorizationManager =  getAuthzMgr(authzMgrStr);
+                authorizationManager.start();
+                contextData.put(PicketBoxConstants.AUTHZ_MGR, authorizationManager);
+            }
+            
             contextData.put(PicketBoxConstants.AUTH_MGR, getAuthMgr(authMgrStr)); 
-            contextData.put(PicketBoxConstants.AUTHZ_MGR, authorizationManager);
             
             authenticationScheme = getAuthenticationScheme(authValue, contextData);
         }
