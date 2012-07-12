@@ -21,6 +21,10 @@
  */
 package org.picketbox.authentication;
 
+import javax.servlet.http.HttpSession;
+
+import org.picketbox.authentication.http.SavedRequest;
+
 /**
  * Define all constants
  *
@@ -74,4 +78,9 @@ public interface PicketBoxConstants {
     String UTF8 = "UTF-8";
 
     String USERNAME = "picketbox.username";
+
+    /**
+     * <p>Defines the {@link HttpSession} attribute name used to store a {@link SavedRequest} instance.</p>
+     */
+    String SAVED_REQUEST = "SAVED_REQUEST";
 }

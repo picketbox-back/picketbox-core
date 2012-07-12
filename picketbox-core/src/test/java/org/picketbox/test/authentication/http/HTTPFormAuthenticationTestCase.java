@@ -111,6 +111,6 @@ public class HTTPFormAuthenticationTestCase {
         assertTrue(result);
 
         // After authentication, we should be redirected to the default page
-        assertEquals("/msite/", resp.getSendRedirectedURI());
+        assertEquals(resp.getSendRedirectedURI(), orig);
     }
 }
