@@ -86,7 +86,7 @@ public class DelegatingSecurityFilter implements Filter {
         String authValue = sc.getInitParameter(PicketBoxConstants.AUTHENTICATION_KEY);
         if(authValue != null && authValue.isEmpty() == false){
             //Look for auth mgr also
-            String authMgrStr = sc.getInitParameter(PicketBoxConstants.AUTH_MGR);
+            String authMgrStr = sc.getInitParameter(PicketBoxConstants.AUTHENTICATION_MANAGER_KEY);
             
             contextData.put(authManager, getAuthMgr(authMgrStr));
             

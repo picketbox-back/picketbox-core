@@ -21,6 +21,9 @@
  */
 package org.picketbox.authentication;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+
 /**
  * Define all constants
  *
@@ -29,8 +32,16 @@ package org.picketbox.authentication;
  */
 public interface PicketBoxConstants {
 
+    /**
+     * <p>Name of the {@link ServletContext} parameter used to load a specific {@link HTTPAuthenticationSchemeLoader}</p> 
+     */
     String AUTHENTICATION_KEY = "org.picketbox.authentication";
-    
+
+    /**
+     * <p>Name of the {@link ServletContext} parameter used to load a specific {@link AuthenticationManager}</p> 
+     */
+    String AUTHENTICATION_MANAGER_KEY = "org.picketbox.authentication.manager";
+
     String AUTH_SCHEME_LOADER = "authSchemeLoader";
     
     String AUTH_MGR = "authMgr";
