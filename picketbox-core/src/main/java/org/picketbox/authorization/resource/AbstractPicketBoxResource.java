@@ -19,38 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.authorization;
+package org.picketbox.authorization.resource;
 
-import org.picketbox.core.PicketBoxLifecycle;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.authorization.Resource;
 
 /**
- * Deals with enforcement and entitlements.
+ * Base class for instances of {@link Resource}
  * @author anil saldhana
- * @since Jul 10, 2012
+ * @since Jul 12, 2012
  */
-public interface AuthorizationManager extends PicketBoxLifecycle {
-    /**
-     * Enforcement API
-     * @param resource resource for which we need to check access decision
-     * @param subject subject (user/process) that is performing an action on the resource
-     * @return
-     */
-    boolean authorize(Resource resource, PicketBoxSubject subject);
-    
-    /**
-     * Entitlement API
-     * @param resource resource for which we need to check entitlements
-     * @param subject subject (user/process) that is performing an action on the resource
-     * @return
-     */
-    Entitlement[] entitlements(Resource resource, PicketBoxSubject subject);
-    
-    /**
-     * Marker interface to indicate an entitlement
-     * @author anil saldhana
-     * @since Jul 10, 2012
-     */
-    public interface Entitlement{
+public abstract class AbstractPicketBoxResource implements Resource {
+    private static final long serialVersionUID = 1L;
+    private boolean authorized = false;
+
+    @Override
+    public boolean isAuthorized() {
+        return authorized;
+    }
+
+    @Override
+    public void setAuthorized(boolean authorize) {
+        this.authorized = authorize;
     }
 }

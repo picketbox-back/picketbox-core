@@ -39,6 +39,7 @@ public class PicketBoxSubject {
     protected Principal user;
     protected List<String> roleNames;
     protected Map<String,Object> attributes = new HashMap<String,Object>();
+    protected Map<String,Object> contextData = new HashMap<String,Object>();
     
     //TODO: how to deal with groups/nested groups etc
     
@@ -101,5 +102,21 @@ public class PicketBoxSubject {
      */
     public void setSubject(Subject subject) {
         this.subject = subject;
+    }
+
+    /**
+     * Get a read only map of contextual data
+     * @return
+     */
+    public Map<String, Object> getContextData() {
+        return Collections.unmodifiableMap(contextData);
+    }
+
+    /**
+     * Set context data
+     * @param contextData
+     */
+    public void setContextData(Map<String, Object> contextData) {
+        this.contextData = contextData;
     }
 }

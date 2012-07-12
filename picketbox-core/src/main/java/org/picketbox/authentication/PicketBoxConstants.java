@@ -33,7 +33,9 @@ public interface PicketBoxConstants {
     
     String AUTH_SCHEME_LOADER = "authSchemeLoader";
     
-    String AUTH_MGR = "authMgr";
+    String AUTH_MGR = "org.picketbox.authentication.manager";
+    
+    String AUTHZ_MGR = "org.picketbox.authorization.manager";
     
     String BASIC = "BASIC";
     

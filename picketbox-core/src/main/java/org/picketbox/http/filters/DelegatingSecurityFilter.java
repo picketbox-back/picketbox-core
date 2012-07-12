@@ -34,6 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.picketbox.PicketBoxMessages;
@@ -47,21 +48,20 @@ import org.picketbox.authentication.http.impl.HTTPDigestAuthenticationSchemeLoad
 import org.picketbox.authentication.http.impl.HTTPFormAuthenticationSchemeLoader;
 import org.picketbox.authentication.impl.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.authentication.impl.SimpleCredentialAuthenticationManager;
+import org.picketbox.authorization.AuthorizationManager;
+import org.picketbox.authorization.resource.WebResource;
+import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.exceptions.AuthenticationException;
 
 /**
  * A {@link Filter} that delegates to the PicketBox Security Infrastructure
  *
  * @author anil saldhana
- * @since Jul 10, 2012
- *
+ * @since Jul 10, 2012 
  */
-public class DelegatingSecurityFilter implements Filter {
-    public static final String authenticationSchemeLoader = PicketBoxConstants.AUTH_SCHEME_LOADER;
-    public static final String servletContext = PicketBoxConstants.SERVLET_CONTEXT;
-    public static final String authManager = PicketBoxConstants.AUTH_MGR;
-
+public class DelegatingSecurityFilter implements Filter { 
     private HTTPAuthenticationScheme authenticationScheme;
+    private AuthorizationManager authorizationManager;
     private FilterConfig filterConfig;
 
     /**
@@ -71,7 +71,15 @@ public class DelegatingSecurityFilter implements Filter {
      */
     public void setAuthenticationScheme(HTTPAuthenticationScheme authenticationScheme) {
         this.authenticationScheme = authenticationScheme;
-    }
+    } 
+
+    /**
+     * Set a {@link AuthorizationManager}
+     * @param authorizationManager
+     */
+    public void setAuthorizationManager(AuthorizationManager authorizationManager) {
+        this.authorizationManager = authorizationManager;
+    } 
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
@@ -80,27 +88,37 @@ public class DelegatingSecurityFilter implements Filter {
         ServletContext sc = filterConfig.getServletContext();
         
         Map<String, Object> contextData = new HashMap<String, Object>();
-        contextData.put(servletContext, sc);
+        contextData.put(PicketBoxConstants.SERVLET_CONTEXT, sc);
         
         //Let us try the servlet context
         String authValue = sc.getInitParameter(PicketBoxConstants.AUTHENTICATION_KEY);
         if(authValue != null && authValue.isEmpty() == false){
             //Look for auth mgr also
             String authMgrStr = sc.getInitParameter(PicketBoxConstants.AUTH_MGR);
+            //Look for auth mgr also
+            String authzMgrStr = sc.getInitParameter(PicketBoxConstants.AUTHZ_MGR);
             
-            contextData.put(authManager, getAuthMgr(authMgrStr));
+            authorizationManager =  getAuthzMgr(authzMgrStr);
+            contextData.put(PicketBoxConstants.AUTH_MGR, getAuthMgr(authMgrStr)); 
+            contextData.put(PicketBoxConstants.AUTHZ_MGR, authorizationManager);
             
             authenticationScheme = getAuthenticationScheme(authValue, contextData);
         }
         else {
-            String loader = filterConfig.getInitParameter(authenticationSchemeLoader);
+            String loader = filterConfig.getInitParameter(PicketBoxConstants.AUTH_SCHEME_LOADER);
             if (loader == null) {
-                throw PicketBoxMessages.MESSAGES.missingRequiredInitParameter(authenticationSchemeLoader);
+                throw PicketBoxMessages.MESSAGES.missingRequiredInitParameter(PicketBoxConstants.AUTH_SCHEME_LOADER);
             }
-            String authManagerStr = filterConfig.getInitParameter(authManager);
+            String authManagerStr = filterConfig.getInitParameter(PicketBoxConstants.AUTH_MGR);
             if (authManagerStr != null && authManagerStr.isEmpty() == false) {
-                AuthenticationManager am = (AuthenticationManager) SecurityActions.instance(getClass(), authManagerStr);
-                contextData.put(authManager, am);
+                AuthenticationManager am = getAuthMgr(authManagerStr);
+                contextData.put(PicketBoxConstants.AUTH_MGR, am);
+            }
+            String authzManagerStr = filterConfig.getInitParameter(PicketBoxConstants.AUTHZ_MGR);
+            if (authzManagerStr != null && authzManagerStr.isEmpty() == false) {
+                authorizationManager = getAuthzMgr(authzManagerStr);
+                authorizationManager.start();
+                contextData.put(PicketBoxConstants.AUTHZ_MGR, authorizationManager);
             }
             HTTPAuthenticationSchemeLoader authLoader = (HTTPAuthenticationSchemeLoader) SecurityActions.instance(getClass(),
                     loader);
@@ -112,6 +130,7 @@ public class DelegatingSecurityFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpSession session = httpRequest.getSession(true);
         Principal principal = (Principal) session.getAttribute(PicketBoxConstants.PRINCIPAL);
         if (principal == null) {
@@ -120,8 +139,29 @@ public class DelegatingSecurityFilter implements Filter {
                 if (result == false) {
                     return;
                 }
+                principal = (Principal) session.getAttribute(PicketBoxConstants.PRINCIPAL);
             } catch (AuthenticationException e) {
                 throw new ServletException(e);
+            }
+        }
+        if(principal == null){
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        //Perform Authorization
+        if(authorizationManager != null){
+            WebResource resource = new WebResource();
+            resource.setContext(filterConfig.getServletContext());
+            resource.setRequest(request);
+            resource.setResponse(response);
+            
+            PicketBoxSubject subject = new PicketBoxSubject();
+            subject.setUser(principal);
+            
+            boolean authorize = authorizationManager.authorize(resource, subject);
+            if(!authorize){
+                httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
             }
         }
         if (!response.isCommitted()) {
@@ -161,5 +201,13 @@ public class DelegatingSecurityFilter implements Filter {
         }
         
         return (AuthenticationManager) SecurityActions.instance(getClass(), value);
+    }
+    
+    private AuthorizationManager getAuthzMgr(String value){
+        if(value.equalsIgnoreCase("Drools")){
+            return (AuthorizationManager) SecurityActions.instance(getClass(), "org.picketbox.drools.authorization.PicketBoxDroolsAuthorizationManager");
+        } 
+        
+        return (AuthorizationManager) SecurityActions.instance(getClass(), "org.picketbox.drools.authorization.PicketBoxDroolsAuthorizationManager");
     }
 }
