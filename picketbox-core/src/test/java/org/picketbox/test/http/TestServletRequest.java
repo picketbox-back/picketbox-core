@@ -27,9 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
@@ -58,6 +60,8 @@ import javax.servlet.http.Part;
 public class TestServletRequest implements HttpServletRequest {
     private BufferedInputStream is = null;
 
+    private List<Cookie> cookies = new ArrayList<Cookie>();
+    
     private Map<String, String> headers = new HashMap<String, String>();
 
     private String method;
@@ -88,7 +92,7 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public Cookie[] getCookies() {
-        return null;
+        return this.cookies.toArray(new Cookie[this.cookies.size()]);
     }
 
     public long getDateHeader(String name) {
@@ -241,7 +245,7 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public Map getParameterMap() {
-        return null;
+        return this.parameters;
     }
 
     public Enumeration getParameterNames() {
