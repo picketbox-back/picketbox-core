@@ -100,6 +100,7 @@ public class DelegatingSecurityFilter implements Filter {
             
             if (authzMgrStr != null) {
                 authorizationManager =  getAuthzMgr(authzMgrStr);
+                authorizationManager.start();
                 contextData.put(PicketBoxConstants.AUTHZ_MGR, authorizationManager);
             }
             
