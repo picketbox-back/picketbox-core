@@ -24,12 +24,14 @@ package org.picketbox.authorization;
 import java.security.Principal;
 import java.util.Map;
 
+import org.picketbox.core.PicketBoxLifecycle;
+
 /**
  * Deals with enforcement and entitlements.
  * @author anil saldhana
  * @since Jul 10, 2012
  */
-public interface AuthorizationManager {
+public interface AuthorizationManager extends PicketBoxLifecycle {
     /**
      * Enforcement API
      * @param resource resource for which we need to check access decision

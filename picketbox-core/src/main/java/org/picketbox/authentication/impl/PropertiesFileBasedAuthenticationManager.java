@@ -42,6 +42,7 @@ import org.picketbox.util.HTTPDigestUtil;
  * @since Jul 10, 2012
  */
 public class PropertiesFileBasedAuthenticationManager extends AbstractAuthenticationManager {
+    
     private Properties properties = new Properties();
 
     public PropertiesFileBasedAuthenticationManager() {

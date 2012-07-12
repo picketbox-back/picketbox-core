@@ -24,6 +24,7 @@ package org.picketbox.authentication;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
+import org.picketbox.core.PicketBoxLifecycle;
 import org.picketbox.exceptions.AuthenticationException;
 
 /**
@@ -32,7 +33,7 @@ import org.picketbox.exceptions.AuthenticationException;
  * @author anil saldhana
  * @since July 5, 2012
  */
-public interface AuthenticationManager {
+public interface AuthenticationManager extends PicketBoxLifecycle{
     /**
      * Authenticate an user based on a Credential
      *

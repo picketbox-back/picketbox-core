@@ -68,6 +68,24 @@ public class HTTPClientCertAuthenticationTestCase {
             }
             return null;
         }
+
+        @Override
+        public boolean started() {
+            return false;
+        }
+
+        @Override
+        public void start() {
+        }
+
+        @Override
+        public boolean stopped() {
+            return false;
+        }
+
+        @Override
+        public void stop() {
+        }
     }
 
     @Before
