@@ -86,4 +86,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 15, value = "Unable to redirect user to default page: %s")
     AuthenticationException failRedirectToDefaultPage(String page, @Cause Throwable t);
+
+    @Message(id = 16, value = "User authentication failed.")
+    AuthenticationException authenticationFailed(@Cause Throwable t);
 }
