@@ -164,7 +164,9 @@ public class DelegatingSecurityFilter implements Filter {
             
             boolean authorize = authorizationManager.authorize(resource, subject);
             if(!authorize){
-                httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+                if (!httpResponse.isCommitted()) {
+                    httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+                }
                 return;
             }
         }
