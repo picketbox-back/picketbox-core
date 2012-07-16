@@ -127,7 +127,7 @@ public class HTTPClientCertAuthenticationTestCase {
         assertNull(result);
 
         // Now set the certificate
-        req.setAttribute(PicketBoxConstants.HTTP_CERTIFICATE, new X509Certificate[] { cert });
+        req.setAttribute(PicketBoxConstants.HTTP_CERTIFICATE, new X509Certificate[]{cert});
 
         result = httpClientCert.authenticate(req, resp);
         assertNotNull(result);

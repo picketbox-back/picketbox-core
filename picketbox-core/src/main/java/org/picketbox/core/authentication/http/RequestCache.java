@@ -37,7 +37,6 @@ import org.picketbox.core.authentication.PicketBoxConstants;
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
  */
 public class RequestCache {
 

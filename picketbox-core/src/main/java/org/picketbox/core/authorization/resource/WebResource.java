@@ -29,6 +29,7 @@ import org.picketbox.core.authorization.Resource;
 
 /**
  * An instance of {@link Resource} that represents a web resource
+ *
  * @author anil saldhana
  * @since Jul 12, 2012
  */
@@ -42,18 +43,23 @@ public class WebResource extends AbstractPicketBoxResource {
     public ServletRequest getRequest() {
         return request;
     }
+
     public void setRequest(ServletRequest request) {
         this.request = request;
     }
+
     public ServletResponse getResponse() {
         return response;
     }
+
     public void setResponse(ServletResponse response) {
         this.response = response;
     }
+
     public ServletContext getContext() {
         return context;
     }
+
     public void setContext(ServletContext context) {
         this.context = context;
     }

@@ -46,17 +46,17 @@ public class OpenDSUtil {
      * Add a LDIF file into the Directory Server
      *
      * @param serverHost Server Host (Use getServerHost() of JBossTestxxx)
-     * @param port Port for the DS
-     * @param admin admin dn ("cn=Directory Manager")
-     * @param adminpwd (password)
-     * @param ldifURL (use getDeployURL of JBossTestxxx)
+     * @param port       Port for the DS
+     * @param admin      admin dn ("cn=Directory Manager")
+     * @param adminpwd   (password)
+     * @param ldifURL    (use getDeployURL of JBossTestxxx)
      * @return whether the add was success
      */
     public boolean addLDIF(String serverHost, String port, String admin, String adminpwd, URL ldifURL) {
         File ldifFile = new File(ldifURL.getPath());
         if (!ldifFile.exists())
             throw new IllegalArgumentException("LDIF file:" + ldifURL + " does not exist");
-        String[] cmd = new String[] { "-h", serverHost, "-p", port, "-D", admin, "-w", adminpwd, "-a", "-f", ldifFile.getPath() };
+        String[] cmd = new String[]{"-h", serverHost, "-p", port, "-D", admin, "-w", adminpwd, "-a", "-f", ldifFile.getPath()};
         log.fine("addLDIF:" + print(cmd));
         return LDAPModify.mainModify(cmd, false, System.out, System.err) == 0;
     }
@@ -65,19 +65,19 @@ public class OpenDSUtil {
      * Delete a DN in the Directory Server
      *
      * @param serverHost Server Host (Use getServerHost() of JBossTestxxx)
-     * @param port Port for the DS
-     * @param admin admin dn ("cn=Directory Manager")
-     * @param adminpwd (password)
+     * @param port       Port for the DS
+     * @param admin      admin dn ("cn=Directory Manager")
+     * @param adminpwd   (password)
      * @param dnToDelete DN to delete (Eg: dc=jboss,dc=org)
-     * @param recursive should children also go?
+     * @param recursive  should children also go?
      * @return whether the delete op was success
      */
     public boolean deleteDN(String serverHost, String port, String admin, String adminpwd, String dnToDelete, boolean recursive) {
         System.out.println("Start delete DN");
         String rec = recursive ? "-x" : " ";
 
-        String[] cmd = new String[] { "-h", serverHost, "-p", port, "-D", admin, "-w", adminpwd, "-V", "3", rec,
-                "--noPropertiesFile", dnToDelete };
+        String[] cmd = new String[]{"-h", serverHost, "-p", port, "-D", admin, "-w", adminpwd, "-V", "3", rec,
+                "--noPropertiesFile", dnToDelete};
         log.fine("deleteDN:" + print(cmd));
         boolean result = LDAPDelete.mainDelete(cmd, false, System.out, System.err) == 0;
         System.out.println("END delete DN");
@@ -95,8 +95,8 @@ public class OpenDSUtil {
      * @return
      */
     public boolean deleteDNRecursively(String serverHost, String port, String admin, String adminpwd, String dnToDelete) {
-        String[] args = { "-h", serverHost, "-p", port, "-V", "3", "-D", admin, "-w", adminpwd, "-x", "--noPropertiesFile",
-                dnToDelete };
+        String[] args = {"-h", serverHost, "-p", port, "-V", "3", "-D", admin, "-w", adminpwd, "-x", "--noPropertiesFile",
+                dnToDelete};
 
         boolean result = LDAPDelete.mainDelete(args, false, System.out, System.err) == 0;
         return result;
@@ -112,7 +112,7 @@ public class OpenDSUtil {
      */
     public boolean existsDN(String serverHost, String port, String dn) {
         System.out.println("Start Search");
-        String[] cmd = new String[] { "-h", serverHost, "-p", port, "-b", dn, "-s", "sub", "objectclass=*" };
+        String[] cmd = new String[]{"-h", serverHost, "-p", port, "-b", dn, "-s", "sub", "objectclass=*"};
         log.fine("existsDN:" + print(cmd));
         boolean result = LDAPSearch.mainSearch(cmd) == 0;
         System.out.println("End Search");

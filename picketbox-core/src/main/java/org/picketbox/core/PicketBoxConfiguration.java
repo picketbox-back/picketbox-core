@@ -32,7 +32,6 @@ import org.picketbox.core.exceptions.ConfigurationException;
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
  */
 public final class PicketBoxConfiguration {
 
@@ -88,7 +87,7 @@ public final class PicketBoxConfiguration {
      *
      * @return a started {@link PicketBoxManager} instance.
      * @throws ConfigurationException if some error occur during the creation or startup of the {@link PicketBoxManager}
-     *         instance. Or if the {@link PicketBoxManager} was already builded or started.
+     *                                instance. Or if the {@link PicketBoxManager} was already builded or started.
      */
     public PicketBoxManager buildAndStart() throws ConfigurationException {
         if (picketBoxManager != null) {

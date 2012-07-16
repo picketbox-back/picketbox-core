@@ -30,7 +30,6 @@ import java.security.Principal;
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
  */
 public class DefaultIdentityManager implements IdentityManager {
 

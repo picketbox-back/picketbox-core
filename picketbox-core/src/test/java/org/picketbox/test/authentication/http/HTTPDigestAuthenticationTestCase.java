@@ -37,10 +37,10 @@ import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPDigestAuthentication;
 import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.core.exceptions.FormatException;
-import org.picketbox.test.http.TestServletRequest;
-import org.picketbox.test.http.TestServletResponse;
 import org.picketbox.core.util.Base64;
 import org.picketbox.core.util.HTTPDigestUtil;
+import org.picketbox.test.http.TestServletRequest;
+import org.picketbox.test.http.TestServletResponse;
 
 /**
  * Unit test the {@link HTTPDigestAuthentication} class

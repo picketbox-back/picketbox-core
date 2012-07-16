@@ -28,7 +28,6 @@ import java.security.Principal;
  *
  * @author anil saldhana
  * @since Jul 10, 2012
- *
  */
 public class PicketBoxPrincipal implements Principal {
 

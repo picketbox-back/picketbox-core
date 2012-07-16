@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
  * <p>This class is a representation of the state of a previous {@link HttpServletRequest} instance.</p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
  */
 public class SavedRequest {
 
@@ -71,14 +70,14 @@ public class SavedRequest {
      * <p>Returns the parameters copied from the original request.</p>
      */
     public Map<String, String[]> getParameters() {
-        return this.parameters ;
+        return this.parameters;
     }
 
     /**
      * <p>Returns the headers copied from the original request.</p>
      */
     public Map<String, String> getHeaders() {
-        return this.headers ;
+        return this.headers;
     }
 
     /**

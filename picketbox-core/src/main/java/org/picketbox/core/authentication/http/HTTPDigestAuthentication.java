@@ -87,7 +87,9 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
 
     private static enum NONCE_VALIDATION_RESULT {
         INVALID, STALE, VALID
-    };
+    }
+
+    ;
 
     /**
      * Authenticate an user

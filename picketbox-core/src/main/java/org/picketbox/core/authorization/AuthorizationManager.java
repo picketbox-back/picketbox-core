@@ -26,31 +26,35 @@ import org.picketbox.core.PicketBoxSubject;
 
 /**
  * Deals with enforcement and entitlements.
+ *
  * @author anil saldhana
  * @since Jul 10, 2012
  */
 public interface AuthorizationManager extends PicketBoxLifecycle {
     /**
      * Enforcement API
+     *
      * @param resource resource for which we need to check access decision
-     * @param subject subject (user/process) that is performing an action on the resource
+     * @param subject  subject (user/process) that is performing an action on the resource
      * @return
      */
     boolean authorize(Resource resource, PicketBoxSubject subject);
 
     /**
      * Entitlement API
+     *
      * @param resource resource for which we need to check entitlements
-     * @param subject subject (user/process) that is performing an action on the resource
+     * @param subject  subject (user/process) that is performing an action on the resource
      * @return
      */
     Entitlement[] entitlements(Resource resource, PicketBoxSubject subject);
 
     /**
      * Marker interface to indicate an entitlement
+     *
      * @author anil saldhana
      * @since Jul 10, 2012
      */
-    public interface Entitlement{
+    public interface Entitlement {
     }
 }

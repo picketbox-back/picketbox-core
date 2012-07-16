@@ -27,6 +27,7 @@ import org.picketbox.core.session.PicketBoxSession;
 
 /**
  * An exception associated with the {@link PicketBoxSession}
+ *
  * @author anil saldhana
  * @since Jul 16, 2012
  */
