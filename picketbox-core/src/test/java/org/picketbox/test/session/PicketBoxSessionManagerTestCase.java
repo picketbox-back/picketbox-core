@@ -77,5 +77,9 @@ public class PicketBoxSessionManagerTestCase {
         public void onInvalidate(PicketBoxSession session) {
             onInvalidateCalled = true;
         }
+
+        @Override
+        public void onExpiration(PicketBoxSession session) {
+        }
     }
 }
