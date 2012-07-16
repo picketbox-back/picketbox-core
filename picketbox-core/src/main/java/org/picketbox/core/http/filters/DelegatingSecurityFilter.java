@@ -35,6 +35,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.picketbox.core.PicketBoxConfiguration;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.PicketBoxConstants;
@@ -47,8 +49,6 @@ import org.picketbox.core.authentication.http.impl.HTTPFormAuthenticationSchemeL
 import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.core.authentication.impl.SimpleCredentialAuthenticationManager;
 import org.picketbox.core.authorization.AuthorizationManager;
-import org.picketbox.core.PicketBoxConfiguration;
-import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
@@ -112,7 +112,7 @@ public class DelegatingSecurityFilter implements Filter {
             authenticationScheme = authLoader.get(contextData);
         }
 
-        this.securityManager = PicketBoxConfiguration.configure()
+        this.securityManager = new PicketBoxConfiguration()
                 .authentication(authenticationScheme)
                 .authorization(authorizationManager).buildAndStart();
         
@@ -156,6 +156,7 @@ public class DelegatingSecurityFilter implements Filter {
     @Override
     public void destroy() {
         this.filterConfig = null;
+        this.securityManager.stop();
     }
 
     private HTTPAuthenticationScheme getAuthenticationScheme(String value, Map<String, Object> contextData)

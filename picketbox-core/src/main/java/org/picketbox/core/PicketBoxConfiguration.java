@@ -36,30 +36,13 @@ import org.picketbox.core.exceptions.ConfigurationException;
  */
 public final class PicketBoxConfiguration {
 
-    private static PicketBoxConfiguration instance;
-    private static PicketBoxManager picketBoxManager;
+    private PicketBoxManager picketBoxManager;
 
     private HTTPAuthenticationScheme authenticationScheme;
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;
 
-    private PicketBoxConfiguration() {
-        // Singleton
-    }
-
-    /**
-     * <p>
-     * This method initializes the PicketBox configurations for use.
-     * </p>
-     *
-     * @return
-     */
-    public static PicketBoxConfiguration configure() {
-        if (instance == null) {
-            instance = new PicketBoxConfiguration();
-        }
-
-        return instance;
+    public PicketBoxConfiguration() {
     }
 
     /**
@@ -71,7 +54,6 @@ public final class PicketBoxConfiguration {
      * @throws if the configuration was not previously initialized.
      */
     public PicketBoxConfiguration authentication(HTTPAuthenticationScheme authenticationScheme) throws ConfigurationException {
-        checkConfigurationInitialized();
         this.authenticationScheme = authenticationScheme;
         return this;
     }
@@ -85,7 +67,6 @@ public final class PicketBoxConfiguration {
      * @throws if the configuration was not previously initialized.
      */
     public PicketBoxConfiguration authorization(AuthorizationManager authorizationManager) throws ConfigurationException {
-        checkConfigurationInitialized();
         this.authorizationManager = authorizationManager;
         return this;
     }
@@ -99,7 +80,6 @@ public final class PicketBoxConfiguration {
      * @throws if the configuration was not previously initialized.
      */
     public PicketBoxConfiguration identityManager(IdentityManager identityManager) throws ConfigurationException {
-        checkConfigurationInitialized();
         this.identityManager = identityManager;
         return this;
     }
@@ -114,8 +94,6 @@ public final class PicketBoxConfiguration {
      *         instance. Or if the {@link PicketBoxManager} was already builded or started.
      */
     public PicketBoxManager buildAndStart() throws ConfigurationException {
-        checkConfigurationInitialized();
-
         if (picketBoxManager != null) {
             throw new ConfigurationException("PicketBoxManager can be built and started only once.");
         }
@@ -135,7 +113,7 @@ public final class PicketBoxConfiguration {
             }
 
             picketBoxManager.setIdentityManager(identityManager);
-
+            
             picketBoxManager.start();
         } catch (Exception e) {
             picketBoxManager = null;
@@ -147,18 +125,6 @@ public final class PicketBoxConfiguration {
         }
 
         return picketBoxManager;
-    }
-
-    /**
-     * <p>
-     * Checks if the configuration was previously initialized. Usually calling the <code>configure</code> method.
-     * </p>
-     */
-    private void checkConfigurationInitialized() throws ConfigurationException {
-        if (instance == null) {
-            throw new ConfigurationException(
-                    "Configuration not initialized. Did you forget to call the configure() method first ?");
-        }
     }
 
 }
