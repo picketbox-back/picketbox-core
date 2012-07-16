@@ -25,6 +25,8 @@ package org.picketbox.core;
 import java.security.Principal;
 
 /**
+ * <p>Default implementation for the {@link IdentityManager} interface.</p>
+ * 
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
