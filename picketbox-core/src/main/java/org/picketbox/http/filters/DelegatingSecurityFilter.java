@@ -116,7 +116,7 @@ public class DelegatingSecurityFilter implements Filter {
 
         this.securityManager = PicketBoxConfiguration.configure()
                 .authentication(authenticationScheme)
-                .authorization(authorizationManager).build();
+                .authorization(authorizationManager).buildAndStart();
     }
 
     @Override
