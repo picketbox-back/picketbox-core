@@ -27,7 +27,6 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.picketbox.core.PicketBoxLogger;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPAuthenticationScheme;
 import org.picketbox.core.authorization.AuthorizationManager;
