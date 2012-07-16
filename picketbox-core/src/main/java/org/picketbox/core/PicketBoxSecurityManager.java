@@ -77,10 +77,6 @@ public final class PicketBoxSecurityManager implements PicketBoxLifecycle {
     
     @Override
     public void start() {
-        if (this.stopped) {
-            throw new IllegalStateException("PicketBox Authorization Manager was stopped.");
-        }
-        
         if (this.started) {
             throw new IllegalStateException("PicketBox Authorization Manager alredy started.");
         }
