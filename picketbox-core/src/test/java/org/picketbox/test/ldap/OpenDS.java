@@ -2,7 +2,7 @@
  * JBoss, Home of Professional Open Source.
  * Copyright 2008, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors. 
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -29,23 +29,20 @@ import org.opends.server.util.EmbeddedUtils;
 
 /**
  * Represents the OpenDS LDAP Server
+ *
  * @author anil saldhana
  */
-public class OpenDS
-{
+public class OpenDS {
     private String serverRoot = "";
 
-    public OpenDS()
-    {
+    public OpenDS() {
     }
 
-    public void intialize(String serverRoot)
-    {
+    public void intialize(String serverRoot) {
         this.serverRoot = serverRoot;
     }
 
-    public void startServer() throws Exception
-    {
+    public void startServer() throws Exception {
         DirectoryEnvironmentConfig config = new DirectoryEnvironmentConfig();
         config.setServerRoot(new File(serverRoot));
         config.setForceDaemonThreads(true);
@@ -53,14 +50,12 @@ public class OpenDS
         EmbeddedUtils.startServer(config);
     }
 
-    public void stopServer() throws Exception
-    {
+    public void stopServer() throws Exception {
         if (EmbeddedUtils.isRunning())
             EmbeddedUtils.stopServer(getClass().getName(), Message.EMPTY);
     }
 
-    public boolean isRunning()
-    {
+    public boolean isRunning() {
         return EmbeddedUtils.isRunning();
     }
 }

@@ -22,30 +22,31 @@
 package org.picketbox.core;
 
 /**
- * Define a simple lifecycle.
- * Two states are possible - started and stopped.
- * 
+ * Define a simple lifecycle. Two states are possible - started and stopped.
+ *
  * @author anil saldhana
  * @since Jul 12, 2012
  */
-public interface PicketBoxLifecycle {    
-   /**
-    * Whether we have started.
-    * @return true - started
-    */
+public interface PicketBoxLifecycle {
+    /**
+     * Whether we have started.
+     *
+     * @return true - started
+     */
     boolean started();
-    
+
     /**
      * Start
      */
     void start();
-    
+
     /**
      * Whether we have stopped
+     *
      * @return
      */
     boolean stopped();
-    
+
     /**
      * Stop
      */

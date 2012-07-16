@@ -25,7 +25,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.picketbox.nonce.UUIDNonceGenerator;
+import org.picketbox.core.nonce.UUIDNonceGenerator;
 
 /**
  * Unit test the {@link UUIDNonceGenerator}

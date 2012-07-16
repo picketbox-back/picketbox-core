@@ -34,10 +34,10 @@ import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.authentication.AbstractAuthenticationManager;
-import org.picketbox.authentication.PicketBoxConstants;
-import org.picketbox.authentication.http.HTTPClientCertAuthentication;
-import org.picketbox.exceptions.AuthenticationException;
+import org.picketbox.core.authentication.AbstractAuthenticationManager;
+import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.http.HTTPClientCertAuthentication;
+import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.test.http.TestServletContext;
 import org.picketbox.test.http.TestServletRequest;
 import org.picketbox.test.http.TestServletResponse;
@@ -123,7 +123,7 @@ public class HTTPClientCertAuthenticationTestCase {
 
         // Call the server to get the digest challenge
         Principal result = httpClientCert.authenticate(req, resp);
-        
+
         assertNull(result);
 
         // Now set the certificate

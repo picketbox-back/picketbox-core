@@ -37,11 +37,11 @@ import org.junit.Test;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
-import org.picketbox.authentication.PicketBoxConstants;
-import org.picketbox.authentication.http.HTTPBasicAuthentication;
-import org.picketbox.authentication.http.impl.HTTPBasicAuthenticationSchemeLoader;
-import org.picketbox.authentication.impl.SimpleCredentialAuthenticationManager;
-import org.picketbox.http.filters.DelegatingSecurityFilter;
+import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.http.HTTPBasicAuthentication;
+import org.picketbox.core.authentication.http.impl.HTTPBasicAuthenticationSchemeLoader;
+import org.picketbox.core.authentication.impl.SimpleCredentialAuthenticationManager;
+import org.picketbox.core.http.filters.DelegatingSecurityFilter;
 import org.picketbox.test.http.jetty.EmbeddedWebServerBase;
 
 /**
@@ -57,9 +57,9 @@ public class DelegatingSecurityFilterHTTPBasicUnitTestCase extends EmbeddedWebSe
     @Override
     protected void establishUserApps() {
         ClassLoader tcl = Thread.currentThread().getContextClassLoader();
-        if(tcl == null){
+        if (tcl == null) {
             tcl = getClass().getClassLoader();
-        }   
+        }
 
         final String WEBAPPDIR = "auth/webapp";
 
@@ -78,8 +78,7 @@ public class DelegatingSecurityFilterHTTPBasicUnitTestCase extends EmbeddedWebSe
         System.setProperty(PicketBoxConstants.CREDENTIAL, "Open Sesame");
 
         FilterHolder filterHolder = new FilterHolder(DelegatingSecurityFilter.class);
-        filterHolder.setInitParameter(PicketBoxConstants.AUTH_MGR,
-                SimpleCredentialAuthenticationManager.class.getName());
+        filterHolder.setInitParameter(PicketBoxConstants.AUTH_MGR, SimpleCredentialAuthenticationManager.class.getName());
         filterHolder.setInitParameter(PicketBoxConstants.AUTH_SCHEME_LOADER,
                 HTTPBasicAuthenticationSchemeLoader.class.getName());
         context.addFilter(filterHolder, "/", 1);

@@ -2,7 +2,7 @@
  * JBoss, Home of Professional Open Source.
  * Copyright 2008, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors. 
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -30,12 +30,12 @@ import org.junit.After;
 import org.junit.Before;
 
 /**
- *  Test Basic OpenDS functionality
- *  @author Anil Saldhana
- *  @version $Revision$
+ * Test Basic OpenDS functionality
+ *
+ * @author Anil Saldhana
+ * @version $Revision$
  */
-public class OpenDSUnitTestAdapter
-{
+public class OpenDSUnitTestAdapter {
     protected String serverHost = "localhost";
     protected String port = "10389";
     protected String adminPW = "password";
@@ -44,31 +44,27 @@ public class OpenDSUnitTestAdapter
     protected OpenDSUtil util = new OpenDSUtil();
 
     /**
-     * Use a different value for the system property on 
-     * a JVM that is not shipped by Sun
+     * Use a different value for the system property on a JVM that is not shipped by Sun
      */
-    protected  String ldapCtxFactory = System.getProperty("ldapctx.factory", "com.sun.jndi.ldap.LdapCtxFactory");
-    protected  String baseDir = System.getProperty("user.dir");
-    protected  String fs = System.getProperty("file.separator");
+    protected String ldapCtxFactory = System.getProperty("ldapctx.factory", "com.sun.jndi.ldap.LdapCtxFactory");
+    protected String baseDir = System.getProperty("user.dir");
+    protected String fs = System.getProperty("file.separator");
 
-    //System property when running in eclipse (-Declipse=jbosssx/ )
-    private  String eclipsePath = System.getProperty("eclipse", "");
-    protected  String targetDir = eclipsePath + "target" + fs + "test-classes" + fs;
-    protected  String openDSDir = targetDir + "opends";
+    // System property when running in eclipse (-Declipse=jbosssx/ )
+    private String eclipsePath = System.getProperty("eclipse", "");
+    protected String targetDir = eclipsePath + "target" + fs + "test-classes" + fs;
+    protected String openDSDir = targetDir + "opends";
 
-    protected  OpenDS opends = null;
- 
+    protected OpenDS opends = null;
+
     @Before
-    public  void setUp() throws Exception
-    {
-        //Ensure openDSDir exists and recycle opends db dir
+    public void setUp() throws Exception {
+        // Ensure openDSDir exists and recycle opends db dir
         File openDSDirFile = new File(openDSDir);
-        if (!openDSDirFile.exists())
-        {
+        if (!openDSDirFile.exists()) {
             openDSDirFile.mkdir();
         }
-        if (openDSDirFile.exists())
-        {
+        if (openDSDirFile.exists()) {
             File dbDir = new File(openDSDir + fs + "db");
             assertTrue("Deletion of opendsDir db success", recursiveDeleteDir(dbDir));
             assertTrue("Creation of opendsDir DB success", dbDir.mkdirs());
@@ -81,35 +77,27 @@ public class OpenDSUnitTestAdapter
         opends.startServer();
         assertTrue(opends.isRunning());
     }
- 
+
     @After
-    public  void tearDown() throws Exception
-    { 
+    public void tearDown() throws Exception {
         assertTrue("DS is running", opends.isRunning());
         shutdown();
         assertFalse("DS is not running", opends.isRunning());
     }
 
-    protected  void shutdown() throws Exception
-    {
-        //Check if the server is running
+    protected void shutdown() throws Exception {
+        // Check if the server is running
         if (opends.isRunning())
             opends.stopServer();
     }
 
-    private  boolean recursiveDeleteDir(File dirPath)
-    {
-        if (dirPath.exists())
-        {
+    private boolean recursiveDeleteDir(File dirPath) {
+        if (dirPath.exists()) {
             File[] files = dirPath.listFiles();
-            for (int i = 0; i < files.length; i++)
-            {
-                if (files[i].isDirectory())
-                {
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
                     recursiveDeleteDir(files[i]);
-                }
-                else
-                {
+                } else {
                     files[i].delete();
                 }
             }

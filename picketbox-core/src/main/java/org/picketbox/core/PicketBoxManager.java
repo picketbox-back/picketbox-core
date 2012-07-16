@@ -27,16 +27,18 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.picketbox.PicketBoxLogger;
-import org.picketbox.authentication.PicketBoxConstants;
-import org.picketbox.authentication.http.HTTPAuthenticationScheme;
-import org.picketbox.authorization.AuthorizationManager;
-import org.picketbox.authorization.resource.WebResource;
-import org.picketbox.exceptions.AuthenticationException;
+import org.picketbox.core.PicketBoxLogger;
+import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.http.HTTPAuthenticationScheme;
+import org.picketbox.core.authorization.AuthorizationManager;
+import org.picketbox.core.authorization.resource.WebResource;
+import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
- * <p>This class acts as a <i>Facade</i> for the PicketBox Security capabilites.</p>
- * 
+ * <p>
+ * This class acts as a <i>Facade</i> for the PicketBox Security capabilites.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
@@ -47,14 +49,16 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     private boolean started;
     private boolean stopped = true;
     private IdentityManager identityManager;
-    
+
     PicketBoxManager() {
-        
-    }    
-    
+
+    }
+
     /**
-     * <p>Checks if the specified {@link HttpServletRequest} instance is from an authenticated user.</p>
-     * 
+     * <p>
+     * Checks if the specified {@link HttpServletRequest} instance is from an authenticated user.
+     * </p>
+     *
      * @param servletReq
      * @return true if the request came from an authenticated user.
      */
@@ -63,8 +67,10 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     }
 
     /**
-     * <p>Authenticates a user.</p>
-     * 
+     * <p>
+     * Authenticates a user.
+     * </p>
+     *
      * @param servletReq
      * @param servletResp
      * @throws AuthenticationException
@@ -72,7 +78,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     public void authenticate(HttpServletRequest servletReq, HttpServletResponse servletResp) throws AuthenticationException {
         if (!isAuthenticated(servletReq)) {
             Principal principal = this.authenticationScheme.authenticate(servletReq, servletResp);
-            
+
             if (principal != null) {
                 PicketBoxSubject subject = this.identityManager.getIdentity(principal);
                 servletReq.getSession(true).setAttribute(PicketBoxConstants.SUBJECT, subject);
@@ -86,7 +92,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
 
     /**
      * <pAuthorizes a user.</p>
-     * 
+     *
      * @param servletReq
      * @param servletResp
      * @return
@@ -96,12 +102,12 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         if (this.authorizationManager == null || !this.isAuthenticated(httpRequest)) {
             return true;
         }
-        
+
         WebResource resource = new WebResource();
         resource.setContext(httpRequest.getServletContext());
         resource.setRequest(httpRequest);
         resource.setResponse(httpResponse);
-        
+
         return this.authorizationManager.authorize(resource, getAuthenticatedUser(httpRequest));
     }
 
@@ -132,7 +138,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     public void setAuthorizationManager(AuthorizationManager authorizationManager) {
         this.authorizationManager = authorizationManager;
     }
-    
+
     /**
      * @return the identityManager
      */
@@ -147,15 +153,19 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         this.identityManager = identityManager;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.PicketBoxLifecycle#started()
      */
     @Override
     public boolean started() {
         return this.started;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.PicketBoxLifecycle#start()
      */
     @Override
@@ -163,16 +173,18 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         if (this.started) {
             throw new IllegalStateException("PicketBox Authorization Manager alredy started.");
         }
-        
+
         PicketBoxLogger.LOGGER.debug("Using Authentication Scheme : " + this.authenticationScheme.getClass().getName());
         PicketBoxLogger.LOGGER.debug("Using Authorization Manager : " + this.authenticationScheme.getClass().getName());
         PicketBoxLogger.LOGGER.debug("Using Identity Manager : " + this.authenticationScheme.getClass().getName());
         PicketBoxLogger.LOGGER.startingPicketBox();
-        
+
         this.started = true;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.PicketBoxLifecycle#stopped()
      */
     @Override
@@ -180,11 +192,13 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         if (this.stopped) {
             throw new IllegalStateException("PicketBox Authorization Manager alredy stopped.");
         }
-        
+
         return this.stopped;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.PicketBoxLifecycle#stop()
      */
     @Override
@@ -192,5 +206,5 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         this.started = false;
         this.stopped = true;
     }
-    
+
 }

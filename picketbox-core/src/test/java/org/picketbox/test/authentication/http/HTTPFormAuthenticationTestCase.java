@@ -33,9 +33,9 @@ import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.authentication.PicketBoxConstants;
-import org.picketbox.authentication.http.HTTPFormAuthentication;
-import org.picketbox.authentication.impl.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.http.HTTPFormAuthentication;
+import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.test.http.TestServletContext;
 import org.picketbox.test.http.TestServletContext.TestRequestDispatcher;
 import org.picketbox.test.http.TestServletRequest;

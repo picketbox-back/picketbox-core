@@ -22,17 +22,17 @@
 
 package org.picketbox.core;
 
-import org.picketbox.authentication.http.HTTPAuthenticationScheme;
-import org.picketbox.authorization.AuthorizationManager;
-import org.picketbox.exceptions.ConfigurationException;
+import org.picketbox.core.authentication.http.HTTPAuthenticationScheme;
+import org.picketbox.core.authorization.AuthorizationManager;
+import org.picketbox.core.exceptions.ConfigurationException;
 
 /**
  * <p>
  * This class should be used to build the configuration and start the {@link PicketBoxManager}.
  * </p>
- * 
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- * 
+ *
  */
 public final class PicketBoxConfiguration {
 
@@ -51,7 +51,7 @@ public final class PicketBoxConfiguration {
      * <p>
      * This method initializes the PicketBox configurations for use.
      * </p>
-     * 
+     *
      * @return
      */
     public static PicketBoxConfiguration configure() {
@@ -65,7 +65,7 @@ public final class PicketBoxConfiguration {
     /**
      * <pConfiguration method to register a @{link HTTPAuthenticationScheme} instance. Before calling this method make sure the
      * configuration was properly initialized using the <code>configure</configure> method.</p>
-     * 
+     *
      * @param authenticationScheme
      * @return the configuration with the {@link HTTPAuthenticationScheme} instance configured.
      * @throws if the configuration was not previously initialized.
@@ -79,7 +79,7 @@ public final class PicketBoxConfiguration {
     /**
      * <pConfiguration method to register a @{link AuthorizationManager} instance. Before calling this method make sure the
      * configuration was properly initialized using the <code>configure</configure> method.</p></p>
-     * 
+     *
      * @param authorizationManager
      * @return the configuration with the {@link AuthorizationManager} instance configured.
      * @throws if the configuration was not previously initialized.
@@ -93,7 +93,7 @@ public final class PicketBoxConfiguration {
     /**
      * <pConfiguration method to register a @{link {@link IdentityManager} instance. Before calling this method make sure the
      * configuration was properly initialized using the <code>configure</configure> method.</p></p>
-     * 
+     *
      * @param identityManager
      * @return the configuration with the {@link AuthorizationManager} instance configured.
      * @throws if the configuration was not previously initialized.
@@ -108,14 +108,14 @@ public final class PicketBoxConfiguration {
      * <p>
      * Create and starts a {@link PicketBoxManager} instance. Call this method when all configuration was done.
      * </p>
-     * 
+     *
      * @return a started {@link PicketBoxManager} instance.
      * @throws ConfigurationException if some error occur during the creation or startup of the {@link PicketBoxManager}
      *         instance. Or if the {@link PicketBoxManager} was already builded or started.
      */
     public PicketBoxManager buildAndStart() throws ConfigurationException {
         checkConfigurationInitialized();
-        
+
         if (picketBoxManager != null) {
             throw new ConfigurationException("PicketBoxManager can be built and started only once.");
         }
@@ -129,13 +129,13 @@ public final class PicketBoxConfiguration {
 
             picketBoxManager.setAuthenticationScheme(this.authenticationScheme);
             picketBoxManager.setAuthorizationManager(this.authorizationManager);
-            
+
             if (this.identityManager == null) {
                 this.identityManager = new DefaultIdentityManager();
             }
-            
+
             picketBoxManager.setIdentityManager(identityManager);
-            
+
             picketBoxManager.start();
         } catch (Exception e) {
             picketBoxManager = null;
