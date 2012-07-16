@@ -37,14 +37,14 @@ import org.picketbox.exceptions.AuthenticationException;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public final class PicketBoxSecurityManager implements PicketBoxLifecycle {
+public final class PicketBoxManager implements PicketBoxLifecycle {
 
     private HTTPAuthenticationScheme authenticationScheme;
     private AuthorizationManager authorizationManager;
     private boolean started;
     private boolean stopped = true;
     
-    PicketBoxSecurityManager() {
+    PicketBoxManager() {
         
     }    
     

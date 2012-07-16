@@ -26,12 +26,15 @@ import org.picketbox.authentication.http.HTTPAuthenticationScheme;
 import org.picketbox.authorization.AuthorizationManager;
 
 /**
+ * <p>This class should be used to build the configuration</p>
+ * 
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public final class PicketBoxConfiguration {
 
     private static PicketBoxConfiguration instance;
+    
     private HTTPAuthenticationScheme authenticationScheme;
     private AuthorizationManager authorizationManager;
 
@@ -57,8 +60,8 @@ public final class PicketBoxConfiguration {
         return this;
     }
     
-    public PicketBoxSecurityManager buildAndStart() {
-        PicketBoxSecurityManager securityManager = new PicketBoxSecurityManager();
+    public PicketBoxManager buildAndStart() {
+        PicketBoxManager securityManager = new PicketBoxManager();
         
         securityManager.setAuthenticationScheme(authenticationScheme);
         securityManager.setAuthorizationManager(authorizationManager);

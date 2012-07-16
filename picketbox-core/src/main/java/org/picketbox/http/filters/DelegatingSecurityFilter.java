@@ -49,7 +49,7 @@ import org.picketbox.authentication.impl.PropertiesFileBasedAuthenticationManage
 import org.picketbox.authentication.impl.SimpleCredentialAuthenticationManager;
 import org.picketbox.authorization.AuthorizationManager;
 import org.picketbox.core.PicketBoxConfiguration;
-import org.picketbox.core.PicketBoxSecurityManager;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.exceptions.AuthenticationException;
 
@@ -60,7 +60,7 @@ import org.picketbox.exceptions.AuthenticationException;
  * @since Jul 10, 2012
  */
 public class DelegatingSecurityFilter implements Filter {
-    private PicketBoxSecurityManager securityManager;
+    private PicketBoxManager securityManager;
 
     private FilterConfig filterConfig;
 
