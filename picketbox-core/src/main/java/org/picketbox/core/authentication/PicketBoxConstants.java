@@ -36,21 +36,21 @@ import org.picketbox.core.PicketBoxSubject;
 public interface PicketBoxConstants {
 
     String AUTHENTICATION_KEY = "org.picketbox.authentication";
-    
+
     String AUTH_SCHEME_LOADER = "authSchemeLoader";
-    
+
     String AUTH_MGR = "org.picketbox.authentication.manager";
-    
+
     String AUTHZ_MGR = "org.picketbox.authorization.manager";
-    
+
     String BASIC = "BASIC";
-    
+
     String CLIENT_CERT = "CLIENT_CERT";
-    
+
     String CREDENTIAL = "picketbox.credential";
-    
+
     String DIGEST = "DIGEST";
-    
+
     String FORM = "FORM";
 
     String HTTP_AUTHORIZATION_HEADER = "Authorization";
@@ -74,7 +74,7 @@ public interface PicketBoxConstants {
     String MD5 = "MD5";
 
     String PRINCIPAL = "PRINCIPAL";
-    
+
     String SERVLET_CONTEXT = "servletContext";
 
     String USERS_PROPERTIES = "users.properties";

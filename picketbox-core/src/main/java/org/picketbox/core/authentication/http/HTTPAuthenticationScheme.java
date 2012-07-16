@@ -48,7 +48,7 @@ public interface HTTPAuthenticationScheme extends HttpSessionListener {
      * @throws AuthenticationException
      */
     Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException;
-    
+
     /**
      * Set the {@link AuthenticationManager}
      * @param authMgr
