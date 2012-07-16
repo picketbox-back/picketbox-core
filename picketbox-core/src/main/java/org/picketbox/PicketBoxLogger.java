@@ -22,7 +22,9 @@
 package org.picketbox;
 
 import org.jboss.logging.BasicLogger;
+import org.jboss.logging.LogMessage;
 import org.jboss.logging.Logger;
+import org.jboss.logging.Message;
 import org.jboss.logging.MessageLogger;
 
 /**
@@ -33,5 +35,10 @@ import org.jboss.logging.MessageLogger;
  */
 @MessageLogger(projectCode = "PBOX")
 public interface PicketBoxLogger extends BasicLogger {
+
     PicketBoxLogger LOGGER = Logger.getMessageLogger(PicketBoxLogger.class, PicketBoxLogger.class.getPackage().getName());
+
+    @LogMessage(level = Logger.Level.DEBUG)
+    @Message(id = 500, value = "Executing query: '%s' with parameters: %s")
+    void debugQueryExecution(String query, String params);
 }
