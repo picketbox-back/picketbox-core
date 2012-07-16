@@ -30,6 +30,7 @@ import org.jboss.logging.Message;
 import org.jboss.logging.MessageBundle;
 import org.jboss.logging.Messages;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketbox.core.exceptions.PicketBoxSessionException;
 
 /**
  * An instance of {@link MessageBundle} from JBoss Logging
@@ -101,4 +102,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 20, value = "Failed to validate credentials")
     AuthenticationException failedToValidateCredentials();
+    
+    @Message(id = 21, value = "Session is invalidated")
+    PicketBoxSessionException invalidatedSession();
 }
