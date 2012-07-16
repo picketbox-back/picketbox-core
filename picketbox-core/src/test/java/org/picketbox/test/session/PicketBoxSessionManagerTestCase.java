@@ -33,23 +33,24 @@ import org.picketbox.core.session.PicketBoxSessionManager;
 
 /**
  * Unit test the {@link PicketBoxSessionManager}
+ *
  * @author anil saldhana
  * @since Jul 16, 2012
  */
 public class PicketBoxSessionManagerTestCase {
     @Test
-    public void testMgr() throws Exception{
+    public void testMgr() throws Exception {
         PicketBoxSession session = PicketBoxSessionManager.create();
         assertNotNull(session);
         assertTrue(session.isValid());
-        
+
         TestPicketBoxSessionListener listener = new TestPicketBoxSessionListener();
-        
+
         session = PicketBoxSessionManager.create(listener);
         assertTrue(listener.onCreateCalled);
         assertFalse(listener.onSetAttributeCalled);
         assertFalse(listener.onInvalidateCalled);
-        
+
         session.setAttribute("a", "b");
         assertTrue(listener.onSetAttributeCalled);
         assertEquals("b", session.getAttribute("a"));
@@ -57,12 +58,12 @@ public class PicketBoxSessionManagerTestCase {
         assertFalse(session.isValid());
         assertTrue(listener.onInvalidateCalled);
     }
-    
-    private class TestPicketBoxSessionListener implements PicketBoxSessionListener{
+
+    private class TestPicketBoxSessionListener implements PicketBoxSessionListener {
         private boolean onCreateCalled = false;
         private boolean onSetAttributeCalled = false;
         private boolean onInvalidateCalled = false;
-        
+
         @Override
         public void onCreate(PicketBoxSession session) {
             onCreateCalled = true;

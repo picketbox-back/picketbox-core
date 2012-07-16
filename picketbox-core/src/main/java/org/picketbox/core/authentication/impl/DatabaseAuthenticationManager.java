@@ -49,13 +49,13 @@ import org.picketbox.core.util.HTTPDigestUtil;
  * <p>
  * This manager offers the following configuratoin properties:
  * <ul>
- *     <li>dataSource: allows for the injection of a {@code DataSource} instance</li>
- *     <li>dsJNDIName: specifies the JNDI name that can be used to retrieve a {@code DataSource} instance. If the
- *     {@code DataSource} has not been injected directly, this property MUST be set. Otherwise, authentication will
- *     fail</li>
- *     <li>principalsQuery: required parameter that specifies the query that must be run in order to obtain the password
- *     associated with the incoming username. It must return a single result and must accept the username as a query
- *     parameter</li>
+ * <li>dataSource: allows for the injection of a {@code DataSource} instance</li>
+ * <li>dsJNDIName: specifies the JNDI name that can be used to retrieve a {@code DataSource} instance. If the
+ * {@code DataSource} has not been injected directly, this property MUST be set. Otherwise, authentication will
+ * fail</li>
+ * <li>principalsQuery: required parameter that specifies the query that must be run in order to obtain the password
+ * associated with the incoming username. It must return a single result and must accept the username as a query
+ * parameter</li>
  * </ul>
  * </p>
  *
@@ -122,7 +122,7 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
      * @param username the username used as a parameter in the {@code principalsQuery}.
      * @return the password retrieved from the database.
      * @throws AuthenticationException if an error occurs while retrieving the {@code DataSource} or if query returns
-     * no results.
+     *                                 no results.
      */
     private String retrievePasswordFromDatabase(String username) throws AuthenticationException {
 
@@ -134,12 +134,10 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
                 try {
                     InitialContext context = new InitialContext();
                     this.dataSource = (DataSource) context.lookup(this.dsJNDIName);
-                }
-                catch (NamingException ne) {
+                } catch (NamingException ne) {
                     throw new AuthenticationException(ne);
                 }
-            }
-            else {
+            } else {
                 throw PicketBoxMessages.MESSAGES.missingDataSourceConfiguration();
             }
         }
@@ -162,30 +160,25 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
                 throw new AuthenticationException(PicketBoxMessages.MESSAGES.queryFoundNoResultsMessage(this.principalsQuery));
 
             return resultSet.getString(1);
-        }
-        catch (SQLException se) {
+        } catch (SQLException se) {
             throw new AuthenticationException(se);
-        }
-        finally {
+        } finally {
             if (resultSet != null) {
                 try {
                     resultSet.close();
-                }
-                catch (SQLException se) {
+                } catch (SQLException se) {
                 }
             }
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();
-                }
-                catch (SQLException se) {
+                } catch (SQLException se) {
                 }
             }
             if (connection != null) {
                 try {
                     connection.close();
-                }
-                catch (SQLException se) {
+                } catch (SQLException se) {
                 }
             }
         }

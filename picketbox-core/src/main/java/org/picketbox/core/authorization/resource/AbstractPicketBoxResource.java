@@ -25,6 +25,7 @@ import org.picketbox.core.authorization.Resource;
 
 /**
  * Base class for instances of {@link Resource}
+ *
  * @author anil saldhana
  * @since Jul 12, 2012
  */

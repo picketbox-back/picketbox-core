@@ -44,8 +44,8 @@ import org.picketbox.core.authentication.http.HTTPBasicAuthentication;
 import org.picketbox.core.authentication.http.impl.HTTPDigestAuthenticationSchemeLoader;
 import org.picketbox.core.authentication.impl.SimpleCredentialAuthenticationManager;
 import org.picketbox.core.http.filters.DelegatingSecurityFilter;
-import org.picketbox.test.http.jetty.EmbeddedWebServerBase;
 import org.picketbox.core.util.HTTPDigestUtil;
+import org.picketbox.test.http.jetty.EmbeddedWebServerBase;
 
 /**
  * Unit test the {@link DelegatingSecurityFilter} for {@link HTTPBasicAuthentication}

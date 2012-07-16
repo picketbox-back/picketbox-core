@@ -51,6 +51,7 @@ public interface HTTPAuthenticationScheme extends HttpSessionListener {
 
     /**
      * Set the {@link AuthenticationManager}
+     *
      * @param authMgr
      */
     void setAuthManager(AuthenticationManager authMgr);

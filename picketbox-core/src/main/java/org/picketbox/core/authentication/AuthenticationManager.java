@@ -33,7 +33,7 @@ import org.picketbox.core.exceptions.AuthenticationException;
  * @author anil saldhana
  * @since July 5, 2012
  */
-public interface AuthenticationManager extends PicketBoxLifecycle{
+public interface AuthenticationManager extends PicketBoxLifecycle {
     /**
      * Authenticate an user based on a Credential
      *

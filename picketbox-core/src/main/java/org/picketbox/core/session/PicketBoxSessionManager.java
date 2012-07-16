@@ -26,6 +26,7 @@ import java.util.TimerTask;
 
 /**
  * A manager capable of creating PicketBox sessions
+ *
  * @author anil saldhana
  * @since Jul 16, 2012
  */
@@ -35,27 +36,32 @@ public class PicketBoxSessionManager {
 
     private static long expiryValue = 5 * 60 * 1000; //5 minutes
 
-    public static enum Expiry {seconds,minutes,hours};
+    public static enum Expiry {seconds, minutes, hours}
+
+    ;
 
     /**
      * Set the expiry
+     *
      * @param milisecs
      */
-    public static void setSessionExpiry(int value,Expiry type){
-        if(type == Expiry.seconds){
+    public static void setSessionExpiry(int value, Expiry type) {
+        if (type == Expiry.seconds) {
             expiryValue = value * 1000;
-        } else if(type == Expiry.minutes){
+        } else if (type == Expiry.minutes) {
             expiryValue = value * 60 * 1000;
-        }  else if(type == Expiry.hours){
+        } else if (type == Expiry.hours) {
             expiryValue = value * 60 * 60 * 1000;
         }
 
     }
+
     /**
      * Create a new instance of {@link PicketBoxSession}
+     *
      * @return
      */
-    public static PicketBoxSession create(){
+    public static PicketBoxSession create() {
         PicketBoxSession session = new PicketBoxSession();
         setTimer(session);
         return session;
@@ -63,9 +69,10 @@ public class PicketBoxSessionManager {
 
     /**
      * Create a new instance of {@link PicketBoxSession}
+     *
      * @return
      */
-    public static PicketBoxSession create(PicketBoxSessionListener listener){
+    public static PicketBoxSession create(PicketBoxSessionListener listener) {
         PicketBoxSession session = new PicketBoxSession();
         setTimer(session);
         session.addListener(listener);
@@ -75,13 +82,14 @@ public class PicketBoxSessionManager {
 
     /**
      * Set a timer for the configured delay
+     *
      * @param session
      */
-    private static void setTimer(final PicketBoxSession session){
+    private static void setTimer(final PicketBoxSession session) {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(session.isValid()){
+                if (session.isValid()) {
                     session.expire();
                 }
             }

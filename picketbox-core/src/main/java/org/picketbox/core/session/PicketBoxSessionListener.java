@@ -23,6 +23,7 @@ package org.picketbox.core.session;
 
 /**
  * A listener for the {@link PicketBoxSession}
+ *
  * @author anil saldhana
  * @since Jul 16, 2012
  */
@@ -35,6 +36,7 @@ public interface PicketBoxSessionListener {
 
     /**
      * Called when there is a set attribute call
+     *
      * @param session
      * @param key
      * @param value
@@ -43,12 +45,14 @@ public interface PicketBoxSessionListener {
 
     /**
      * Called when the session is invalidated
+     *
      * @param session
      */
     void onInvalidate(PicketBoxSession session);
 
     /**
      * Called when the session expires
+     *
      * @param session
      */
     void onExpiration(PicketBoxSession session);
