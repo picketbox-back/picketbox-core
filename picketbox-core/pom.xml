@@ -109,6 +109,18 @@
          <version>4.1.2</version>
          <scope>test</scope>
       </dependency>
+      <dependency>
+         <groupId>sun-opends</groupId>
+         <artifactId>OpenDS</artifactId>
+         <version>1.0.0</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>sleepycat</groupId>
+         <artifactId>je</artifactId>
+         <version>3.2.43</version>
+         <scope>test</scope>
+       </dependency>
        <dependency>
            <groupId>org.jboss.logging</groupId>
            <artifactId>jboss-logging</artifactId>
