@@ -46,7 +46,7 @@ public class PicketBoxSession {
     
     protected List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
     
-    public PicketBoxSession(){
+    PicketBoxSession(){
     }
     
     /**
