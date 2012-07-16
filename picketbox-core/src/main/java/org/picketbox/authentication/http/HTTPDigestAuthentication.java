@@ -97,11 +97,10 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
      * @return
      * @throws AuthenticationException
      */
-    public boolean authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
+    public Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
         HttpServletRequest request = (HttpServletRequest) servletReq;
         HttpServletResponse response = (HttpServletResponse) servletResp;
         HttpSession session = request.getSession(true);
-
         String sessionId = session.getId();
 
         // Get the Authorization Header
@@ -116,7 +115,8 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
 
             int len = tokens.length;
             if (len == 0) {
-                return challengeClient(request, response, false);
+                challengeClient(request, response, false);
+                return null;
             }
 
             DigestHolder digest = HTTPDigestUtil.digest(tokens);
@@ -124,22 +124,26 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
             // Pre-verify the client response
             if (digest.getUsername() == null || digest.getRealm() == null || digest.getNonce() == null
                     || digest.getUri() == null || digest.getClientResponse() == null) {
-                return challengeClient(request, response, false);
+                challengeClient(request, response, false);
+                return null;
             }
 
             // Validate Opaque
             if (digest.getOpaque() != null && digest.getOpaque().equals(this.opaque) == false) {
-                return challengeClient(request, response, false);
+                challengeClient(request, response, false);
+                return null;
             }
 
             // Validate realm
             if (digest.getRealm().equals(this.realmName) == false) {
-                return challengeClient(request, response, false);
+                challengeClient(request, response, false);
+                return null;
             }
 
             // Validate qop
             if (digest.getQop().equals(this.qop) == false) {
-                return challengeClient(request, response, false);
+                challengeClient(request, response, false);
+                return null;
             }
 
             digest.setRequestMethod(request.getMethod());
@@ -151,15 +155,14 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
                 if (authManager == null) {
                     throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
                 }
-                Principal principal = authManager.authenticate(digest);
-                if (principal != null) {
-                    session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);
-                    return true;
-                }
+
+                return authManager.authenticate(digest);
             }
         }
 
-        return challengeClient(request, response, false);
+        challengeClient(request, response, false);
+        
+        return null;
     }
 
     private boolean challengeClient(HttpServletRequest request, HttpServletResponse response, boolean isStale)

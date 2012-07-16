@@ -19,30 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox;
 
-import org.jboss.logging.BasicLogger;
-import org.jboss.logging.LogMessage;
-import org.jboss.logging.Logger;
-import org.jboss.logging.Message;
-import org.jboss.logging.MessageLogger;
+package org.picketbox.core;
+
+import java.security.Principal;
 
 /**
- * An subclass of {@link BasicLogger} from JBoss Logging
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
- * @author Stefan Guilhen
- * @since Jul 10, 2012
  */
-@MessageLogger(projectCode = "PBOX")
-public interface PicketBoxLogger extends BasicLogger {
+public interface IdentityManager {
 
-    PicketBoxLogger LOGGER = Logger.getMessageLogger(PicketBoxLogger.class, PicketBoxLogger.class.getPackage().getName());
-
-    @LogMessage(level = Logger.Level.DEBUG)
-    @Message(id = 500, value = "Executing query: '%s' with parameters: %s")
-    void debugQueryExecution(String query, String params);
-
-    @LogMessage(level = Logger.Level.INFO)
-    @Message(id = 501, value = "Starting PicketBox")
-    void startingPicketBox();
+    PicketBoxSubject getIdentity(Principal principal);
+    
 }

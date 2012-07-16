@@ -93,7 +93,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
      * @return
      * @throws AuthenticationException
      */
-    public boolean authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
+    public Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
         String username, password;
 
         HttpServletRequest request = (HttpServletRequest) servletReq;
@@ -107,7 +107,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
 
         if (jSecurityCheck == false && principalExists(session) == false) {
             challengeClient(request, response);
-            return false;
+            return null;
         }
 
         if (username != null && password != null) {
@@ -116,9 +116,8 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
             }
 
             Principal principal = authManager.authenticate(username, password);
+            
             if (principal != null) {
-                session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);
-                
                 // remove from the cache the saved request and store it in the session for further use.
                 String savedRequest = this.requestCache.removeAndStoreSavedRequestInSession(request).getRequestURI();
                 
@@ -129,7 +128,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
                     sendRedirect(response, savedRequest);
                 }
                 
-                return true;
+                return principal;
             }
         }
 
@@ -155,17 +154,15 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
                             throw MESSAGES.invalidNullAuthenticationManager();
                         }
 
-                        Principal principal = authManager.authenticate(username, password);
-                        if (principal != null) {
-                            session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);
-                            return true;
-                        }
+                        return authManager.authenticate(username, password);
                     }
                 }
             }
         }
 
-        return challengeClient(request, response);
+        challengeClient(request, response);
+        
+        return null;
     }
 
     protected void sendRedirect(HttpServletResponse response, String redirectUrl) throws AuthenticationException {

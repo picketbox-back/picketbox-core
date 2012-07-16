@@ -21,13 +21,14 @@
  */
 package org.picketbox.test.authentication.http;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.Principal;
 import java.util.HashMap;
 
 import org.junit.Before;
@@ -86,8 +87,8 @@ public class HTTPFormAuthenticationTestCase {
         req.setRequestURI(orig);
 
         // Call the server to get the digest challenge
-        boolean result = httpForm.authenticate(req, resp);
-        assertFalse(result);
+        Principal result = httpForm.authenticate(req, resp);
+        assertNull(result);
 
         // We will test that the request dispatcher is set on the form login page
         TestRequestDispatcher rd = sc.getLast();
@@ -108,7 +109,7 @@ public class HTTPFormAuthenticationTestCase {
         newReq.setParameter(PicketBoxConstants.HTTP_FORM_J_PASSWORD, "Open Sesame");
 
         result = httpForm.authenticate(newReq, resp);
-        assertTrue(result);
+        assertNotNull(result);
 
         // After authentication, we should be redirected to the default page
         assertEquals(resp.getSendRedirectedURI(), orig);

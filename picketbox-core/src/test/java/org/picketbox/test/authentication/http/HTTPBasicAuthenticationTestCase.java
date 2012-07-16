@@ -21,12 +21,14 @@
  */
 package org.picketbox.test.authentication.http;
 
-import static org.junit.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.Principal;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -72,16 +74,16 @@ public class HTTPBasicAuthenticationTestCase {
 
         // Get Positive Authentication
         req.addHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER, "Basic " + getPositive());
-        boolean result = httpBasic.authenticate(req, resp);
+        Principal principal = httpBasic.authenticate(req, resp);
 
-        assertTrue(result);
+        assertNotNull(principal);
 
         req.clearHeaders();
 
         // Get Negative Authentication
         req.addHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER, "Basic " + getNegative());
-        result = httpBasic.authenticate(req, resp);
-        assertFalse(result);
+        principal = httpBasic.authenticate(req, resp);
+        assertNull(principal);
 
         String basicHeader = resp.getHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE);
         assertTrue(basicHeader.startsWith("basic realm="));

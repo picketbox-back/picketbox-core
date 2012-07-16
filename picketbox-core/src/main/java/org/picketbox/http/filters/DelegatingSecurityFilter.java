@@ -22,7 +22,6 @@
 package org.picketbox.http.filters;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +49,6 @@ import org.picketbox.authentication.impl.SimpleCredentialAuthenticationManager;
 import org.picketbox.authorization.AuthorizationManager;
 import org.picketbox.core.PicketBoxConfiguration;
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.exceptions.AuthenticationException;
 
 /**
@@ -117,6 +115,8 @@ public class DelegatingSecurityFilter implements Filter {
         this.securityManager = PicketBoxConfiguration.configure()
                 .authentication(authenticationScheme)
                 .authorization(authorizationManager).buildAndStart();
+        
+        sc.setAttribute(PicketBoxConstants.PICKETBOX_MANAGER, this.securityManager);
     }
 
     @Override
@@ -125,43 +125,32 @@ public class DelegatingSecurityFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        Principal result = authenticate(httpRequest, httpResponse);
+        authenticate(httpRequest, httpResponse);
 
-        authorize(httpRequest, httpResponse, result);
+        authorize(httpRequest, httpResponse);
 
         if (!response.isCommitted()) {
             chain.doFilter(httpRequest, response);
         }
     }
 
-    private void authorize(HttpServletRequest httpRequest, HttpServletResponse httpResponse, Principal result)
+    private void authorize(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
             throws IOException {
-        if (result != null) {
-            boolean authorize = this.securityManager.authorize(httpRequest, httpResponse);
+        boolean authorize = this.securityManager.authorize(httpRequest, httpResponse);
 
-            if (!authorize) {
-                if (!httpResponse.isCommitted()) {
-                    httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
-                }
+        if (!authorize) {
+            if (!httpResponse.isCommitted()) {
+                httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
             }
         }
     }
 
-    private Principal authenticate(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException {
-        Principal result = this.securityManager.getAuthenticatedUser(httpRequest);
-
-        if (result == null) {
-            try {
-                PicketBoxSubject subject = this.securityManager.authenticate(httpRequest, httpResponse);
-
-                if (subject != null) {
-                    result = subject.getUser();
-                }
-            } catch (AuthenticationException e) {
-                throw new ServletException(e);
-            }
+    private void authenticate(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException {
+        try {
+            this.securityManager.authenticate(httpRequest, httpResponse);
+        } catch (AuthenticationException e) {
+            throw new ServletException(e);
         }
-        return result;
     }
 
     @Override
