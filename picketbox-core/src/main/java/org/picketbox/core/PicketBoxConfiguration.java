@@ -57,11 +57,13 @@ public final class PicketBoxConfiguration {
         return this;
     }
     
-    public PicketBoxSecurityManager build() {
+    public PicketBoxSecurityManager buildAndStart() {
         PicketBoxSecurityManager securityManager = new PicketBoxSecurityManager();
         
         securityManager.setAuthenticationScheme(authenticationScheme);
         securityManager.setAuthorizationManager(authorizationManager);
+        
+        securityManager.start();
         
         return securityManager;
     }
