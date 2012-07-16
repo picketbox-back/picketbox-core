@@ -42,7 +42,7 @@ import org.picketbox.core.util.HTTPDigestUtil;
 
 /**
  * <p>
- * An instance of {@link org.picketbox.authentication.AuthenticationManager} that connects to a database to retrieve
+ * An instance of {@link org.picketbox.core.authentication.AuthenticationManager} that connects to a database to retrieve
  * stored passwords for authentication. It requires the configuration of a {@code DataSource} and a query that will be
  * used to obtain the password for the incoming username.
  * </p>
@@ -149,11 +149,14 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
             throw PicketBoxMessages.MESSAGES.missingRequiredProperty("principalsQuery");
 
         PicketBoxLogger.LOGGER.debugQueryExecution(this.principalsQuery, username);
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
-            Connection connection = this.dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(this.principalsQuery);
+            connection = this.dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(this.principalsQuery);
             preparedStatement.setString(1, username);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
             if (!resultSet.next())
                 throw new AuthenticationException(PicketBoxMessages.MESSAGES.queryFoundNoResultsMessage(this.principalsQuery));
@@ -162,6 +165,29 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
         }
         catch (SQLException se) {
             throw new AuthenticationException(se);
+        }
+        finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                }
+                catch (SQLException se) {
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                }
+                catch (SQLException se) {
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                }
+                catch (SQLException se) {
+                }
+            }
         }
     }
 }
