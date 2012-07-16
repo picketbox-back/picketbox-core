@@ -34,11 +34,11 @@ import org.picketbox.core.authorization.Resource;
  */
 public class WebResource extends AbstractPicketBoxResource {
     private static final long serialVersionUID = 1L;
-    
+
     protected ServletRequest request;
     protected ServletResponse response;
     protected ServletContext context;
-    
+
     public ServletRequest getRequest() {
         return request;
     }

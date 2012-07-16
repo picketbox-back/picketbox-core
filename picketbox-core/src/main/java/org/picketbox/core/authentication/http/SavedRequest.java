@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>This class is a representation of the state of a previous {@link HttpServletRequest} instance.</p>
- * 
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
@@ -50,7 +50,7 @@ public class SavedRequest {
     private String requestURI;
     private String scheme;
     private String contextPath;
-    
+
     /**
      * <p>Create a new instance copying the state from the request passed as argument.</p>
      */
@@ -124,11 +124,11 @@ public class SavedRequest {
     }
 
     /**
-     * <p>Copy the parameters from the original {@link HttpServletRequest}.</p> 
+     * <p>Copy the parameters from the original {@link HttpServletRequest}.</p>
      */
     private void copyParameters(HttpServletRequest request) {
         Set<Entry<String, String[]>> parametersEntries = request.getParameterMap().entrySet();
-        
+
         for (Entry<String, String[]> parameter : parametersEntries) {
             this.getParameters().put(parameter.getKey(), (String[]) parameter.getValue());
         }
@@ -139,11 +139,11 @@ public class SavedRequest {
      */
     private void copyHeaders(HttpServletRequest request) {
         Enumeration<String> headerNames = request.getHeaderNames();
-        
+
         while (headerNames.hasMoreElements()) {
             String headerName = (String) headerNames.nextElement();
             String headerValue = request.getHeader(headerName);
-            
+
             this.getHeaders().put(headerName, headerValue);
         }
     }
@@ -153,11 +153,11 @@ public class SavedRequest {
      */
     private void copyCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        
+
         if (cookies == null) {
             return;
         }
-        
+
         for (Cookie cookie : cookies) {
             this.getCookies().add(cookie);
         }

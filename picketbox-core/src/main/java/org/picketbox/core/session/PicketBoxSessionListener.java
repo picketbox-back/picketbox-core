@@ -27,12 +27,12 @@ package org.picketbox.core.session;
  * @since Jul 16, 2012
  */
 public interface PicketBoxSessionListener {
-    
+
     /**
      * Called when a session is created
      */
     void onCreate(PicketBoxSession session);
-    
+
     /**
      * Called when there is a set attribute call
      * @param session
@@ -40,13 +40,13 @@ public interface PicketBoxSessionListener {
      * @param value
      */
     void onSetAttribute(PicketBoxSession session, String key, Object value);
-    
+
     /**
      * Called when the session is invalidated
      * @param session
      */
     void onInvalidate(PicketBoxSession session);
-    
+
     /**
      * Called when the session expires
      * @param session

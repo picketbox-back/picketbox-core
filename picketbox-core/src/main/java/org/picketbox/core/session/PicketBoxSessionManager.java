@@ -30,13 +30,13 @@ import java.util.TimerTask;
  * @since Jul 16, 2012
  */
 public class PicketBoxSessionManager {
-    
+
     private static Timer timer = new Timer();
 
     private static long expiryValue = 5 * 60 * 1000; //5 minutes
-    
+
     public static enum Expiry {seconds,minutes,hours};
-    
+
     /**
      * Set the expiry
      * @param milisecs
@@ -48,8 +48,8 @@ public class PicketBoxSessionManager {
             expiryValue = value * 60 * 1000;
         }  else if(type == Expiry.hours){
             expiryValue = value * 60 * 60 * 1000;
-        }  
-        
+        }
+
     }
     /**
      * Create a new instance of {@link PicketBoxSession}
@@ -60,7 +60,7 @@ public class PicketBoxSessionManager {
         setTimer(session);
         return session;
     }
-    
+
     /**
      * Create a new instance of {@link PicketBoxSession}
      * @return
@@ -72,7 +72,7 @@ public class PicketBoxSessionManager {
         listener.onCreate(session);
         return session;
     }
-    
+
     /**
      * Set a timer for the configured delay
      * @param session

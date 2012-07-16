@@ -41,14 +41,14 @@ public class PicketBoxSession {
     protected ConcurrentMap<String,Object> attributes = new ConcurrentHashMap<String, Object>();
     //Level 4 UUID based id
     protected String id = UUID.randomUUID().toString();
-    
+
     protected boolean invalid = false;
-    
+
     protected List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
-    
+
     PicketBoxSession(){
     }
-    
+
     /**
      * Add a session listener
      * @param listener
@@ -56,7 +56,7 @@ public class PicketBoxSession {
     void addListener(PicketBoxSessionListener listener){
         listeners.add(listener);
     }
-    
+
     /**
      * Get the session id
      * @return
@@ -64,12 +64,12 @@ public class PicketBoxSession {
     public String getId() {
         return id;
     }
-    
+
     /**
      * Add an attribute
      * @param key
      * @param val
-     * @throws PicketBoxSessionException 
+     * @throws PicketBoxSessionException
      */
     public void setAttribute(String key, Object val) throws PicketBoxSessionException{
         if(invalid)
@@ -82,14 +82,14 @@ public class PicketBoxSession {
     /**
      * Get a read only copy of the attributes
      * @return
-     * @throws PicketBoxSessionException 
+     * @throws PicketBoxSessionException
      */
     public Map<String, Object> getAttributes() throws PicketBoxSessionException {
         if(invalid)
             throw PicketBoxMessages.MESSAGES.invalidatedSession();
         return Collections.unmodifiableMap(attributes);
     }
-    
+
     /**
      * Get an attribute
      * @param key
@@ -100,8 +100,8 @@ public class PicketBoxSession {
         if(invalid)
             throw PicketBoxMessages.MESSAGES.invalidatedSession();
         return attributes.get(key);
-    } 
-    
+    }
+
     /**
      * Is the session valid?
      * @return

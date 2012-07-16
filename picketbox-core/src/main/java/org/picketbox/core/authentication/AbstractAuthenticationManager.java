@@ -38,9 +38,9 @@ import org.picketbox.core.exceptions.AuthenticationException;
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     protected boolean started = false, stopped = false;
-    
+
     protected Map<String,Object> options = new HashMap<String,Object>();
-    
+
     /**
      * Set the options
      * @param theOpt
@@ -49,7 +49,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         this.options.clear();
         this.options.putAll(theOpt);
     }
-    
+
     @Override
     public Principal authenticate(String username, Object credential) throws AuthenticationException {
         throw new RuntimeException();

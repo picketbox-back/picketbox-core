@@ -57,7 +57,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         if (authenticationScheme == null) {
             throw PicketBoxMessages.MESSAGES.authenticationSchemeNotProvided();
         }
-        
+
         this.authenticationScheme = authenticationScheme;
     }
 
@@ -109,7 +109,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
      */
     public boolean authorize(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         checkIfStarted();
-        
+
         if (this.authorizationManager == null || !this.isAuthenticated(httpRequest)) {
             return true;
         }

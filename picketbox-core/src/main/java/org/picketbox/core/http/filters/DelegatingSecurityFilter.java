@@ -53,7 +53,7 @@ import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
  * A {@link Filter} that delegates to the PicketBox Security Infrastructure
- * 
+ *
  * @author anil saldhana
  * @since Jul 10, 2012
  */
@@ -115,7 +115,7 @@ public class DelegatingSecurityFilter implements Filter {
         this.securityManager = new PicketBoxConfiguration()
                 .authentication(authenticationScheme)
                 .authorization(authorizationManager).buildAndStart();
-        
+
         sc.setAttribute(PicketBoxConstants.PICKETBOX_MANAGER, this.securityManager);
     }
 

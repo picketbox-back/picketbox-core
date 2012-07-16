@@ -35,9 +35,9 @@ import org.picketbox.core.authentication.PicketBoxConstants;
  * is to be used during authentication to help to retrieve previous informations from the request made for the first time before
  * the authentication process begins. It also stores the cached request in the user session for later use, if necessary.
  * </p>
- * 
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- * 
+ *
  */
 public class RequestCache {
 
@@ -48,7 +48,7 @@ public class RequestCache {
      * Saves a {@link HttpServletRequest} as a {@link SavedRequest} instance. All the state from the original request will be
      * copied.
      * </p>
-     * 
+     *
      * @param request
      */
     public void saveRequest(HttpServletRequest request) {

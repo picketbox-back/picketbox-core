@@ -161,7 +161,7 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
         }
 
         challengeClient(request, response, false);
-        
+
         return null;
     }
 
