@@ -23,6 +23,8 @@ package org.picketbox.authentication;
 
 import java.security.Principal;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.picketbox.exceptions.AuthenticationException;
 
@@ -36,6 +38,17 @@ import org.picketbox.exceptions.AuthenticationException;
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     protected boolean started = false, stopped = false;
+    
+    protected Map<String,Object> options = new HashMap<String,Object>();
+    
+    /**
+     * Set the options
+     * @param theOpt
+     */
+    public void setOptions(Map<String,Object> theOpt){
+        this.options.clear();
+        this.options.putAll(theOpt);
+    }
     
     @Override
     public Principal authenticate(String username, Object credential) throws AuthenticationException {
