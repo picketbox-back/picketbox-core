@@ -34,11 +34,12 @@ import org.picketbox.core.exceptions.PicketBoxSessionException;
 
 /**
  * A session that is capable of storing attributes
+ *
  * @author anil saldhana
  * @since Jul 16, 2012
  */
 public class PicketBoxSession {
-    protected ConcurrentMap<String,Object> attributes = new ConcurrentHashMap<String, Object>();
+    protected ConcurrentMap<String, Object> attributes = new ConcurrentHashMap<String, Object>();
     //Level 4 UUID based id
     protected String id = UUID.randomUUID().toString();
 
@@ -46,19 +47,21 @@ public class PicketBoxSession {
 
     protected List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
 
-    PicketBoxSession(){
+    PicketBoxSession() {
     }
 
     /**
      * Add a session listener
+     *
      * @param listener
      */
-    void addListener(PicketBoxSessionListener listener){
+    void addListener(PicketBoxSessionListener listener) {
         listeners.add(listener);
     }
 
     /**
      * Get the session id
+     *
      * @return
      */
     public String getId() {
@@ -67,64 +70,71 @@ public class PicketBoxSession {
 
     /**
      * Add an attribute
+     *
      * @param key
      * @param val
      * @throws PicketBoxSessionException
      */
-    public void setAttribute(String key, Object val) throws PicketBoxSessionException{
-        if(invalid)
+    public void setAttribute(String key, Object val) throws PicketBoxSessionException {
+        if (invalid)
             throw PicketBoxMessages.MESSAGES.invalidatedSession();
         attributes.put(key, val);
-        for(PicketBoxSessionListener listener : listeners){
+        for (PicketBoxSessionListener listener : listeners) {
             listener.onSetAttribute(this, key, val);
         }
     }
+
     /**
      * Get a read only copy of the attributes
+     *
      * @return
      * @throws PicketBoxSessionException
      */
     public Map<String, Object> getAttributes() throws PicketBoxSessionException {
-        if(invalid)
+        if (invalid)
             throw PicketBoxMessages.MESSAGES.invalidatedSession();
         return Collections.unmodifiableMap(attributes);
     }
 
     /**
      * Get an attribute
+     *
      * @param key
      * @return
      * @throws PicketBoxSessionException
      */
     public Object getAttribute(String key) throws PicketBoxSessionException {
-        if(invalid)
+        if (invalid)
             throw PicketBoxMessages.MESSAGES.invalidatedSession();
         return attributes.get(key);
     }
 
     /**
      * Is the session valid?
+     *
      * @return
      */
-    public boolean isValid(){
+    public boolean isValid() {
         return invalid == false;
     }
+
     /**
      * Invalidate the session
      */
-    public void invalidate(){
-        for(PicketBoxSessionListener listener : listeners){
+    public void invalidate() {
+        for (PicketBoxSessionListener listener : listeners) {
             listener.onInvalidate(this);
         }
         attributes.clear();
         invalid = true;
     }
+
     /**
      * Expire the session
      */
-    public void expire(){
+    public void expire() {
         invalidate();
-        for(PicketBoxSessionListener listener : listeners){
+        for (PicketBoxSessionListener listener : listeners) {
             listener.onExpiration(this);
         }
     }

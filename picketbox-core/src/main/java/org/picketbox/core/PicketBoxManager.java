@@ -39,7 +39,6 @@ import org.picketbox.core.exceptions.AuthenticationException;
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
  */
 public final class PicketBoxManager implements PicketBoxLifecycle {
 

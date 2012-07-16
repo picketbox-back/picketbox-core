@@ -34,18 +34,18 @@ import org.picketbox.core.exceptions.AuthenticationException;
  *
  * @author anil saldhana
  * @since Jul 10, 2012
- *
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     protected boolean started = false, stopped = false;
 
-    protected Map<String,Object> options = new HashMap<String,Object>();
+    protected Map<String, Object> options = new HashMap<String, Object>();
 
     /**
      * Set the options
+     *
      * @param theOpt
      */
-    public void setOptions(Map<String,Object> theOpt){
+    public void setOptions(Map<String, Object> theOpt) {
         this.options.clear();
         this.options.putAll(theOpt);
     }

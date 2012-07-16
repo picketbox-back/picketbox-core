@@ -49,7 +49,6 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
     protected boolean useCertificateValidation = false;
 
     /**
-     *
      * Use Certificate validation directly rather than username/cred model. Default is false.
      *
      * @param useCertificateValidation

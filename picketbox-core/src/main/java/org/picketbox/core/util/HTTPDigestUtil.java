@@ -54,7 +54,6 @@ public class HTTPDigestUtil {
     }
 
     /**
-     *
      * @param token
      * @return
      */

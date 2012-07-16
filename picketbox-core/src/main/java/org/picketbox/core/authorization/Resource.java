@@ -25,18 +25,21 @@ import java.io.Serializable;
 
 /**
  * A interface to indicate an enforceable resource
+ *
  * @author anil saldhana
  * @since Jul 10, 2012
  */
 public interface Resource extends Serializable {
     /**
      * Authorized to perform operation?
+     *
      * @return
      */
     boolean isAuthorized();
 
     /**
      * Set the flag indicating that this resource is authorized
+     *
      * @param authorize
      */
     void setAuthorized(boolean authorize);

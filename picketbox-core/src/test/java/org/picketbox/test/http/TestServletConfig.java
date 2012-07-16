@@ -32,7 +32,7 @@ import javax.servlet.ServletContext;
  * @author Anil.Saldhana@redhat.com
  * @since Jan 28, 2009
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class TestServletConfig implements ServletConfig {
     private ServletContext sc;
 

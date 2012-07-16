@@ -26,7 +26,6 @@ package org.picketbox.core.exceptions;
  * <p>An exception to indicate a failure during the configuration process.</p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
  */
 public class ConfigurationException extends RuntimeException {
 

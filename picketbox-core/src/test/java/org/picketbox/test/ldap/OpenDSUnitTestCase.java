@@ -44,8 +44,8 @@ import org.junit.Test;
  * Test Basic OpenDS functionality
  *
  * @author Anil Saldhana
- * @since Aug 23, 2007
  * @version $Revision$
+ * @since Aug 23, 2007
  */
 public class OpenDSUnitTestCase {
     protected String serverHost;
@@ -132,9 +132,7 @@ public class OpenDSUnitTestCase {
         } catch (Exception e) {
             System.err.println("Error in searching:");
             e.printStackTrace();
-        }
-
-        finally {
+        } finally {
             if (ne != null)
                 ne.close();
             if (dc != null)

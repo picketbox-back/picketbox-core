@@ -36,8 +36,8 @@ public interface HTTPAuthenticationSchemeLoader {
     /**
      * Get the {@link HTTPAuthenticationScheme}
      *
-     * @return an instance of {@link HTTPAuthenticationScheme}
      * @param contextData contextual data such as {@link ServletContext}
+     * @return an instance of {@link HTTPAuthenticationScheme}
      * @throws {@link ServletException}
      */
     HTTPAuthenticationScheme get(Map<String, Object> contextData) throws ServletException;
