@@ -37,7 +37,7 @@ public interface AuthorizationManager extends PicketBoxLifecycle {
      * @return
      */
     boolean authorize(Resource resource, PicketBoxSubject subject);
-    
+
     /**
      * Entitlement API
      * @param resource resource for which we need to check entitlements
@@ -45,7 +45,7 @@ public interface AuthorizationManager extends PicketBoxLifecycle {
      * @return
      */
     Entitlement[] entitlements(Resource resource, PicketBoxSubject subject);
-    
+
     /**
      * Marker interface to indicate an entitlement
      * @author anil saldhana

@@ -78,7 +78,7 @@ public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
                         }
 
                         Principal principal = authManager.authenticate(username, password);
-                        
+
                         if (principal != null) {
                             return principal;
                         }
@@ -88,7 +88,7 @@ public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
         }
 
         challengeClient(request, response);
-        
+
         return null;
     }
 

@@ -44,16 +44,16 @@ import org.picketbox.core.util.Base64;
  * @since July 9, 2012
  */
 public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
-    
+
     private static final String DEFAULT_PAGE_URL = "/";
 
     private RequestCache requestCache = new RequestCache();
-    
+
     /**
      * The page used to redirect the user after a succesful authentication.
      */
     protected String defaultPage = DEFAULT_PAGE_URL;
-    
+
     /**
      * The FORM login page. It should always start with a '/'
      */
@@ -116,18 +116,18 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
             }
 
             Principal principal = authManager.authenticate(username, password);
-            
+
             if (principal != null) {
                 // remove from the cache the saved request and store it in the session for further use.
                 String savedRequest = this.requestCache.removeAndStoreSavedRequestInSession(request).getRequestURI();
-                
-                // if the user has explicit defined a default page url, use it to redirect the user after a successful authentication. 
+
+                // if the user has explicit defined a default page url, use it to redirect the user after a successful authentication.
                 if (!this.defaultPage.equals(DEFAULT_PAGE_URL)) {
-                    sendRedirect(response, request.getContextPath() + this.defaultPage);    
+                    sendRedirect(response, request.getContextPath() + this.defaultPage);
                 } else {
                     sendRedirect(response, savedRequest);
                 }
-                
+
                 return principal;
             }
         }
@@ -161,7 +161,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
         }
 
         challengeClient(request, response);
-        
+
         return null;
     }
 
@@ -183,7 +183,7 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
 
         this.requestCache.saveRequest(request);
         forwardRequest(request, response, formAuthPage);
-        
+
         return false;
     }
 

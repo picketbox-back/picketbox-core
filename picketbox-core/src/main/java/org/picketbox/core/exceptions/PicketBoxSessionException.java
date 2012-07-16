@@ -35,18 +35,18 @@ public class PicketBoxSessionException extends GeneralSecurityException {
     private static final long serialVersionUID = 1L;
 
     public PicketBoxSessionException() {
-        super(); 
+        super();
     }
 
     public PicketBoxSessionException(String message, Throwable cause) {
-        super(message, cause); 
+        super(message, cause);
     }
 
     public PicketBoxSessionException(String msg) {
-        super(msg); 
+        super(msg);
     }
 
     public PicketBoxSessionException(Throwable cause) {
-        super(cause); 
+        super(cause);
     }
 }

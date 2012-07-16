@@ -105,7 +105,7 @@ public final class PicketBoxConfiguration {
             }
 
             picketBoxManager.setIdentityManager(identityManager);
-            
+
             picketBoxManager.start();
         } catch (Exception e) {
             picketBoxManager = null;

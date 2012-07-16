@@ -121,7 +121,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 26, value = "PicketBox Manager was not properly started.")
     ConfigurationException picketBoxManagerNotProperlyStarted();
-    
+
     @Message(id = 27, value = "Session is invalidated")
     PicketBoxSessionException invalidatedSession();
 }

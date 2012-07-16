@@ -99,9 +99,9 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
                 return authManager.authenticate(username, password);
             }
         }
-        
+
         forbidClient(response);
-        
+
         return null;
     }
 
