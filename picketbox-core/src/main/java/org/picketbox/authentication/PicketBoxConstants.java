@@ -21,6 +21,12 @@
  */
 package org.picketbox.authentication;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+
+import org.picketbox.core.PicketBoxManager;
+import org.picketbox.core.PicketBoxSubject;
+
 /**
  * Define all constants
  *
@@ -81,4 +87,14 @@ public interface PicketBoxConstants {
      * <p>Defines the {@link HttpSession} attribute name used to store a {@link SavedRequest} instance.</p>
      */
     String SAVED_REQUEST = "SAVED_REQUEST";
+
+    /**
+     * <p>Defines the {@link ServletContext} attribute name used to store a {@link PicketBoxManager} instance.</p>
+     */
+    String PICKETBOX_MANAGER = "PICKETBOX_MANAGER";
+
+    /**
+     * <p>Defines the {@link HttpSession} attribute name used to store a {@link PicketBoxSubject} instance.</p>
+     */
+    String SUBJECT = "SUBJECT";
 }
