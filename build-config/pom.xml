@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ JBoss, Home of Professional Open Source.
   ~ Copyright 2010, Red Hat, Inc., and individual contributors
@@ -19,36 +20,26 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.picketbox</groupId>
-		<artifactId>picketbox-core-parent</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
-		<relativePath>parent</relativePath>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>picketbox-core-pom</artifactId>
-	<packaging>pom</packaging>
-	<name>PicketBox POM - Aggregator</name>
-	<url>http://jboss.org/picketbox/</url>
-	<description>PicketBox is a security framework for Java Applications</description>
-	<modules>
-		<module>parent</module>
-		<module>build-config</module>
-		<module>picketbox-core</module>
-	</modules>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+      <groupId>org.picketbox</groupId>
+      <artifactId>picketbox-core-parent</artifactId>
+      <version>5.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>picketbox-build-config</artifactId>
+    <name>PicketBox: Build Configuration</name>
+
+    <licenses>
+        <license>
+            <name>lgpl</name>
+            <url>http://repository.jboss.org/licenses/lgpl-2.1.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
 </project>
