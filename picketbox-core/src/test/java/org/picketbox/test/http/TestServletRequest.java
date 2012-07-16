@@ -61,7 +61,7 @@ public class TestServletRequest implements HttpServletRequest {
     private BufferedInputStream is = null;
 
     private List<Cookie> cookies = new ArrayList<Cookie>();
-    
+
     private Map<String, String> headers = new HashMap<String, String>();
 
     private String method;
@@ -86,7 +86,7 @@ public class TestServletRequest implements HttpServletRequest {
     public String getContextPath() {
         return this.contextPath;
     }
-    
+
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }

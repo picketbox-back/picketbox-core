@@ -38,14 +38,14 @@ import org.junit.Test;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
-import org.picketbox.authentication.DigestHolder;
-import org.picketbox.authentication.PicketBoxConstants;
-import org.picketbox.authentication.http.HTTPBasicAuthentication;
-import org.picketbox.authentication.http.impl.HTTPDigestAuthenticationSchemeLoader;
-import org.picketbox.authentication.impl.SimpleCredentialAuthenticationManager;
-import org.picketbox.http.filters.DelegatingSecurityFilter;
+import org.picketbox.core.authentication.DigestHolder;
+import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.http.HTTPBasicAuthentication;
+import org.picketbox.core.authentication.http.impl.HTTPDigestAuthenticationSchemeLoader;
+import org.picketbox.core.authentication.impl.SimpleCredentialAuthenticationManager;
+import org.picketbox.core.http.filters.DelegatingSecurityFilter;
 import org.picketbox.test.http.jetty.EmbeddedWebServerBase;
-import org.picketbox.util.HTTPDigestUtil;
+import org.picketbox.core.util.HTTPDigestUtil;
 
 /**
  * Unit test the {@link DelegatingSecurityFilter} for {@link HTTPBasicAuthentication}
@@ -60,9 +60,9 @@ public class DelegatingSecurityFilterHTTPDigestUnitTestCase extends EmbeddedWebS
     @Override
     protected void establishUserApps() {
         ClassLoader tcl = Thread.currentThread().getContextClassLoader();
-        if(tcl == null){
+        if (tcl == null) {
             tcl = getClass().getClassLoader();
-        }   
+        }
 
         final String WEBAPPDIR = "auth/webapp";
 
@@ -81,8 +81,7 @@ public class DelegatingSecurityFilterHTTPDigestUnitTestCase extends EmbeddedWebS
         System.setProperty(PicketBoxConstants.CREDENTIAL, "Open Sesame");
 
         FilterHolder filterHolder = new FilterHolder(DelegatingSecurityFilter.class);
-        filterHolder.setInitParameter(PicketBoxConstants.AUTH_MGR,
-                SimpleCredentialAuthenticationManager.class.getName());
+        filterHolder.setInitParameter(PicketBoxConstants.AUTH_MGR, SimpleCredentialAuthenticationManager.class.getName());
         filterHolder.setInitParameter(PicketBoxConstants.AUTH_SCHEME_LOADER,
                 HTTPDigestAuthenticationSchemeLoader.class.getName());
         context.addFilter(filterHolder, "/", 1);

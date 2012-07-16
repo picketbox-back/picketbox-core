@@ -25,22 +25,26 @@ package org.picketbox.core;
 import java.security.Principal;
 
 /**
- * <p>Default implementation for the {@link IdentityManager} interface.</p>
- * 
+ * <p>
+ * Default implementation for the {@link IdentityManager} interface.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public class DefaultIdentityManager implements IdentityManager {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.IdentityManager#getIdentity()
      */
     @Override
     public PicketBoxSubject getIdentity(Principal principal) {
         PicketBoxSubject subject = new PicketBoxSubject();
-        
+
         subject.setUser(principal);
-        
+
         return subject;
     }
 

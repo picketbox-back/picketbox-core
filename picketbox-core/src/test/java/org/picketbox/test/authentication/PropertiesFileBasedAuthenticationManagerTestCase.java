@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.picketbox.authentication.impl.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
 
 /**
  * Unit test the {@link PropertiesFileBasedAuthenticationManager}

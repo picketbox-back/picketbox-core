@@ -31,6 +31,7 @@ import javax.security.auth.Subject;
 
 /**
  * An Application View of the authenticated/authorized Subject
+ *
  * @author anil saldhana
  * @since Jul 12, 2012
  */
@@ -38,66 +39,78 @@ public class PicketBoxSubject {
     protected Subject subject;
     protected Principal user;
     protected List<String> roleNames;
-    protected Map<String,Object> attributes = new HashMap<String,Object>();
-    protected Map<String,Object> contextData = new HashMap<String,Object>();
-    
-    //TODO: how to deal with groups/nested groups etc
-    
+    protected Map<String, Object> attributes = new HashMap<String, Object>();
+    protected Map<String, Object> contextData = new HashMap<String, Object>();
+
+    // TODO: how to deal with groups/nested groups etc
+
     /**
      * get the user
+     *
      * @return
      */
     public Principal getUser() {
         return user;
     }
-    
+
     /**
      * Set the user
+     *
      * @param user
      */
     public void setUser(Principal user) {
         this.user = user;
     }
-    
+
     /**
      * Get the role names
+     *
      * @return
      */
     public List<String> getRoleNames() {
         return Collections.unmodifiableList(roleNames);
     }
+
     /**
      * Set the role names of the user
+     *
      * @param rolesNames
      */
     public void setRoleNames(List<String> rolesNames) {
         this.roleNames = rolesNames;
     }
+
     /**
      * Get the user attributes
+     *
      * @return
      */
     public Map<String, Object> getAttributes() {
         return Collections.unmodifiableMap(attributes);
     }
+
     /**
      * Set the attributes
+     *
      * @param attributes
      */
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes.clear();
         this.attributes.putAll(attributes);
     }
+
     /**
      * Get the JAAS Subject if available
+     *
      * @return
      */
     public Subject getSubject() {
         return subject;
     }
-    
+
     /**
      * Set the JAAS Subject
+     *
      * @param subject
      */
     public void setSubject(Subject subject) {
@@ -106,6 +119,7 @@ public class PicketBoxSubject {
 
     /**
      * Get a read only map of contextual data
+     *
      * @return
      */
     public Map<String, Object> getContextData() {
@@ -114,6 +128,7 @@ public class PicketBoxSubject {
 
     /**
      * Set context data
+     *
      * @param contextData
      */
     public void setContextData(Map<String, Object> contextData) {
