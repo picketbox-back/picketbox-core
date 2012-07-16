@@ -32,12 +32,12 @@ import java.security.Principal;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.authentication.PicketBoxConstants;
-import org.picketbox.authentication.http.HTTPBasicAuthentication;
-import org.picketbox.authentication.impl.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.http.HTTPBasicAuthentication;
+import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.test.http.TestServletRequest;
 import org.picketbox.test.http.TestServletResponse;
-import org.picketbox.util.Base64;
+import org.picketbox.core.util.Base64;
 
 /**
  * Unit test the {@link HTTPBasicAuthentication} class

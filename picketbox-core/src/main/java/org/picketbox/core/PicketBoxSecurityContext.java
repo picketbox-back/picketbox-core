@@ -25,24 +25,28 @@ import java.security.Principal;
 
 /**
  * Class representing security context for applications
+ *
  * @author anil saldhana
  * @since Jul 12, 2012
  */
 public class PicketBoxSecurityContext {
     protected Principal principal;
-    
+
     /**
      * Set the authenticated {@link Principal}
+     *
      * @param principal
      */
-    public void setPrincipal(Principal principal){
+    public void setPrincipal(Principal principal) {
         this.principal = principal;
     }
+
     /**
      * Return the authenticated {@link Principal}
+     *
      * @return
      */
-    Principal getPrincipal(){
+    Principal getPrincipal() {
         return principal;
     }
 }

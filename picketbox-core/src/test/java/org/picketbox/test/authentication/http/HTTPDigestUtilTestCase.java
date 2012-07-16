@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.picketbox.util.HTTPDigestUtil;
+import org.picketbox.core.util.HTTPDigestUtil;
 
 /**
  * Unit Test the {@link HTTPDigestUtil} class

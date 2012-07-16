@@ -29,41 +29,40 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.authentication.impl.LDAPAuthenticationManager;
+import org.picketbox.core.authentication.impl.LDAPAuthenticationManager;
 import org.picketbox.test.ldap.OpenDSUnitTestCase;
 
 /**
  * Unit test the {@link LDAPAuthenticationManager}
+ *
  * @author anil saldhana
  * @since Jul 16, 2012
  */
-public class LDAPAuthenticationManagerUnitTestCase extends OpenDSUnitTestCase{
-    
+public class LDAPAuthenticationManagerUnitTestCase extends OpenDSUnitTestCase {
+
     @Before
-    public void setup() throws Exception{
+    public void setup() throws Exception {
         URL ldif = getClass().getClassLoader().getResource("ldap/ldapAttributes.ldif");
         boolean op = util.addLDIF(serverHost, port, adminDN, adminPW, ldif);
         assertTrue(op);
     }
-    
-    
+
     @Override
     @Test
     public void testLDAPAddDelete() throws Exception {
     }
 
-
     @Test
-    public void testAuth() throws Exception{
-      LDAPAuthenticationManager auth = new LDAPAuthenticationManager();
-      
-      Map<String,Object> options = new HashMap<String,Object>();
-      options.put("java.naming.provider.url","ldap://localhost:10389/");
-      options.put("principalDNPrefix", "uid=");
-      options.put("principalDNSuffix",",ou=People,dc=jboss,dc=org");
-      
-      auth.setOptions(options);
-      
-      assertTrue(auth.authenticate("jduke", "theduke") != null);
+    public void testAuth() throws Exception {
+        LDAPAuthenticationManager auth = new LDAPAuthenticationManager();
+
+        Map<String, Object> options = new HashMap<String, Object>();
+        options.put("java.naming.provider.url", "ldap://localhost:10389/");
+        options.put("principalDNPrefix", "uid=");
+        options.put("principalDNSuffix", ",ou=People,dc=jboss,dc=org");
+
+        auth.setOptions(options);
+
+        assertTrue(auth.authenticate("jduke", "theduke") != null);
     }
 }
