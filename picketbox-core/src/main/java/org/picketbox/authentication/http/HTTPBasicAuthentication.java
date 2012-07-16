@@ -28,7 +28,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.picketbox.PicketBoxMessages;
 import org.picketbox.authentication.PicketBoxConstants;
@@ -51,12 +50,11 @@ public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
      * @return
      * @throws AuthenticationException
      */
-    public boolean authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
+    public Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
         String username, password;
 
         HttpServletRequest request = (HttpServletRequest) servletReq;
         HttpServletResponse response = (HttpServletResponse) servletResp;
-        HttpSession session = request.getSession(true);
         // Get the Authorization Header
         String authorizationHeader = request.getHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER);
 
@@ -80,25 +78,26 @@ public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
                         }
 
                         Principal principal = authManager.authenticate(username, password);
+                        
                         if (principal != null) {
-                            session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);
-                            return true;
+                            return principal;
                         }
                     }
                 }
             }
         }
 
-        return challengeClient(request, response);
+        challengeClient(request, response);
+        
+        return null;
     }
 
-    private boolean challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    private void challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         response.setHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE, "basic realm=\"" + realmName + '"');
         try {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         } catch (IOException e) {
             throw new AuthenticationException(e);
         }
-        return false;
     }
 }

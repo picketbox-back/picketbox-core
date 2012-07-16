@@ -21,6 +21,8 @@
  */
 package org.picketbox.authentication.http;
 
+import java.security.Principal;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSessionListener;
@@ -45,7 +47,7 @@ public interface HTTPAuthenticationScheme extends HttpSessionListener {
      * @return
      * @throws AuthenticationException
      */
-    boolean authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException;
+    Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException;
     
     /**
      * Set the {@link AuthenticationManager}

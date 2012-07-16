@@ -29,7 +29,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.picketbox.PicketBoxMessages;
 import org.picketbox.authentication.PicketBoxConstants;
@@ -67,12 +66,11 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
      * @return
      * @throws AuthenticationException
      */
-    public boolean authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
+    public Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
         String username, password;
 
         HttpServletRequest request = (HttpServletRequest) servletReq;
         HttpServletResponse response = (HttpServletResponse) servletResp;
-        HttpSession session = request.getSession(true);
 
         X509Certificate[] certs = (X509Certificate[]) request.getAttribute(PicketBoxConstants.HTTP_CERTIFICATE);
 
@@ -81,11 +79,7 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
 
         if (certs != null) {
             if (useCertificateValidation) {
-                Principal principal = authManager.authenticate(certs);
-                if (principal != null) {
-                    session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);
-                    return true;
-                }
+                return authManager.authenticate(certs);
             }
 
             for (X509Certificate cert : certs) {
@@ -102,23 +96,20 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
                 // Credential is the certificate
                 password = Base64.encodeBytes(cert.getSignature());
 
-                Principal principal = authManager.authenticate(username, password);
-                if (principal != null) {
-                    session.setAttribute(PicketBoxConstants.PRINCIPAL, principal);
-                    return true;
-                }
+                return authManager.authenticate(username, password);
             }
         }
-        return forbidClient(response);
+        
+        forbidClient(response);
+        
+        return null;
     }
 
-    private boolean forbidClient(HttpServletResponse response) throws AuthenticationException {
-
+    private void forbidClient(HttpServletResponse response) throws AuthenticationException {
         try {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
         } catch (IOException e) {
             throw new AuthenticationException(e);
         }
-        return false;
     }
 }

@@ -21,12 +21,14 @@
  */
 package org.picketbox.test.authentication.http;
 
-import static org.junit.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.Principal;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -80,8 +82,8 @@ public class HTTPDigestAuthenticationTestCase {
         req.setMethod("GET");
 
         // Call the server to get the digest challenge
-        boolean result = httpDigest.authenticate(req, resp);
-        assertFalse(result);
+        Principal result = httpDigest.authenticate(req, resp);
+        assertNull(result);
 
         String authorizationHeader = resp.getHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE);
         authorizationHeader = authorizationHeader.substring(7);
@@ -94,14 +96,14 @@ public class HTTPDigestAuthenticationTestCase {
         req.addHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER, "Digest " + getPositive(digest));
         result = httpDigest.authenticate(req, resp);
 
-        assertTrue(result);
+        assertNotNull(result);
 
         req.clearHeaders();
 
         // Get Negative Authentication
         req.addHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER, "Digest " + getNegative());
         result = httpDigest.authenticate(req, resp);
-        assertFalse(result);
+        assertNull(result);
 
         String digestHeader = resp.getHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE);
         assertTrue(digestHeader.startsWith("Digest realm="));

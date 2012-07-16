@@ -21,9 +21,8 @@
  */
 package org.picketbox.test.authentication.http;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -123,13 +122,14 @@ public class HTTPClientCertAuthenticationTestCase {
         assertNotNull(cert);
 
         // Call the server to get the digest challenge
-        boolean result = httpClientCert.authenticate(req, resp);
-        assertFalse(result);
+        Principal result = httpClientCert.authenticate(req, resp);
+        
+        assertNull(result);
 
         // Now set the certificate
         req.setAttribute(PicketBoxConstants.HTTP_CERTIFICATE, new X509Certificate[] { cert });
 
         result = httpClientCert.authenticate(req, resp);
-        assertTrue(result);
+        assertNotNull(result);
     }
 }
