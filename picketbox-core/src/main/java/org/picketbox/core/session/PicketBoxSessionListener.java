@@ -46,4 +46,10 @@ public interface PicketBoxSessionListener {
      * @param session
      */
     void onInvalidate(PicketBoxSession session);
+    
+    /**
+     * Called when the session expires
+     * @param session
+     */
+    void onExpiration(PicketBoxSession session);
 }

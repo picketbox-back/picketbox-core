@@ -119,4 +119,13 @@ public class PicketBoxSession {
         attributes.clear();
         invalid = true;
     }
+    /**
+     * Expire the session
+     */
+    public void expire(){
+        invalidate();
+        for(PicketBoxSessionListener listener : listeners){
+            listener.onExpiration(this);
+        }
+    }
 }
