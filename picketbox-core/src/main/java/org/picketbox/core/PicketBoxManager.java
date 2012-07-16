@@ -45,12 +45,20 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
 
     private HTTPAuthenticationScheme authenticationScheme;
     private AuthorizationManager authorizationManager;
-    private boolean started;
-    private boolean stopped = true;
     private IdentityManager identityManager;
 
-    PicketBoxManager() {
+    /*
+     * Life cycle attributes.
+     */
+    private boolean started;
+    private boolean stopped = true;
 
+    PicketBoxManager(HTTPAuthenticationScheme authenticationScheme) {
+        if (authenticationScheme == null) {
+            throw PicketBoxMessages.MESSAGES.authenticationSchemeNotProvided();
+        }
+        
+        this.authenticationScheme = authenticationScheme;
     }
 
     /**
@@ -75,6 +83,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
      * @throws AuthenticationException
      */
     public void authenticate(HttpServletRequest servletReq, HttpServletResponse servletResp) throws AuthenticationException {
+        checkIfStarted();
         if (!isAuthenticated(servletReq)) {
             Principal principal = this.authenticationScheme.authenticate(servletReq, servletResp);
 
@@ -86,6 +95,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     }
 
     public PicketBoxSubject getAuthenticatedUser(HttpServletRequest servletReq) {
+        checkIfStarted();
         return (PicketBoxSubject) servletReq.getSession().getAttribute(PicketBoxConstants.SUBJECT);
     }
 
@@ -98,6 +108,8 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
      * @throws AuthenticationException
      */
     public boolean authorize(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+        checkIfStarted();
+        
         if (this.authorizationManager == null || !this.isAuthenticated(httpRequest)) {
             return true;
         }
@@ -170,7 +182,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     @Override
     public void start() {
         if (this.started) {
-            throw new IllegalStateException("PicketBox Authorization Manager alredy started.");
+            throw PicketBoxMessages.MESSAGES.picketBoxManagerAlreadyStarted();
         }
 
         PicketBoxLogger.LOGGER.debug("Using Authentication Scheme : " + this.authenticationScheme.getClass().getName());
@@ -179,6 +191,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         PicketBoxLogger.LOGGER.startingPicketBox();
 
         this.started = true;
+        this.stopped = false;
     }
 
     /*
@@ -188,10 +201,6 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
      */
     @Override
     public boolean stopped() {
-        if (this.stopped) {
-            throw new IllegalStateException("PicketBox Authorization Manager alredy stopped.");
-        }
-
         return this.stopped;
     }
 
@@ -202,8 +211,21 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
      */
     @Override
     public void stop() {
+        if (this.stopped) {
+            throw PicketBoxMessages.MESSAGES.picketBoxManagerAlreadyStopped();
+        }
+
         this.started = false;
         this.stopped = true;
+    }
+
+    /**
+     * <p>Checks if the manager is started.</p>
+     */
+    private void checkIfStarted() {
+        if (!this.started()) {
+            throw PicketBoxMessages.MESSAGES.picketBoxManagerNotStarted();
+        }
     }
 
 }

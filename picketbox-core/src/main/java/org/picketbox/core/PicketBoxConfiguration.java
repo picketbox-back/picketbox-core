@@ -46,8 +46,7 @@ public final class PicketBoxConfiguration {
     }
 
     /**
-     * <pConfiguration method to register a @{link HTTPAuthenticationScheme} instance. Before calling this method make sure the
-     * configuration was properly initialized using the <code>configure</configure> method.</p>
+     * <pConfiguration method to register a @{link HTTPAuthenticationScheme} instance.</p>
      *
      * @param authenticationScheme
      * @return the configuration with the {@link HTTPAuthenticationScheme} instance configured.
@@ -59,8 +58,7 @@ public final class PicketBoxConfiguration {
     }
 
     /**
-     * <pConfiguration method to register a @{link AuthorizationManager} instance. Before calling this method make sure the
-     * configuration was properly initialized using the <code>configure</configure> method.</p></p>
+     * <pConfiguration method to register an @{link AuthorizationManager} instance.</p>
      *
      * @param authorizationManager
      * @return the configuration with the {@link AuthorizationManager} instance configured.
@@ -72,8 +70,7 @@ public final class PicketBoxConfiguration {
     }
 
     /**
-     * <pConfiguration method to register a @{link {@link IdentityManager} instance. Before calling this method make sure the
-     * configuration was properly initialized using the <code>configure</configure> method.</p></p>
+     * <pConfiguration method to register an {@link IdentityManager} instance.</p>
      *
      * @param identityManager
      * @return the configuration with the {@link AuthorizationManager} instance configured.
@@ -95,17 +92,12 @@ public final class PicketBoxConfiguration {
      */
     public PicketBoxManager buildAndStart() throws ConfigurationException {
         if (picketBoxManager != null) {
-            throw new ConfigurationException("PicketBoxManager can be built and started only once.");
-        }
-
-        if (this.authenticationScheme == null) {
-            throw new ConfigurationException("No authentication scheme provided.");
+            throw PicketBoxMessages.MESSAGES.picketBoxManagerAlreadyStarted();
         }
 
         try {
-            picketBoxManager = new PicketBoxManager();
+            picketBoxManager = new PicketBoxManager(this.authenticationScheme);
 
-            picketBoxManager.setAuthenticationScheme(this.authenticationScheme);
             picketBoxManager.setAuthorizationManager(this.authorizationManager);
 
             if (this.identityManager == null) {
@@ -117,11 +109,11 @@ public final class PicketBoxConfiguration {
             picketBoxManager.start();
         } catch (Exception e) {
             picketBoxManager = null;
-            throw new ConfigurationException("Could not build and start PicketBoxManager.", e);
+            throw PicketBoxMessages.MESSAGES.failedToConfigurePicketBoxManager(e);
         }
 
         if (!picketBoxManager.started()) {
-            throw new ConfigurationException("PicketBoxManager was not properly started.");
+            throw PicketBoxMessages.MESSAGES.picketBoxManagerNotProperlyStarted();
         }
 
         return picketBoxManager;

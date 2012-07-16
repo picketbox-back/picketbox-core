@@ -30,6 +30,7 @@ import org.jboss.logging.Message;
 import org.jboss.logging.MessageBundle;
 import org.jboss.logging.Messages;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketbox.core.exceptions.ConfigurationException;
 
 /**
  * An instance of {@link MessageBundle} from JBoss Logging
@@ -101,4 +102,22 @@ public interface PicketBoxMessages {
 
     @Message(id = 20, value = "Failed to validate credentials")
     AuthenticationException failedToValidateCredentials();
+
+    @Message(id = 21, value = "No Authentication Scheme provided.")
+    ConfigurationException authenticationSchemeNotProvided();
+
+    @Message(id = 22, value = "PicketBox Manager already started.")
+    IllegalStateException picketBoxManagerAlreadyStarted();
+
+    @Message(id = 23, value = "PicketBox Manager alredy stopped.")
+    IllegalStateException picketBoxManagerAlreadyStopped();
+
+    @Message(id = 24, value = "PicketBox Manager not started.")
+    IllegalStateException picketBoxManagerNotStarted();
+
+    @Message(id = 25, value = "Could not build and start PicketBoxManager.")
+    ConfigurationException failedToConfigurePicketBoxManager(@Cause Throwable t);
+
+    @Message(id = 26, value = "PicketBox Manager was not properly started.")
+    ConfigurationException picketBoxManagerNotProperlyStarted();
 }
