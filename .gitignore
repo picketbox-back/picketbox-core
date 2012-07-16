@@ -43,3 +43,4 @@ PutObjectStoreDirHere
 /.m2
 #ignore opends lock files
 *.lock
+.checkstyle
