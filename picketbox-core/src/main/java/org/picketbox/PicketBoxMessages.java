@@ -89,4 +89,16 @@ public interface PicketBoxMessages {
 
     @Message(id = 16, value = "User authentication failed.")
     AuthenticationException authenticationFailed(@Cause Throwable t);
+
+    @Message(id = 17, value = "Missing required property: %s")
+    IllegalStateException missingRequiredProperty(String property);
+
+    @Message(id = 18, value = "Failed to locate a DataSource: either provide one via injection or provide a dsJNDIName")
+    IllegalStateException missingDataSourceConfiguration();
+
+    @Message(id = 19, value = "Query %s found no results")
+    String queryFoundNoResultsMessage(String query);
+
+    @Message(id = 20, value = "Failed to validate credentials")
+    AuthenticationException failedToValidateCredentials();
 }
