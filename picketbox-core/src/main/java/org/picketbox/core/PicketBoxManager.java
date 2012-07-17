@@ -189,6 +189,10 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         PicketBoxLogger.LOGGER.debug("Using Identity Manager : " + this.authenticationScheme.getClass().getName());
         PicketBoxLogger.LOGGER.startingPicketBox();
 
+        if (this.authorizationManager != null) {
+            this.authorizationManager.start();
+        }
+
         this.started = true;
         this.stopped = false;
     }
@@ -219,7 +223,9 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     }
 
     /**
-     * <p>Checks if the manager is started.</p>
+     * <p>
+     * Checks if the manager is started.
+     * </p>
      */
     private void checkIfStarted() {
         if (!this.started()) {
