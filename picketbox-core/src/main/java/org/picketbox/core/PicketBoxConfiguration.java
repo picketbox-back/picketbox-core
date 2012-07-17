@@ -25,6 +25,8 @@ package org.picketbox.core;
 import org.picketbox.core.authentication.http.HTTPAuthenticationScheme;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.exceptions.ConfigurationException;
+import org.picketbox.core.identity.DefaultIdentityManager;
+import org.picketbox.core.identity.IdentityManager;
 import org.picketbox.core.logout.LogoutManager;
 
 /**
