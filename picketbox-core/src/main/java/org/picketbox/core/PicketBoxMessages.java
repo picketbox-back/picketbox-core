@@ -30,6 +30,7 @@ import org.jboss.logging.Message;
 import org.jboss.logging.MessageBundle;
 import org.jboss.logging.Messages;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketbox.core.exceptions.AuthorizationException;
 import org.picketbox.core.exceptions.ConfigurationException;
 import org.picketbox.core.exceptions.PicketBoxSessionException;
 
@@ -124,4 +125,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 27, value = "Session is invalidated")
     PicketBoxSessionException invalidatedSession();
+
+    @Message(id = 28, value = "User authorization failed.")
+    AuthorizationException authorizationFailed(@Cause Throwable t);
 }
