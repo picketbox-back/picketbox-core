@@ -41,22 +41,4 @@ public interface AuthorizationManager extends PicketBoxLifecycle {
      * @throws AuthorizationException if some problem occurs during the authorization process.
      */
     boolean authorize(Resource resource, PicketBoxSubject subject) throws AuthorizationException;
-
-    /**
-     * Entitlement API
-     *
-     * @param resource resource for which we need to check entitlements
-     * @param subject  subject (user/process) that is performing an action on the resource
-     * @return
-     */
-    Entitlement[] entitlements(Resource resource, PicketBoxSubject subject);
-
-    /**
-     * Marker interface to indicate an entitlement
-     *
-     * @author anil saldhana
-     * @since Jul 10, 2012
-     */
-    public interface Entitlement {
-    }
 }
