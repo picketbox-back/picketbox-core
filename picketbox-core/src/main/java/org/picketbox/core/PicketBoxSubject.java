@@ -21,6 +21,7 @@
  */
 package org.picketbox.core;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +36,10 @@ import javax.security.auth.Subject;
  * @author anil saldhana
  * @since Jul 12, 2012
  */
-public class PicketBoxSubject {
+public class PicketBoxSubject implements Serializable {
+
+    private static final long serialVersionUID = -7767959770091515534L;
+
     protected Subject subject;
     protected Principal user;
     protected List<String> roleNames;
