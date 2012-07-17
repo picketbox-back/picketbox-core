@@ -112,8 +112,7 @@ public class DelegatingSecurityFilter implements Filter {
             authenticationScheme = authLoader.get(contextData);
         }
 
-        this.securityManager = new PicketBoxConfiguration()
-                .authentication(authenticationScheme)
+        this.securityManager = new PicketBoxConfiguration().authentication(authenticationScheme)
                 .authorization(authorizationManager).buildAndStart();
 
         sc.setAttribute(PicketBoxConstants.PICKETBOX_MANAGER, this.securityManager);
@@ -125,6 +124,8 @@ public class DelegatingSecurityFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        logout(httpRequest, httpResponse);
+
         authenticate(httpRequest, httpResponse);
 
         authorize(httpRequest, httpResponse);
@@ -134,8 +135,7 @@ public class DelegatingSecurityFilter implements Filter {
         }
     }
 
-    private void authorize(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
-            throws IOException {
+    private void authorize(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
         boolean authorize = this.securityManager.authorize(httpRequest, httpResponse);
 
         if (!authorize) {
@@ -146,11 +146,19 @@ public class DelegatingSecurityFilter implements Filter {
     }
 
     private void authenticate(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException {
+        if (httpResponse.isCommitted()) {
+            return;
+        }
+
         try {
             this.securityManager.authenticate(httpRequest, httpResponse);
         } catch (AuthenticationException e) {
             throw new ServletException(e);
         }
+    }
+
+    private void logout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException {
+        this.securityManager.logout(httpRequest, httpResponse);
     }
 
     @Override
