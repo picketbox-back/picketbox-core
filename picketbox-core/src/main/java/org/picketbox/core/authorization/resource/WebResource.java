@@ -22,8 +22,8 @@
 package org.picketbox.core.authorization.resource;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.picketbox.core.authorization.Resource;
 
@@ -36,23 +36,23 @@ import org.picketbox.core.authorization.Resource;
 public class WebResource extends AbstractPicketBoxResource {
     private static final long serialVersionUID = 1L;
 
-    protected ServletRequest request;
-    protected ServletResponse response;
+    protected HttpServletRequest request;
+    protected HttpServletResponse response;
     protected ServletContext context;
 
-    public ServletRequest getRequest() {
+    public HttpServletRequest getRequest() {
         return request;
     }
 
-    public void setRequest(ServletRequest request) {
+    public void setRequest(HttpServletRequest request) {
         this.request = request;
     }
 
-    public ServletResponse getResponse() {
+    public HttpServletResponse getResponse() {
         return response;
     }
 
-    public void setResponse(ServletResponse response) {
+    public void setResponse(HttpServletResponse response) {
         this.response = response;
     }
 
