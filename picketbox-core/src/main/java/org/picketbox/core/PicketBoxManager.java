@@ -33,6 +33,7 @@ import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.resource.WebResource;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.exceptions.AuthorizationException;
+import org.picketbox.core.logout.LogoutManager;
 
 /**
  * <p>
@@ -46,6 +47,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     private HTTPAuthenticationScheme authenticationScheme;
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;
+    private LogoutManager logoutManager;
 
     /*
      * Life cycle attributes.
@@ -53,12 +55,14 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     private boolean started;
     private boolean stopped = true;
 
-    PicketBoxManager(HTTPAuthenticationScheme authenticationScheme) {
+    PicketBoxManager(HTTPAuthenticationScheme authenticationScheme, LogoutManager logoutManager) {
         if (authenticationScheme == null) {
             throw PicketBoxMessages.MESSAGES.authenticationSchemeNotProvided();
         }
 
         this.authenticationScheme = authenticationScheme;
+
+        this.logoutManager = logoutManager;
     }
 
     /**
@@ -96,7 +100,12 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
 
     public PicketBoxSubject getAuthenticatedUser(HttpServletRequest servletReq) {
         checkIfStarted();
-        return (PicketBoxSubject) servletReq.getSession().getAttribute(PicketBoxConstants.SUBJECT);
+
+        if (servletReq.getSession(false) == null) {
+            return null;
+        }
+
+        return (PicketBoxSubject) servletReq.getSession(false).getAttribute(PicketBoxConstants.SUBJECT);
     }
 
     /**
@@ -128,6 +137,11 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         } catch (Exception e) {
             throw PicketBoxMessages.MESSAGES.authorizationFailed(e);
         }
+    }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        checkIfStarted();
+        this.logoutManager.logout(request, response);
     }
 
     /**
@@ -172,6 +186,20 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         this.identityManager = identityManager;
     }
 
+    /**
+     * @return the logoutManager
+     */
+    public LogoutManager getLogoutManager() {
+        return this.logoutManager;
+    }
+
+    /**
+     * @param logoutManager the logoutManager to set
+     */
+    public void setLogoutManager(LogoutManager logoutManager) {
+        this.logoutManager = logoutManager;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -194,8 +222,16 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         }
 
         PicketBoxLogger.LOGGER.debug("Using Authentication Scheme : " + this.authenticationScheme.getClass().getName());
-        PicketBoxLogger.LOGGER.debug("Using Authorization Manager : " + this.authenticationScheme.getClass().getName());
-        PicketBoxLogger.LOGGER.debug("Using Identity Manager : " + this.authenticationScheme.getClass().getName());
+        PicketBoxLogger.LOGGER.debug("Using Logout Manager : " + this.logoutManager.getClass().getName());
+
+        if (this.authorizationManager != null) {
+            PicketBoxLogger.LOGGER.debug("Using Authorization Manager : " + this.authorizationManager.getClass().getName());
+        }
+
+        if (this.identityManager != null) {
+            PicketBoxLogger.LOGGER.debug("Using Identity Manager : " + this.identityManager.getClass().getName());
+        }
+
         PicketBoxLogger.LOGGER.startingPicketBox();
 
         if (this.authorizationManager != null) {

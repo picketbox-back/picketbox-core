@@ -84,17 +84,30 @@ public interface PicketBoxConstants {
     String USERNAME = "picketbox.username";
 
     /**
-     * <p>Defines the {@link HttpSession} attribute name used to store a {@link SavedRequest} instance.</p>
+     * <p>
+     * Defines the {@link HttpSession} attribute name used to store a {@link SavedRequest} instance.
+     * </p>
      */
     String SAVED_REQUEST = "SAVED_REQUEST";
 
     /**
-     * <p>Defines the {@link ServletContext} attribute name used to store a {@link PicketBoxManager} instance.</p>
+     * <p>
+     * Defines the {@link ServletContext} attribute name used to store a {@link PicketBoxManager} instance.
+     * </p>
      */
     String PICKETBOX_MANAGER = "PICKETBOX_MANAGER";
 
     /**
-     * <p>Defines the {@link HttpSession} attribute name used to store a {@link PicketBoxSubject} instance.</p>
+     * <p>
+     * Defines the {@link HttpSession} attribute name used to store a {@link PicketBoxSubject} instance.
+     * </p>
      */
     String SUBJECT = "SUBJECT";
+
+    /**
+     * <p>
+     * Defines the default URI used to start the logout process.
+     * </p>
+     */
+    String LOGOUT_URI = "/picketbox_logout";
 }
