@@ -23,6 +23,7 @@ package org.picketbox.core.authorization;
 
 import org.picketbox.core.PicketBoxLifecycle;
 import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.exceptions.AuthorizationException;
 
 /**
  * Deals with enforcement and entitlements.
@@ -37,8 +38,9 @@ public interface AuthorizationManager extends PicketBoxLifecycle {
      * @param resource resource for which we need to check access decision
      * @param subject  subject (user/process) that is performing an action on the resource
      * @return
+     * @throws AuthorizationException if some problem occurs during the authorization process.
      */
-    boolean authorize(Resource resource, PicketBoxSubject subject);
+    boolean authorize(Resource resource, PicketBoxSubject subject) throws AuthorizationException;
 
     /**
      * Entitlement API

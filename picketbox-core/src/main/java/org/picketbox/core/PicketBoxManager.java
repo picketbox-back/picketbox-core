@@ -32,6 +32,7 @@ import org.picketbox.core.authentication.http.HTTPAuthenticationScheme;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.resource.WebResource;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketbox.core.exceptions.AuthorizationException;
 
 /**
  * <p>
@@ -103,22 +104,30 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
      *
      * @param servletReq
      * @param servletResp
-     * @return
-     * @throws AuthenticationException
+     *
+     * @return true is the user is authorized.
+     *
+     * @throws AuthorizationException if some problem occurs during the authorization process.
      */
-    public boolean authorize(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
-        checkIfStarted();
+    public boolean authorize(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws AuthorizationException {
+        try {
+            checkIfStarted();
 
-        if (this.authorizationManager == null || !this.isAuthenticated(httpRequest)) {
-            return true;
+            if (this.authorizationManager == null || !this.isAuthenticated(httpRequest)) {
+                return true;
+            }
+
+            WebResource resource = new WebResource();
+            resource.setContext(httpRequest.getServletContext());
+            resource.setRequest(httpRequest);
+            resource.setResponse(httpResponse);
+
+            boolean isAuthorized = this.authorizationManager.authorize(resource, getAuthenticatedUser(httpRequest));
+
+            return isAuthorized;
+        } catch (Exception e) {
+            throw PicketBoxMessages.MESSAGES.authorizationFailed(e);
         }
-
-        WebResource resource = new WebResource();
-        resource.setContext(httpRequest.getServletContext());
-        resource.setRequest(httpRequest);
-        resource.setResponse(httpResponse);
-
-        return this.authorizationManager.authorize(resource, getAuthenticatedUser(httpRequest));
     }
 
     /**
