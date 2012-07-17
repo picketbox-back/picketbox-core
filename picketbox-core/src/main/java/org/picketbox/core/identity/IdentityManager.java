@@ -19,26 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.core.authorization;
 
-import org.picketbox.core.PicketBoxLifecycle;
+package org.picketbox.core.identity;
+
+import java.security.Principal;
+
 import org.picketbox.core.PicketBoxSubject;
-import org.picketbox.core.exceptions.AuthorizationException;
 
 /**
- * Deals with enforcement and entitlements.
+ * <p>
+ * This interfrace defines the contract for Identity Manager implementations used to create {@link PicketBoxSubject} instances
+ * with the informations retrieved from an specific identity store or IDM solution.
+ * </p>
  *
- * @author anil saldhana
- * @since Jul 10, 2012
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public interface AuthorizationManager extends PicketBoxLifecycle {
+public interface IdentityManager {
+
     /**
-     * Enforcement API
+     * <p>
+     * Used to create a {@link PicketBoxSubject} instance using an authenticated {@link Principal}.
+     * </p>
      *
-     * @param resource resource for which we need to check access decision
-     * @param subject  subject (user/process) that is performing an action on the resource
+     * @param principal
      * @return
-     * @throws AuthorizationException if some problem occurs during the authorization process.
      */
-    boolean authorize(Resource resource, PicketBoxSubject subject) throws AuthorizationException;
+    PicketBoxSubject getIdentity(Principal principal);
+
 }

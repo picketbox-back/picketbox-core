@@ -30,9 +30,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPAuthenticationScheme;
 import org.picketbox.core.authorization.AuthorizationManager;
+import org.picketbox.core.authorization.EntitlementsManager;
 import org.picketbox.core.authorization.resource.WebResource;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.exceptions.AuthorizationException;
+import org.picketbox.core.identity.IdentityManager;
 import org.picketbox.core.logout.LogoutManager;
 
 /**
@@ -46,6 +48,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
 
     private HTTPAuthenticationScheme authenticationScheme;
     private AuthorizationManager authorizationManager;
+    private EntitlementsManager entitlementsManager;
     private IdentityManager identityManager;
     private LogoutManager logoutManager;
 
@@ -200,6 +203,22 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         this.logoutManager = logoutManager;
     }
 
+    /**
+     * Get the {@link EntitlementsManager}
+     * @return
+     */
+    public EntitlementsManager getEntitlementsManager() {
+        return entitlementsManager;
+    }
+
+    /**
+     * Set the {@link EntitlementsManager}
+     * @param entitlementsManager
+     */
+    public void setEntitlementsManager(EntitlementsManager entitlementsManager) {
+        this.entitlementsManager = entitlementsManager;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -277,5 +296,4 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
             throw PicketBoxMessages.MESSAGES.picketBoxManagerNotStarted();
         }
     }
-
 }
