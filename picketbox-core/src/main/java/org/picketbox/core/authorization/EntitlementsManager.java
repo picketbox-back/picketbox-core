@@ -19,29 +19,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.picketbox.core.authorization;
 
-package org.picketbox.core;
-
-import java.security.Principal;
+import org.picketbox.core.PicketBoxSubject;
 
 /**
- * <p>
- * This interfrace defines the contract for Identity Manager implementations used to create {@link PicketBoxSubject} instances
- * with the informations retrieved from an specific identity store or IDM solution.
- * </p>
+ * Unlike the {@link AuthorizationManager}, the {@link EntitlementsManager}
+ * is used to obtain all the entitlements with one call.
  *
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * @author anil saldhana
+ * @since Jul 17, 2012
  */
-public interface IdentityManager {
-
+public interface EntitlementsManager {
     /**
-     * <p>
-     * Used to create a {@link PicketBoxSubject} instance using an authenticated {@link Principal}.
-     * </p>
+     * Entitlement API
      *
-     * @param principal
+     * @param resource resource for which we need to check entitlements
+     * @param subject  subject (user/process) that is performing an action on the resource
      * @return
      */
-    PicketBoxSubject getIdentity(Principal principal);
+    Entitlement[] entitlements(Resource resource, PicketBoxSubject subject);
 
+    /**
+     * Marker interface to indicate an entitlement
+     *
+     * @author anil saldhana
+     * @since Jul 10, 2012
+     */
+    public interface Entitlement {
+    }
 }

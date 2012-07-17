@@ -34,6 +34,7 @@ import org.picketbox.core.authorization.EntitlementsManager;
 import org.picketbox.core.authorization.resource.WebResource;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.exceptions.AuthorizationException;
+import org.picketbox.core.identity.IdentityManager;
 import org.picketbox.core.logout.LogoutManager;
 
 /**

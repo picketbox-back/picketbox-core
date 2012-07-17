@@ -20,9 +20,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core;
+package org.picketbox.core.identity;
 
 import java.security.Principal;
+
+import org.picketbox.core.PicketBoxSubject;
 
 /**
  * <p>
