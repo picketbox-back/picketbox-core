@@ -66,7 +66,7 @@ public abstract class EmbeddedWebServerBase {
     protected Connector[] getConnectors() {
         Connector connector = new SocketConnector();
         connector.setPort(11080);
-        return new Connector[]{connector};
+        return new Connector[] { connector };
     }
 
     /**

@@ -23,6 +23,7 @@ package org.picketbox.core;
 
 import java.io.Serializable;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,7 @@ public class PicketBoxSubject implements Serializable {
 
     protected Subject subject;
     protected Principal user;
-    protected List<String> roleNames;
+    protected List<String> roleNames = new ArrayList<String>();
     protected Map<String, Object> attributes = new HashMap<String, Object>();
     protected Map<String, Object> contextData = new HashMap<String, Object>();
 
@@ -81,7 +82,7 @@ public class PicketBoxSubject implements Serializable {
      * @param rolesNames
      */
     public void setRoleNames(List<String> rolesNames) {
-        this.roleNames = rolesNames;
+        this.roleNames.addAll(rolesNames);
     }
 
     /**

@@ -26,6 +26,8 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 import org.jboss.logging.Cause;
+import org.jboss.logging.LogMessage;
+import org.jboss.logging.Logger;
 import org.jboss.logging.Message;
 import org.jboss.logging.MessageBundle;
 import org.jboss.logging.Messages;
@@ -131,4 +133,16 @@ public interface PicketBoxMessages {
 
     @Message(id = 29, value = "User session is not valid.")
     IllegalStateException invalidUserSession();
+
+    @Message(id = 30, value = "Failed to close NamingEnumeration")
+    RuntimeException namingEnumerationClose(@Cause Throwable throwable);
+
+    @Message(id = 31, value = "Failed to construct Ldap Context")
+    RuntimeException ldapCtxConstructionFailure(@Cause Throwable throwable);
+
+    @Message(id = 32, value = "Ldap Search Config is missing")
+    RuntimeException ldapSearchConfigMissing();
+
+    @Message(id = 33, value = "Ldap Search Base is missing")
+    RuntimeException ldapSearchBaseMissing();
 }

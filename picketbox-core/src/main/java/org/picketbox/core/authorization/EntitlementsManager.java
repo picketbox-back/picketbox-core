@@ -24,8 +24,8 @@ package org.picketbox.core.authorization;
 import org.picketbox.core.PicketBoxSubject;
 
 /**
- * Unlike the {@link AuthorizationManager}, the {@link EntitlementsManager}
- * is used to obtain all the entitlements with one call.
+ * Unlike the {@link AuthorizationManager}, the {@link EntitlementsManager} is used to obtain all the entitlements with one
+ * call.
  *
  * @author anil saldhana
  * @since Jul 17, 2012
@@ -35,7 +35,7 @@ public interface EntitlementsManager {
      * Entitlement API
      *
      * @param resource resource for which we need to check entitlements
-     * @param subject  subject (user/process) that is performing an action on the resource
+     * @param subject subject (user/process) that is performing an action on the resource
      * @return
      */
     Entitlement[] entitlements(Resource resource, PicketBoxSubject subject);

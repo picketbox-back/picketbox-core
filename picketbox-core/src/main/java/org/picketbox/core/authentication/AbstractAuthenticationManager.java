@@ -65,7 +65,6 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         throw new RuntimeException();
     }
 
-
     @Override
     public boolean started() {
         return started;

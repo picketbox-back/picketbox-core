@@ -205,6 +205,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
 
     /**
      * Get the {@link EntitlementsManager}
+     *
      * @return
      */
     public EntitlementsManager getEntitlementsManager() {
@@ -213,6 +214,7 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
 
     /**
      * Set the {@link EntitlementsManager}
+     *
      * @param entitlementsManager
      */
     public void setEntitlementsManager(EntitlementsManager entitlementsManager) {

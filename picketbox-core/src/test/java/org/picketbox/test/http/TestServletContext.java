@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author anil saldhana
  * @since Jan 28, 2009
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class TestServletContext implements ServletContext {
 
     public class TestRequestDispatcher implements RequestDispatcher {
