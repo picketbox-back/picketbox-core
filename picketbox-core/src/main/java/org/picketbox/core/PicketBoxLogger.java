@@ -45,4 +45,8 @@ public interface PicketBoxLogger extends BasicLogger {
     @LogMessage(level = Logger.Level.INFO)
     @Message(id = 501, value = "Starting PicketBox")
     void startingPicketBox();
+
+    @LogMessage(level = Logger.Level.WARN)
+    @Message(id = 502, value = "ALL RESOURCES WILL BE PROTECTED. MAYBE YOU DID NOT DEFINE WHICH RESOURCES SHOULD BE PROTECTED.")
+    void allResourcesWillBeProteced();
 }
