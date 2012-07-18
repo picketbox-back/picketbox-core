@@ -36,6 +36,8 @@ import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.exceptions.AuthorizationException;
 import org.picketbox.core.identity.IdentityManager;
 import org.picketbox.core.logout.LogoutManager;
+import org.picketbox.core.resource.ProtectedResource;
+import org.picketbox.core.resource.ProtectedResourceManager;
 
 /**
  * <p>
@@ -44,28 +46,32 @@ import org.picketbox.core.logout.LogoutManager;
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public final class PicketBoxManager implements PicketBoxLifecycle {
+public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
 
     private HTTPAuthenticationScheme authenticationScheme;
+    private LogoutManager logoutManager;
+    private ProtectedResourceManager protectedResourceManager;
     private AuthorizationManager authorizationManager;
     private EntitlementsManager entitlementsManager;
     private IdentityManager identityManager;
-    private LogoutManager logoutManager;
 
-    /*
-     * Life cycle attributes.
-     */
-    private boolean started;
-    private boolean stopped = true;
-
-    PicketBoxManager(HTTPAuthenticationScheme authenticationScheme, LogoutManager logoutManager) {
+    PicketBoxManager(HTTPAuthenticationScheme authenticationScheme, LogoutManager logoutManager,
+            ProtectedResourceManager protectedResourceManager) {
         if (authenticationScheme == null) {
-            throw PicketBoxMessages.MESSAGES.authenticationSchemeNotProvided();
+            throw PicketBoxMessages.MESSAGES.invalidNullArgument("Authentication Scheme");
+        }
+
+        if (logoutManager == null) {
+            throw PicketBoxMessages.MESSAGES.invalidNullArgument("Logout Manager");
+        }
+
+        if (protectedResourceManager == null) {
+            throw PicketBoxMessages.MESSAGES.invalidNullArgument("Protected Resource Manager");
         }
 
         this.authenticationScheme = authenticationScheme;
-
         this.logoutManager = logoutManager;
+        this.protectedResourceManager = protectedResourceManager;
     }
 
     /**
@@ -91,12 +97,17 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
      */
     public void authenticate(HttpServletRequest servletReq, HttpServletResponse servletResp) throws AuthenticationException {
         checkIfStarted();
-        if (!isAuthenticated(servletReq)) {
-            Principal principal = this.authenticationScheme.authenticate(servletReq, servletResp);
 
-            if (principal != null) {
-                PicketBoxSubject subject = this.identityManager.getIdentity(principal);
-                servletReq.getSession(true).setAttribute(PicketBoxConstants.SUBJECT, subject);
+        ProtectedResource protectedResource = getProtectedResource(servletReq);
+
+        if (protectedResource.requiresAuthentication()) {
+            if (!isAuthenticated(servletReq)) {
+                Principal principal = this.authenticationScheme.authenticate(servletReq, servletResp);
+
+                if (principal != null) {
+                    PicketBoxSubject subject = this.identityManager.getIdentity(principal);
+                    servletReq.getSession(true).setAttribute(PicketBoxConstants.SUBJECT, subject);
+                }
             }
         }
     }
@@ -125,7 +136,9 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         try {
             checkIfStarted();
 
-            if (this.authorizationManager == null || !this.isAuthenticated(httpRequest)) {
+            ProtectedResource protectedResource = getProtectedResource(httpRequest);
+
+            if (!isPerformAuthorization(httpRequest, protectedResource)) {
                 return true;
             }
 
@@ -145,6 +158,10 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         checkIfStarted();
         this.logoutManager.logout(request, response);
+    }
+
+    private boolean isPerformAuthorization(HttpServletRequest httpRequest, ProtectedResource protectedResource) {
+        return this.authorizationManager != null && this.isAuthenticated(httpRequest) && protectedResource.requiresAuthorization();
     }
 
     /**
@@ -221,29 +238,39 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
         this.entitlementsManager = entitlementsManager;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Get the {@link ProtectedResourceManager}
      *
-     * @see org.picketbox.core.PicketBoxLifecycle#started()
+     * @return the protectedResourceManager
      */
-    @Override
-    public boolean started() {
-        return this.started;
+    public ProtectedResourceManager getProtectedResourceManager() {
+        return protectedResourceManager;
+    }
+
+    /**
+     * Set the {@link ProtectedResourceManager}
+     *
+     * @param protectedResourceManager
+     */
+    public void setProtectedResourceManager(ProtectedResourceManager protectedResourceManager) {
+        this.protectedResourceManager = protectedResourceManager;
+    }
+
+    private ProtectedResource getProtectedResource(HttpServletRequest servletReq) {
+        return this.protectedResourceManager.getProtectedResource(servletReq);
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.picketbox.core.PicketBoxLifecycle#start()
+     * @see org.picketbox.core.AbstractPicketBoxLifeCycle#doStart()
      */
     @Override
-    public void start() {
-        if (this.started) {
-            throw PicketBoxMessages.MESSAGES.picketBoxManagerAlreadyStarted();
-        }
-
+    protected void doStart() {
         PicketBoxLogger.LOGGER.debug("Using Authentication Scheme : " + this.authenticationScheme.getClass().getName());
         PicketBoxLogger.LOGGER.debug("Using Logout Manager : " + this.logoutManager.getClass().getName());
+        PicketBoxLogger.LOGGER
+                .debug("Using Protected Resource Manager : " + this.protectedResourceManager.getClass().getName());
 
         if (this.authorizationManager != null) {
             PicketBoxLogger.LOGGER.debug("Using Authorization Manager : " + this.authorizationManager.getClass().getName());
@@ -259,43 +286,17 @@ public final class PicketBoxManager implements PicketBoxLifecycle {
             this.authorizationManager.start();
         }
 
-        this.started = true;
-        this.stopped = false;
+        this.protectedResourceManager.start();
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.picketbox.core.PicketBoxLifecycle#stopped()
+     * @see org.picketbox.core.AbstractPicketBoxLifeCycle#doStop()
      */
     @Override
-    public boolean stopped() {
-        return this.stopped;
+    protected void doStop() {
+
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.PicketBoxLifecycle#stop()
-     */
-    @Override
-    public void stop() {
-        if (this.stopped) {
-            throw PicketBoxMessages.MESSAGES.picketBoxManagerAlreadyStopped();
-        }
-
-        this.started = false;
-        this.stopped = true;
-    }
-
-    /**
-     * <p>
-     * Checks if the manager is started.
-     * </p>
-     */
-    private void checkIfStarted() {
-        if (!this.started()) {
-            throw PicketBoxMessages.MESSAGES.picketBoxManagerNotStarted();
-        }
-    }
 }
