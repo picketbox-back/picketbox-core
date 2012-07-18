@@ -96,8 +96,8 @@ public interface PicketBoxMessages {
     @Message(id = 17, value = "Missing required property: %s")
     IllegalStateException missingRequiredProperty(String property);
 
-    @Message(id = 18, value = "Failed to locate a DataSource: either provide one via injection or provide a dsJNDIName")
-    IllegalStateException missingDataSourceConfiguration();
+    @Message(id = 18, value = "Invalid configuration: either provide a JPA config name or a DataSource (via injection or JNDI)")
+    IllegalStateException invalidDatabaseAuthenticationManagerConfiguration();
 
     @Message(id = 19, value = "Query %s found no results")
     String queryFoundNoResultsMessage(String query);
