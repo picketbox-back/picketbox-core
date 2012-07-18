@@ -40,7 +40,7 @@ import org.picketbox.core.exceptions.PicketBoxSessionException;
  */
 public class PicketBoxSession {
     protected ConcurrentMap<String, Object> attributes = new ConcurrentHashMap<String, Object>();
-    //Level 4 UUID based id
+    // Level 4 UUID based id
     protected String id = UUID.randomUUID().toString();
 
     protected boolean invalid = false;
