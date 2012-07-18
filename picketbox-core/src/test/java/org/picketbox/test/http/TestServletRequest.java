@@ -74,6 +74,8 @@ public class TestServletRequest implements HttpServletRequest {
 
     private String contextPath;
 
+    private HttpSession session = new TestHttpSession();
+
     public TestServletRequest(InputStream is) {
         super();
         this.is = new BufferedInputStream(is);
@@ -160,11 +162,11 @@ public class TestServletRequest implements HttpServletRequest {
     }
 
     public HttpSession getSession() {
-        return new TestHttpSession();
+        return this.session;
     }
 
     public HttpSession getSession(boolean create) {
-        return new TestHttpSession();
+        return this.session;
     }
 
     public Principal getUserPrincipal() {

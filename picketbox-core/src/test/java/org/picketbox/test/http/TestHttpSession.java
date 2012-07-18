@@ -22,6 +22,8 @@
 package org.picketbox.test.http;
 
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -35,6 +37,8 @@ import javax.servlet.http.HttpSessionContext;
  */
 @SuppressWarnings("deprecation")
 public class TestHttpSession implements HttpSession {
+
+    private Map<String, Object> attributes = new HashMap<String, Object>();
 
     @Override
     public long getCreationTime() {
@@ -72,7 +76,7 @@ public class TestHttpSession implements HttpSession {
 
     @Override
     public Object getAttribute(String name) {
-        return null;
+        return this.attributes.get(name);
     }
 
     @Override
@@ -92,6 +96,7 @@ public class TestHttpSession implements HttpSession {
 
     @Override
     public void setAttribute(String name, Object value) {
+        this.attributes .put(name, value);
     }
 
     @Override
