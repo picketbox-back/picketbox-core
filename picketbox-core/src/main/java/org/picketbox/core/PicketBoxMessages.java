@@ -128,4 +128,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 28, value = "User authorization failed.")
     AuthorizationException authorizationFailed(@Cause Throwable t);
+
+    @Message(id = 29, value = "User session is not valid.")
+    IllegalStateException invalidUserSession();
 }

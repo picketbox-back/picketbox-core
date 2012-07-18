@@ -28,24 +28,39 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.authentication.PicketBoxConstants;
 
 /**
+ * <p>This class provides the basic functionalities for the logout process.</p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public class LogoutManager {
 
+    /**
+     * <p>URL used to start the logout process.</p>
+     */
     private String logoutUrl;
 
+    /**
+     * <p>Page URL to redirect the user after a successful logout.</p>
+     */
     private String logoutPage;
 
+    /**
+     * <p>Process the logout.</p>
+     *
+     * @param request
+     * @param response
+     */
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         if (isLogoutRequest(request)) {
             HttpSession session = request.getSession(false);
 
             if (session == null) {
-                throw new IllegalStateException("User session not created. Could not proceed with the logout.");
+                throw PicketBoxMessages.MESSAGES.invalidUserSession();
             }
 
             session.invalidate();
@@ -64,8 +79,20 @@ public class LogoutManager {
         }
     }
 
-    protected boolean isLogoutRequest(HttpServletRequest request) {
-        return request.getRequestURI().contains(PicketBoxConstants.LOGOUT_URI);
+    /**
+     * <p>Checks if the request is asking for a logout.</p>
+     *
+     * @param request
+     * @return
+     */
+    private boolean isLogoutRequest(HttpServletRequest request) {
+        String logoutUrl = getLogoutUrl();
+
+        if (logoutUrl == null) {
+            logoutUrl = PicketBoxConstants.LOGOUT_URI;
+        }
+
+        return request.getRequestURI().contains(logoutUrl);
     }
 
     /**
