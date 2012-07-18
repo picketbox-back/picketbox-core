@@ -26,6 +26,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
@@ -85,11 +87,11 @@ public class DatabaseAuthenticationManagerUnitTestCase {
     }
 
     @Test
-    public void testSuccessfulAuth() throws Exception {
+    public void testSuccessfulAuthViaJDBC() throws Exception {
         // create an instance of DBAuthManager and inject the datasource.
         DatabaseAuthenticationManager manager = new DatabaseAuthenticationManager();
         manager.setDataSource(dataSource);
-        manager.setPrincipalsQuery("SELECT PASSWORD FROM USERS WHERE USERNAME = ?");
+        manager.setPasswordQuery("SELECT PASSWORD FROM USERS WHERE USERNAME = ?");
 
         // try to authenticate using a valid passoword.
         Principal principal = manager.authenticate("picketbox", "goodpass");
@@ -99,11 +101,11 @@ public class DatabaseAuthenticationManagerUnitTestCase {
     }
 
     @Test
-    public void testUnsuccessfulAuth() throws Exception {
+    public void testUnsuccessfulAuthViaJDBC() throws Exception {
         DatabaseAuthenticationManager manager = new DatabaseAuthenticationManager();
         manager.setDataSource(dataSource);
         String query = "SELECT PASSWORD FROM USERS WHERE USERNAME = ?";
-        manager.setPrincipalsQuery(query);
+        manager.setPasswordQuery(query);
 
         // try to authenticate using an invalid password.
         try {
@@ -122,12 +124,68 @@ public class DatabaseAuthenticationManagerUnitTestCase {
         }
 
         // lastly, try to authenticate using an invalid SQL query string.
-        manager.setPrincipalsQuery("SELECT PASSWORD FROM ANOTHER_TABLE WHERE USERNAME = ?");
+        manager.setPasswordQuery("SELECT PASSWORD FROM ANOTHER_TABLE WHERE USERNAME = ?");
         try {
             manager.authenticate("picketbox", "goodpass");
             Assert.fail("Authentication should have failed - invalid query has been provided");
         } catch (AuthenticationException ae) {
             Assert.assertTrue(ae.getCause() instanceof SQLException);
         }
+    }
+
+    @Test
+    public void testSuccessfulAuthViaJPA() throws Exception {
+        DatabaseAuthenticationManager manager = new DatabaseAuthenticationManager();
+        manager.setPasswordQuery("SELECT PASSWORD FROM USERS WHERE USERNAME = ?");
+        manager.setJpaConfigName("test");
+
+        Principal principal = manager.authenticate("picketbox", "goodpass");
+        Assert.assertNotNull(principal);
+        Assert.assertTrue(principal instanceof PicketBoxPrincipal);
+        Assert.assertEquals("picketbox", principal.getName());
+    }
+
+    @Test
+    public void testUnsuccessfulAuthViaJPA() throws Exception {
+        DatabaseAuthenticationManager manager = new DatabaseAuthenticationManager();
+        String query = "SELECT PASSWORD FROM USERS WHERE USERNAME = ?";
+        manager.setPasswordQuery(query);
+        manager.setJpaConfigName("test");
+
+        // try to authenticate using an invalid password.
+        try {
+            manager.authenticate("picketbox", "badpass");
+            Assert.fail("Authentication should have failed - bad password has been provided");
+        } catch (AuthenticationException ae) {
+            Assert.assertEquals(PicketBoxMessages.MESSAGES.failedToValidateCredentials().getMessage(), ae.getMessage());
+        }
+
+        // now try to authenticate using an invalid username.
+        try {
+            manager.authenticate("baduser", "badpass");
+            Assert.fail("Authentication should have failed - invalid username has been provided");
+        } catch (AuthenticationException ae) {
+            Assert.assertTrue(ae.getCause() instanceof NoResultException);
+        }
+
+        // now try to use an invalid JPA configuration.
+        manager.setJpaConfigName("badconfig");
+        try {
+            manager.authenticate("picketbox", "goodpass");
+            Assert.fail("Authentication should have failed - invalid JPA configuration has been provided");
+        } catch (AuthenticationException ae) {
+            Assert.assertTrue(ae.getCause() instanceof PersistenceException);
+        }
+
+        // finally try to authenticate using an invalid SQL query string.
+        manager.setJpaConfigName("test");
+        manager.setPasswordQuery("SELECT PASSWORD FROM ANOTHER_TABLE WHERE USERNAME = ?");
+        try {
+            manager.authenticate("picketbox", "goodpass");
+            Assert.fail("Authentication should have failed - invalid query has been provided");
+        } catch (AuthenticationException ae) {
+            Assert.assertTrue(ae.getCause() instanceof PersistenceException);
+        }
+
     }
 }

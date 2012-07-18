@@ -29,6 +29,10 @@ import java.sql.SQLException;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.sql.DataSource;
 
 import org.picketbox.core.PicketBoxLogger;
@@ -43,21 +47,29 @@ import org.picketbox.core.util.HTTPDigestUtil;
 /**
  * <p>
  * An instance of {@link org.picketbox.core.authentication.AuthenticationManager} that connects to a database to retrieve
- * stored passwords for authentication. It requires the configuration of a {@code DataSource} and a query that will be
- * used to obtain the password for the incoming username.
+ * stored passwords for authentication. Both JPA and JDBC can be used to connect to the database and perform the queries.
  * </p>
  * <p>
- * This manager offers the following configuratoin properties:
+ * When using JPA, the following properties MUST be configured;
  * <ul>
- * <li>dataSource: allows for the injection of a {@code DataSource} instance</li>
- * <li>dsJNDIName: specifies the JNDI name that can be used to retrieve a {@code DataSource} instance. If the
- * {@code DataSource} has not been injected directly, this property MUST be set. Otherwise, authentication will
- * fail</li>
- * <li>principalsQuery: required parameter that specifies the query that must be run in order to obtain the password
- * associated with the incoming username. It must return a single result and must accept the username as a query
- * parameter</li>
+ *     <li>jpaConfigName; the name of the persistence unit as configured in the persistence.xml file</li>
+ *     <li>passwordQuery; the query that must be run in order to obtain the password associated with the incoming
+ *     username. It must return a single result and must accept the username as a query parameter.</li>
  * </ul>
  * </p>
+ * <p>
+ * When using JDBC, the manager requires the configuration of a {@code DataSource}. The following properties are available
+ * for JDBC mode:
+ * <ul>
+ *     <li>dataSource; allows for direct injection of a {@code DataSource} instance</li>
+ *     <li>dsJndiName; specifies the JNDI name that can be used to retrieve a {@code DataSource} instance. If the
+ * {@code DataSource} has not been injected directly, this property MUST be set. Otherwise, authentication will
+ * fail</li>
+ *     <li>passwordQuery; the query that must be run in order to obtain the password associated with the incoming
+ *     username. It must return a single result and must accept the username as a query parameter.</li>
+ * </ul>
+ * </p>
+ * <p>
  *
  * @author <a href="mailto:sguilhen@redhat.com">Stefan Guilhen</a>
  */
@@ -67,7 +79,41 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
 
     private String dsJNDIName;
 
-    private String principalsQuery;
+    private String jpaConfigName;
+
+    private String passwordQuery;
+
+    public DataSource getDataSource() {
+        return this.dataSource;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public String getDsJNDIName() {
+        return this.dsJNDIName;
+    }
+
+    public void setDsJNDIName(String dsJNDIName) {
+        this.dsJNDIName = dsJNDIName;
+    }
+
+    public String getJpaConfigName() {
+        return this.jpaConfigName;
+    }
+
+    public void setJpaConfigName(String configuration) {
+        this.jpaConfigName = configuration;
+    }
+
+    public String getPasswordQuery() {
+        return this.passwordQuery;
+    }
+
+    public void setPasswordQuery(String query) {
+        this.passwordQuery = query;
+    }
 
     @Override
     public Principal authenticate(String username, Object credential) throws AuthenticationException {
@@ -90,74 +136,73 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
             throw PicketBoxMessages.MESSAGES.failedToValidateCredentials();
     }
 
-    public DataSource getDataSource() {
-        return this.dataSource;
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public String getDsJNDIName() {
-        return this.dsJNDIName;
-    }
-
-    public void setDsJNDIName(String dsJNDIName) {
-        this.dsJNDIName = dsJNDIName;
-    }
-
-    public String getPrincipalsQuery() {
-        return this.principalsQuery;
-    }
-
-    public void setPrincipalsQuery(String query) {
-        this.principalsQuery = query;
-    }
-
     /**
      * <p>
-     * Establishes a connection to the database to obtain the password associated with the specified username.
+     * Establishes a connection to the database to obtain the password associated with the specified username. If a JPA
+     * configuration name has been provided, JPA will be used to retrieve the password. If not, the code will attempt to
+     * use a DataSource to establish a JDBC connection to the database.
      * </p>
      *
-     * @param username the username used as a parameter in the {@code principalsQuery}.
+     * @param username the username used as a parameter in the {@code passwordQuery}.
      * @return the password retrieved from the database.
-     * @throws AuthenticationException if an error occurs while retrieving the {@code DataSource} or if query returns
-     *                                 no results.
+     * @throws AuthenticationException if an error occurs while retrieving password from the database.
      */
     private String retrievePasswordFromDatabase(String username) throws AuthenticationException {
 
-        // TODO: add code to suspend/resume transactions via configuration.
+        // check if the required principals query property has been set..
+        if (this.getPasswordQuery() == null || this.getPasswordQuery().isEmpty())
+            throw PicketBoxMessages.MESSAGES.missingRequiredProperty("passwordQuery");
 
-        // if the datasource has not been injected, try obtaining it from JNDI.
-        if (this.dataSource == null) {
-            if (this.dsJNDIName != null) {
+        // if the name of a JPA configuration has been set, use it to execute the query via JPA.
+        if (this.getJpaConfigName() != null) {
+            return this.retrievePasswordViaJPA(username);
+        }
+
+        // no JPA config has been supplied - try getting a reference to a datasource.
+        if (this.getDataSource() == null) {
+            if (this.getDsJNDIName() != null) {
                 try {
                     InitialContext context = new InitialContext();
-                    this.dataSource = (DataSource) context.lookup(this.dsJNDIName);
+                    this.dataSource = (DataSource) context.lookup(this.getDsJNDIName());
                 } catch (NamingException ne) {
                     throw new AuthenticationException(ne);
                 }
             } else {
-                throw PicketBoxMessages.MESSAGES.missingDataSourceConfiguration();
+                throw PicketBoxMessages.MESSAGES.invalidDatabaseAuthenticationManagerConfiguration();
             }
         }
 
-        // get a connection from the datasource and execute the principalsQuery.
-        if (this.principalsQuery == null)
-            throw PicketBoxMessages.MESSAGES.missingRequiredProperty("principalsQuery");
+        // use the datasource to execute the query via JDBC.
+        return this.retrievePasswordViaJDBC(username);
+    }
 
-        PicketBoxLogger.LOGGER.debugQueryExecution(this.principalsQuery, username);
+    /**
+     * <p>
+     * This method uses the configured {@code DataSource} to get a connection to the database and execute the password
+     * query. It expects the query to return a single result and to accept the incoming username as a parameter.
+     * </p>
+     *
+     * @param username the username used as a parameter in the {@code passwordQuery}.
+     * @return the password retrieved from the dabase.
+     * @throws AuthenticationException if an error occurs while retrieving the password via JDBC.
+     */
+    private String retrievePasswordViaJDBC(String username) throws AuthenticationException {
+
+        // TODO: add code to suspend/resume transactions via configuration.
+        PicketBoxLogger.LOGGER.debugQueryExecution(this.getPasswordQuery(), username);
+
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
             connection = this.dataSource.getConnection();
-            preparedStatement = connection.prepareStatement(this.principalsQuery);
+            preparedStatement = connection.prepareStatement(this.getPasswordQuery());
             preparedStatement.setString(1, username);
             resultSet = preparedStatement.executeQuery();
 
             if (!resultSet.next())
-                throw new AuthenticationException(PicketBoxMessages.MESSAGES.queryFoundNoResultsMessage(this.principalsQuery));
+                throw new AuthenticationException(PicketBoxMessages.MESSAGES.queryFoundNoResultsMessage(
+                        this.getPasswordQuery()));
 
             return resultSet.getString(1);
         } catch (SQLException se) {
@@ -166,21 +211,56 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
             if (resultSet != null) {
                 try {
                     resultSet.close();
-                } catch (SQLException se) {
+                } catch (SQLException ignored) {
                 }
             }
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();
-                } catch (SQLException se) {
+                } catch (SQLException ignored) {
                 }
             }
             if (connection != null) {
                 try {
                     connection.close();
-                } catch (SQLException se) {
+                } catch (SQLException ignored) {
                 }
             }
         }
+    }
+
+    /**
+     * <p>
+     * This method uses a JPA configuration to connect to the database and execute the password query. It is expected that
+     * a persistence.xml file has been properly configured with a persistence unit whose name matches the name provided
+     * in the {@code jpaConfigName} property.
+     * </p>
+     * <p>
+     * The query follows the same rule as the JDBC query: it must return a single result containing the password and must
+     * accept the incoming username as a query parameter.
+     * </p>
+     *
+     * @param username the username used as a parameter in the {@code passwordQuery}.
+     * @return the password retrieved from the dabase.
+     * @throws AuthenticationException if an error occurs while retrieving the password via JPA.
+     */
+    private String retrievePasswordViaJPA(String username) throws AuthenticationException {
+
+        try {
+            // get an entity manager factory using the jpa configuration name.
+            EntityManagerFactory factory = Persistence.createEntityManagerFactory(this.getJpaConfigName());
+            EntityManager manager = factory.createEntityManager();
+
+            // create a query instance and run the configured principals query.
+            Query query = manager.createNativeQuery(this.getPasswordQuery());
+            query.setParameter(1, username);
+
+            Object result = query.getSingleResult();
+            return result.toString();
+        }
+        catch (Exception e) {
+            throw new AuthenticationException(e);
+        }
+
     }
 }
