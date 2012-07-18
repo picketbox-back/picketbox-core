@@ -56,7 +56,7 @@ import javax.servlet.http.Part;
  * @author anil saldhana
  * @since Jan 28, 2009
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class TestServletRequest implements HttpServletRequest {
     private BufferedInputStream is = null;
 

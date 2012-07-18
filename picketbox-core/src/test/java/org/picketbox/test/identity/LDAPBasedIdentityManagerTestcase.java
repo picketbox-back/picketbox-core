@@ -19,45 +19,64 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.authentication;
+package org.picketbox.test.identity;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.naming.Context;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.core.authentication.impl.LDAPAuthenticationManager;
+import org.picketbox.core.PicketBoxPrincipal;
+import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
 import org.picketbox.test.ldap.BaseOpenDS;
 
 /**
- * Unit test the {@link LDAPAuthenticationManager}
+ * Unit test the {@link LDAPBasedIdentityManager}
  *
  * @author anil saldhana
- * @since Jul 16, 2012
+ * @since Jul 18, 2012
  */
-public class LDAPAuthenticationManagerUnitTestCase extends BaseOpenDS {
+public class LDAPBasedIdentityManagerTestcase extends BaseOpenDS {
 
     @Before
     public void setup() throws Exception {
-        URL ldif = getClass().getClassLoader().getResource("ldap/ldapAttributes.ldif");
+        URL ldif = getClass().getClassLoader().getResource("ldap/users.ldif");
         boolean op = util.addLDIF(serverHost, port, adminDN, adminPW, ldif);
         assertTrue(op);
     }
 
     @Test
-    public void testAuth() throws Exception {
-        LDAPAuthenticationManager auth = new LDAPAuthenticationManager();
+    public void testIdentity() throws Exception {
+        LDAPBasedIdentityManager im = new LDAPBasedIdentityManager();
 
         Map<String, Object> options = new HashMap<String, Object>();
         options.put("java.naming.provider.url", "ldap://localhost:10389/");
         options.put("principalDNPrefix", "uid=");
         options.put("principalDNSuffix", ",ou=People,dc=jboss,dc=org");
 
-        auth.setOptions(options);
+        options.put(Context.SECURITY_PRINCIPAL, "cn=Directory Manager");
+        options.put(Context.SECURITY_CREDENTIALS, "password");
+        options.put("rolesCtxDN", "ou=Roles,dc=jboss,dc=org");
+        options.put("uidAttributeID", "member");
+        options.put("matchOnUserDN", "true");
+        options.put("roleAttributeID", "cn");
+        options.put("roleAttributeIsDN", "false");
 
-        assertTrue(auth.authenticate("jduke", "theduke") != null);
+        im.setOptions(options);
+
+        PicketBoxSubject subject = im.getIdentity(new PicketBoxPrincipal("jduke"));
+        assertNotNull(subject);
+        List<String> roleNames = subject.getRoleNames();
+        assertTrue(roleNames != null && roleNames.size() > 0);
+        assertTrue(roleNames.contains("Echo"));
+        assertTrue(roleNames.contains("TheDuke"));
     }
 }

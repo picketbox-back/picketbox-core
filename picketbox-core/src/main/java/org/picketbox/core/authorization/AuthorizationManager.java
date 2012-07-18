@@ -36,7 +36,7 @@ public interface AuthorizationManager extends PicketBoxLifecycle {
      * Enforcement API
      *
      * @param resource resource for which we need to check access decision
-     * @param subject  subject (user/process) that is performing an action on the resource
+     * @param subject subject (user/process) that is performing an action on the resource
      * @return
      * @throws AuthorizationException if some problem occurs during the authorization process.
      */

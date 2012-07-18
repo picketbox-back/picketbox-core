@@ -43,7 +43,6 @@ import org.picketbox.core.authentication.DigestHolder;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.util.HTTPDigestUtil;
 
-
 /**
  * <p>
  * An instance of {@link org.picketbox.core.authentication.AuthenticationManager} that connects to a database to retrieve
@@ -145,7 +144,12 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
      *
      * @param username the username used as a parameter in the {@code passwordQuery}.
      * @return the password retrieved from the database.
+<<<<<<< HEAD
      * @throws AuthenticationException if an error occurs while retrieving password from the database.
+=======
+     * @throws AuthenticationException if an error occurs while retrieving the {@code DataSource} or if query returns no
+     *         results.
+>>>>>>> 7758681... ldap based stuff
      */
     private String retrievePasswordFromDatabase(String username) throws AuthenticationException {
 
