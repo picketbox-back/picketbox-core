@@ -28,6 +28,8 @@ import org.picketbox.core.exceptions.ConfigurationException;
 import org.picketbox.core.identity.DefaultIdentityManager;
 import org.picketbox.core.identity.IdentityManager;
 import org.picketbox.core.logout.LogoutManager;
+import org.picketbox.core.resource.ProtectedResourceConstraint;
+import org.picketbox.core.resource.ProtectedResourceManager;
 
 /**
  * <p>
@@ -44,8 +46,10 @@ public final class PicketBoxConfiguration {
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;
     private LogoutManager logoutManager;
+    private ProtectedResourceManager protectedResourceManager;
 
     public PicketBoxConfiguration() {
+        this.protectedResourceManager = new ProtectedResourceManager();
     }
 
     /**
@@ -102,16 +106,13 @@ public final class PicketBoxConfiguration {
      *         instance. Or if the {@link PicketBoxManager} was already builded or started.
      */
     public PicketBoxManager buildAndStart() throws ConfigurationException {
-        if (this.picketBoxManager != null) {
-            throw PicketBoxMessages.MESSAGES.picketBoxManagerAlreadyStarted();
-        }
-
         try {
             if (this.logoutManager == null) {
                 this.logoutManager = new LogoutManager();
             }
 
-            this.picketBoxManager = new PicketBoxManager(this.authenticationScheme, this.logoutManager);
+            this.picketBoxManager = new PicketBoxManager(this.authenticationScheme, this.logoutManager,
+                    this.protectedResourceManager);
 
             this.picketBoxManager.setAuthorizationManager(this.authorizationManager);
 
@@ -132,6 +133,15 @@ public final class PicketBoxConfiguration {
         }
 
         return this.picketBoxManager;
+    }
+
+    public void addProtectedResource(String pattern, ProtectedResourceConstraint constraint) {
+        this.protectedResourceManager.addProtectedResource(pattern, constraint);
+    }
+
+    public PicketBoxConfiguration resourceManager(ProtectedResourceManager resourceManager) {
+        this.protectedResourceManager = resourceManager;
+        return this;
     }
 
 }

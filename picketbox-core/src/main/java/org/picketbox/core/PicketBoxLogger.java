@@ -75,4 +75,9 @@ public interface PicketBoxLogger extends BasicLogger {
     @LogMessage(level = Logger.Level.DEBUG)
     @Message(id = 508, value = "Failed to locate roles")
     void debugFailureToExecuteRolesDNSearch(@Cause Throwable throwable);
+
+    @LogMessage(level = Logger.Level.WARN)
+    @Message(id = 509, value = "ALL RESOURCES WILL BE PROTECTED. MAYBE YOU DID NOT DEFINE WHICH RESOURCES SHOULD BE PROTECTED.")
+    void allResourcesWillBeProteced();
+
 }
