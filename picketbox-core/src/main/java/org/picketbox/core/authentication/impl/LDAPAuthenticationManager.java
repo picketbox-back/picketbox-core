@@ -42,9 +42,7 @@ import org.picketbox.core.exceptions.AuthenticationException;
  * <p/>
  * Some of the prominent options
  * <p/>
- * java.naming.provider.url= ldap://localhost:10389/
- * principalDNPrefix=   uid=
- * principalDNSuffix=   ",ou=People,dc=jboss,dc=org"
+ * java.naming.provider.url= ldap://localhost:10389/ principalDNPrefix uid= principalDNSuffix ",ou=People,dc=jboss,dc=org"
  *
  * @author Scott Stark
  * @author anil saldhana
@@ -53,7 +51,6 @@ import org.picketbox.core.exceptions.AuthenticationException;
 public class LDAPAuthenticationManager extends AbstractAuthenticationManager {
     private static final String PRINCIPAL_DN_PREFIX_OPT = "principalDNPrefix";
     private static final String PRINCIPAL_DN_SUFFIX_OPT = "principalDNSuffix";
-
 
     @Override
     public Principal authenticate(String username, Object credential) throws AuthenticationException {

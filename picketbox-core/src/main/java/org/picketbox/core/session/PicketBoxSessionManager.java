@@ -34,9 +34,11 @@ public class PicketBoxSessionManager {
 
     private static Timer timer = new Timer();
 
-    private static long expiryValue = 5 * 60 * 1000; //5 minutes
+    private static long expiryValue = 5 * 60 * 1000; // 5 minutes
 
-    public static enum Expiry {seconds, minutes, hours}
+    public static enum Expiry {
+        seconds, minutes, hours
+    }
 
     ;
 

@@ -28,7 +28,7 @@ import org.picketbox.core.PicketBoxSubject;
 
 /**
  * <p>
- * This interfrace defines the contract for Identity Manager implementations used to create {@link PicketBoxSubject} instances
+ * This interface defines the contract for Identity Manager implementations used to create {@link PicketBoxSubject} instances
  * with the informations retrieved from an specific identity store or IDM solution.
  * </p>
  *
@@ -45,5 +45,4 @@ public interface IdentityManager {
      * @return
      */
     PicketBoxSubject getIdentity(Principal principal);
-
 }

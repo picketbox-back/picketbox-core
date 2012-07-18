@@ -38,7 +38,7 @@ public interface NonceGenerator {
      * Verify if the nonce has expired
      *
      * @param nonceValue
-     * @param maxValue   max value for expiry
+     * @param maxValue max value for expiry
      * @return
      */
     boolean hasExpired(String nonceValue, long maxValue);

@@ -22,6 +22,7 @@
 package org.picketbox.core;
 
 import org.jboss.logging.BasicLogger;
+import org.jboss.logging.Cause;
 import org.jboss.logging.LogMessage;
 import org.jboss.logging.Logger;
 import org.jboss.logging.Message;
@@ -46,7 +47,37 @@ public interface PicketBoxLogger extends BasicLogger {
     @Message(id = 501, value = "Starting PicketBox")
     void startingPicketBox();
 
+    @LogMessage(level = Logger.Level.TRACE)
+    @Message(id = 502, value = "Checking search result %s")
+    void traceCheckSearchResult(String searchResult);
+
+    @LogMessage(level = Logger.Level.DEBUG)
+    @Message(id = 503, value = "Failed to parse %s as number, using default value %s")
+    void debugFailureToParseNumberProperty(String property, long defaultValue);
+
+    @LogMessage(level = Logger.Level.TRACE)
+    @Message(id = 504, value = "Searching rolesCtxDN %s with roleFilter: %s, filterArgs: %s, roleAttr: %s, searchScope: %s, searchTimeLimit: %s")
+    void traceRolesDNSearch(String dn, String roleFilter, String filterArgs, String roleAttr, int searchScope,
+            int searchTimeLimit);
+
+    @LogMessage(level = Logger.Level.DEBUG)
+    @Message(id = 505, value = "Failed to query %s from %s")
+    void debugFailureToQueryLDAPAttribute(String attributeName, String contextName, @Cause Throwable throwable);
+
+    @LogMessage(level = Logger.Level.TRACE)
+    @Message(id = 506, value = "Following roleDN %s")
+    void traceFollowRoleDN(String roleDN);
+
+    @LogMessage(level = Logger.Level.DEBUG)
+    @Message(id = 507, value = "No attribute %s found in search result %s")
+    void debugFailureToFindAttrInSearchResult(String attrName, String searchResult);
+
+    @LogMessage(level = Logger.Level.DEBUG)
+    @Message(id = 508, value = "Failed to locate roles")
+    void debugFailureToExecuteRolesDNSearch(@Cause Throwable throwable);
+
     @LogMessage(level = Logger.Level.WARN)
-    @Message(id = 502, value = "ALL RESOURCES WILL BE PROTECTED. MAYBE YOU DID NOT DEFINE WHICH RESOURCES SHOULD BE PROTECTED.")
+    @Message(id = 509, value = "ALL RESOURCES WILL BE PROTECTED. MAYBE YOU DID NOT DEFINE WHICH RESOURCES SHOULD BE PROTECTED.")
     void allResourcesWillBeProteced();
+
 }

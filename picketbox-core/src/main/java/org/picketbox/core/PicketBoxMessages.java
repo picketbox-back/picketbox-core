@@ -96,8 +96,8 @@ public interface PicketBoxMessages {
     @Message(id = 17, value = "Missing required property: %s")
     IllegalStateException missingRequiredProperty(String property);
 
-    @Message(id = 18, value = "Failed to locate a DataSource: either provide one via injection or provide a dsJNDIName")
-    IllegalStateException missingDataSourceConfiguration();
+    @Message(id = 18, value = "Invalid configuration: either provide a JPA config name or a DataSource (via injection or JNDI)")
+    IllegalStateException invalidDatabaseAuthenticationManagerConfiguration();
 
     @Message(id = 19, value = "Query %s found no results")
     String queryFoundNoResultsMessage(String query);
@@ -128,4 +128,16 @@ public interface PicketBoxMessages {
 
     @Message(id = 29, value = "User session is not valid.")
     IllegalStateException invalidUserSession();
+
+    @Message(id = 30, value = "Failed to close NamingEnumeration")
+    RuntimeException namingEnumerationClose(@Cause Throwable throwable);
+
+    @Message(id = 31, value = "Failed to construct Ldap Context")
+    RuntimeException ldapCtxConstructionFailure(@Cause Throwable throwable);
+
+    @Message(id = 32, value = "Ldap Search Config is missing")
+    RuntimeException ldapSearchConfigMissing();
+
+    @Message(id = 33, value = "Ldap Search Base is missing")
+    RuntimeException ldapSearchBaseMissing();
 }

@@ -33,9 +33,10 @@ import java.util.Set;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
- * <p>This class is a representation of the state of a previous {@link HttpServletRequest} instance.</p>
+ * <p>
+ * This class is a representation of the state of a previous {@link HttpServletRequest} instance.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
@@ -51,7 +52,9 @@ public class SavedRequest {
     private String contextPath;
 
     /**
-     * <p>Create a new instance copying the state from the request passed as argument.</p>
+     * <p>
+     * Create a new instance copying the state from the request passed as argument.
+     * </p>
      */
     public SavedRequest(HttpServletRequest request) {
         copyCookies(request);
@@ -67,63 +70,81 @@ public class SavedRequest {
     }
 
     /**
-     * <p>Returns the parameters copied from the original request.</p>
+     * <p>
+     * Returns the parameters copied from the original request.
+     * </p>
      */
     public Map<String, String[]> getParameters() {
         return this.parameters;
     }
 
     /**
-     * <p>Returns the headers copied from the original request.</p>
+     * <p>
+     * Returns the headers copied from the original request.
+     * </p>
      */
     public Map<String, String> getHeaders() {
         return this.headers;
     }
 
     /**
-     * <p>Returns the cookies copied from the original request.</p>
+     * <p>
+     * Returns the cookies copied from the original request.
+     * </p>
      */
     public List<Cookie> getCookies() {
         return this.cookies;
     }
 
     /**
-     * <p>Returns the original HTTP method used by the original request.</p>
+     * <p>
+     * Returns the original HTTP method used by the original request.
+     * </p>
      */
     public String getMethod() {
         return method;
     }
 
     /**
-     * <p>Returns the querystring used by the original request.</p>
+     * <p>
+     * Returns the querystring used by the original request.
+     * </p>
      */
     public String getQueryString() {
         return queryString;
     }
 
     /**
-     * <p>Returns the requestURI used by the original request.</p>
+     * <p>
+     * Returns the requestURI used by the original request.
+     * </p>
      */
     public String getRequestURI() {
         return requestURI;
     }
 
     /**
-     * <p>Returns the original scheme used by the original request.</p>
+     * <p>
+     * Returns the original scheme used by the original request.
+     * </p>
      */
     public String getScheme() {
         return scheme;
     }
 
     /**
-     * <p>Returns the original context path used by the original request.</p>
+     * <p>
+     * Returns the original context path used by the original request.
+     * </p>
      */
     public String getContextPath() {
         return contextPath;
     }
 
     /**
-     * <p>Copy the parameters from the original {@link HttpServletRequest}.</p>
+     * <p>
+     * Copy the parameters from the original {@link HttpServletRequest}.
+     * </p>
      */
     private void copyParameters(HttpServletRequest request) {
         Set<Entry<String, String[]>> parametersEntries = request.getParameterMap().entrySet();
@@ -134,7 +155,9 @@ public class SavedRequest {
     }
 
     /**
-     * <p>Copy the headers from the original {@link HttpServletRequest}.</p>
+     * <p>
+     * Copy the headers from the original {@link HttpServletRequest}.
+     * </p>
      */
     private void copyHeaders(HttpServletRequest request) {
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -148,7 +171,9 @@ public class SavedRequest {
     }
 
     /**
-     * <p>Copy the cookies from the original {@link HttpServletRequest}.</p>
+     * <p>
+     * Copy the cookies from the original {@link HttpServletRequest}.
+     * </p>
      */
     private void copyCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();

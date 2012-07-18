@@ -19,22 +19,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.picketbox.core.exceptions;
+package org.picketbox.core.config;
 
 /**
- * <p>
- * An exception to indicate a failure during authorization process.
- * </p>
+ * Configuration for the Identity Store such as LDAP and DB
  *
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * @author anil saldhana
+ * @since Jul 18, 2012
  */
-public class AuthorizationException extends RuntimeException {
+public interface BasicIdentityStoreConfig {
+    /**
+     * The URL to the store
+     *
+     * @return
+     */
+    String getStoreURL();
 
-    private static final long serialVersionUID = 2437882517744609860L;
+    /**
+     * Identity the admin for the store
+     *
+     * @return
+     */
+    String getAdminName();
 
-    public AuthorizationException(Throwable t) {
-        super(t);
-    }
-
+    /**
+     * The password for the admin
+     *
+     * @return
+     */
+    char[] getAdminPassword();
 }

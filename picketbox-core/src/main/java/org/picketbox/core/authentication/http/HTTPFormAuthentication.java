@@ -121,7 +121,8 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
                 // remove from the cache the saved request and store it in the session for further use.
                 String savedRequest = this.requestCache.removeAndStoreSavedRequestInSession(request).getRequestURI();
 
-                // if the user has explicit defined a default page url, use it to redirect the user after a successful authentication.
+                // if the user has explicit defined a default page url, use it to redirect the user after a successful
+                // authentication.
                 if (!this.defaultPage.equals(DEFAULT_PAGE_URL)) {
                     sendRedirect(response, request.getContextPath() + this.defaultPage);
                 } else {
