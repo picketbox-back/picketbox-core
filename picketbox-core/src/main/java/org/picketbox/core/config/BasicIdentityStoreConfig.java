@@ -40,12 +40,12 @@ public interface BasicIdentityStoreConfig {
      *
      * @return
      */
-    String getAdminName();
+    String getUserName();
 
     /**
      * The password for the admin
      *
      * @return
      */
-    char[] getAdminPassword();
+    char[] getUserPassword();
 }
