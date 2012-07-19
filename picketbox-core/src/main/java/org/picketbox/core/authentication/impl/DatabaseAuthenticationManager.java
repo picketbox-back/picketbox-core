@@ -45,27 +45,26 @@ import org.picketbox.core.util.HTTPDigestUtil;
 
 /**
  * <p>
- * An instance of {@link org.picketbox.core.authentication.AuthenticationManager} that connects to a database to retrieve
- * stored passwords for authentication. Both JPA and JDBC can be used to connect to the database and perform the queries.
+ * An instance of {@link org.picketbox.core.authentication.AuthenticationManager} that connects to a database to retrieve stored
+ * passwords for authentication. Both JPA and JDBC can be used to connect to the database and perform the queries.
  * </p>
  * <p>
  * When using JPA, the following properties MUST be configured;
  * <ul>
- *     <li>jpaConfigName; the name of the persistence unit as configured in the persistence.xml file</li>
- *     <li>passwordQuery; the query that must be run in order to obtain the password associated with the incoming
- *     username. It must return a single result and must accept the username as a query parameter.</li>
+ * <li>jpaConfigName; the name of the persistence unit as configured in the persistence.xml file</li>
+ * <li>passwordQuery; the query that must be run in order to obtain the password associated with the incoming username. It must
+ * return a single result and must accept the username as a query parameter.</li>
  * </ul>
  * </p>
  * <p>
- * When using JDBC, the manager requires the configuration of a {@code DataSource}. The following properties are available
- * for JDBC mode:
+ * When using JDBC, the manager requires the configuration of a {@code DataSource}. The following properties are available for
+ * JDBC mode:
  * <ul>
- *     <li>dataSource; allows for direct injection of a {@code DataSource} instance</li>
- *     <li>dsJndiName; specifies the JNDI name that can be used to retrieve a {@code DataSource} instance. If the
- * {@code DataSource} has not been injected directly, this property MUST be set. Otherwise, authentication will
- * fail</li>
- *     <li>passwordQuery; the query that must be run in order to obtain the password associated with the incoming
- *     username. It must return a single result and must accept the username as a query parameter.</li>
+ * <li>dataSource; allows for direct injection of a {@code DataSource} instance</li>
+ * <li>dsJndiName; specifies the JNDI name that can be used to retrieve a {@code DataSource} instance. If the {@code DataSource}
+ * has not been injected directly, this property MUST be set. Otherwise, authentication will fail</li>
+ * <li>passwordQuery; the query that must be run in order to obtain the password associated with the incoming username. It must
+ * return a single result and must accept the username as a query parameter.</li>
  * </ul>
  * </p>
  * <p>
@@ -138,18 +137,15 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
     /**
      * <p>
      * Establishes a connection to the database to obtain the password associated with the specified username. If a JPA
-     * configuration name has been provided, JPA will be used to retrieve the password. If not, the code will attempt to
-     * use a DataSource to establish a JDBC connection to the database.
+     * configuration name has been provided, JPA will be used to retrieve the password. If not, the code will attempt to use a
+     * DataSource to establish a JDBC connection to the database.
      * </p>
      *
      * @param username the username used as a parameter in the {@code passwordQuery}.
-     * @return the password retrieved from the database.
-<<<<<<< HEAD
-     * @throws AuthenticationException if an error occurs while retrieving password from the database.
-=======
+     * @return the password retrieved from the database. <<<<<<< HEAD
+     * @throws AuthenticationException if an error occurs while retrieving password from the database. =======
      * @throws AuthenticationException if an error occurs while retrieving the {@code DataSource} or if query returns no
-     *         results.
->>>>>>> 7758681... ldap based stuff
+     *         results. >>>>>>> 7758681... ldap based stuff
      */
     private String retrievePasswordFromDatabase(String username) throws AuthenticationException {
 
@@ -182,8 +178,8 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
 
     /**
      * <p>
-     * This method uses the configured {@code DataSource} to get a connection to the database and execute the password
-     * query. It expects the query to return a single result and to accept the incoming username as a parameter.
+     * This method uses the configured {@code DataSource} to get a connection to the database and execute the password query. It
+     * expects the query to return a single result and to accept the incoming username as a parameter.
      * </p>
      *
      * @param username the username used as a parameter in the {@code passwordQuery}.
@@ -205,8 +201,8 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
             resultSet = preparedStatement.executeQuery();
 
             if (!resultSet.next())
-                throw new AuthenticationException(PicketBoxMessages.MESSAGES.queryFoundNoResultsMessage(
-                        this.getPasswordQuery()));
+                throw new AuthenticationException(
+                        PicketBoxMessages.MESSAGES.queryFoundNoResultsMessage(this.getPasswordQuery()));
 
             return resultSet.getString(1);
         } catch (SQLException se) {
@@ -235,13 +231,13 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
 
     /**
      * <p>
-     * This method uses a JPA configuration to connect to the database and execute the password query. It is expected that
-     * a persistence.xml file has been properly configured with a persistence unit whose name matches the name provided
-     * in the {@code jpaConfigName} property.
+     * This method uses a JPA configuration to connect to the database and execute the password query. It is expected that a
+     * persistence.xml file has been properly configured with a persistence unit whose name matches the name provided in the
+     * {@code jpaConfigName} property.
      * </p>
      * <p>
-     * The query follows the same rule as the JDBC query: it must return a single result containing the password and must
-     * accept the incoming username as a query parameter.
+     * The query follows the same rule as the JDBC query: it must return a single result containing the password and must accept
+     * the incoming username as a query parameter.
      * </p>
      *
      * @param username the username used as a parameter in the {@code passwordQuery}.
@@ -261,8 +257,7 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
 
             Object result = query.getSingleResult();
             return result.toString();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AuthenticationException(e);
         }
 

@@ -78,8 +78,8 @@ public class LDAPContextHandler {
             env.setProperty(Context.SECURITY_PROTOCOL, protocol);
         }
 
-        String bindDN = ldapStoreConfig.getAdminName();
-        char[] bindCredential = ldapStoreConfig.getAdminPassword();
+        String bindDN = ldapStoreConfig.getUserName();
+        char[] bindCredential = ldapStoreConfig.getUserPassword();
 
         if (bindDN != null) {
             env.setProperty(Context.SECURITY_PRINCIPAL, bindDN);

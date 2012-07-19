@@ -31,24 +31,39 @@ import org.picketbox.core.config.BasicIdentityStoreConfig;
  */
 public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
 
-    protected String storeURL, adminName, factoryName = "com.sun.jndi.ldap.LdapCtxFactory", securityAuthentication = "simple";
-    protected char[] adminPassword;
+    protected String storeURL, userName, factoryName = "com.sun.jndi.ldap.LdapCtxFactory", securityAuthentication = "simple";
+    protected char[] userPassword;
 
     protected String securityProtocol;
 
     public BasicLDAPStoreConfig() {
     }
 
+    /**
+     * Set the LDAP URL
+     *
+     * @param storeURL
+     */
     public void setStoreURL(String storeURL) {
         this.storeURL = storeURL;
     }
 
-    public void setAdminName(String adminName) {
-        this.adminName = adminName;
+    /**
+     * Set the User DN Name
+     *
+     * @param adminName
+     */
+    public void setUserName(String adminName) {
+        this.userName = adminName;
     }
 
-    public void setAdminPassword(char[] adminPassword) {
-        this.adminPassword = adminPassword;
+    /**
+     * Set the User Password
+     *
+     * @param adminPassword
+     */
+    public void setUserPassword(char[] adminPassword) {
+        this.userPassword = adminPassword;
     }
 
     @Override
@@ -57,19 +72,24 @@ public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
     }
 
     @Override
-    public String getAdminName() {
-        return adminName;
+    public String getUserName() {
+        return userName;
     }
 
     @Override
-    public char[] getAdminPassword() {
-        return adminPassword;
+    public char[] getUserPassword() {
+        return userPassword;
     }
 
     public String getFactoryName() {
         return factoryName;
     }
 
+    /**
+     * Set the factory name of the JNDI Implementation
+     *
+     * @param factoryName
+     */
     public void setFactoryName(String factoryName) {
         this.factoryName = factoryName;
     }
@@ -78,6 +98,11 @@ public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
         return securityAuthentication;
     }
 
+    /**
+     * Set optionally security authentication Default is set to "simple"
+     *
+     * @param securityAuthentication
+     */
     public void setSecurityAuthentication(String securityAuthentication) {
         this.securityAuthentication = securityAuthentication;
     }
@@ -86,6 +111,11 @@ public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
         return securityProtocol;
     }
 
+    /**
+     * Set optionally security protocol such as "ssl"
+     *
+     * @param securityAuthentication
+     */
     public void setSecurityProtocol(String securityProtocol) {
         this.securityProtocol = securityProtocol;
     }

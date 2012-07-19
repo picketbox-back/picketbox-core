@@ -42,6 +42,26 @@ public class LDAPSearchConfig {
 
     private String[] searchAttributes;
 
+    private int searchTimeLimit = 10000;
+
+    /**
+     * Get the search time limit
+     *
+     * @return
+     */
+    public int getSearchTimeLimit() {
+        return searchTimeLimit;
+    }
+
+    /**
+     * Set the search time limit
+     *
+     * @param searchTimeLimit
+     */
+    public void setSearchTimeLimit(int searchTimeLimit) {
+        this.searchTimeLimit = searchTimeLimit;
+    }
+
     /**
      * Get the search attributes
      *
@@ -96,10 +116,20 @@ public class LDAPSearchConfig {
         this.searchFilter = searchFilter;
     }
 
+    /**
+     * Search filter expression such as "member={0}"
+     *
+     * @return
+     */
     public String getSearchFilterExpression() {
         return searchFilterExpression;
     }
 
+    /**
+     * Search filter expression such as "member={0}"
+     *
+     * @param searchFilterExpression
+     */
     public void setSearchFilterExpression(String searchFilterExpression) {
         this.searchFilterExpression = searchFilterExpression;
     }
@@ -125,6 +155,10 @@ public class LDAPSearchConfig {
     /**
      * Get the filter arguments that need to be passed to the filter expression
      *
+     * Works in conjunction with the search filter expression
+     *
+     * @see #setSearchFilterExpression(String)
+     *
      * @return
      */
     public Object[] getFilterArgs() {
@@ -133,6 +167,10 @@ public class LDAPSearchConfig {
 
     /**
      * Set the filter arguments that need to be passed to the filter expression
+     *
+     * Works in conjunction with the search filter expression
+     *
+     * @see #setSearchFilterExpression(String)
      *
      * @param filterArgs
      */

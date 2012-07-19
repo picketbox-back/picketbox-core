@@ -22,35 +22,43 @@
 package org.picketbox.core.authentication.impl;
 
 import java.security.Principal;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Properties;
 
-import javax.naming.Context;
-import javax.naming.ldap.InitialLdapContext;
+import javax.naming.directory.DirContext;
 
+import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.PicketBoxPrincipal;
 import org.picketbox.core.authentication.AbstractAuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.DigestHolder;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
+import org.picketbox.core.ldap.handlers.LDAPContextHandler;
 
 /**
  * An instance of {@link AuthenticationManager} that uses LDAP for authentication.
- * <p/>
- * Based on org.jboss.security.auth.spi.LdapLoginModule
- * <p/>
- * Some of the prominent options
- * <p/>
- * java.naming.provider.url= ldap://localhost:10389/ principalDNPrefix uid= principalDNSuffix ",ou=People,dc=jboss,dc=org"
  *
- * @author Scott Stark
+ * For configuration, there is a need to inject the {@link BasicLDAPStoreConfig}
+ *
+ * Additionally, an option of userDN needs to be configured.
+ *
+ * Example: "uid=CHANGE_USER,ou=People,dc=jboss,dc=org" This Manager will substitute the keyword CHANGE_USER with the username,
+ * it is trying to authenticate.
+ *
  * @author anil saldhana
  * @since Jul 16, 2012
  */
 public class LDAPAuthenticationManager extends AbstractAuthenticationManager {
-    private static final String PRINCIPAL_DN_PREFIX_OPT = "principalDNPrefix";
-    private static final String PRINCIPAL_DN_SUFFIX_OPT = "principalDNSuffix";
+
+    private BasicLDAPStoreConfig ldapStoreConfig = null;
+
+    /**
+     * Set an instance of {@link BasicLDAPStoreConfig}
+     *
+     * @param ldapStoreConfig
+     */
+    public void setLdapStoreConfig(BasicLDAPStoreConfig ldapStoreConfig) {
+        this.ldapStoreConfig = ldapStoreConfig;
+    }
 
     @Override
     public Principal authenticate(String username, Object credential) throws AuthenticationException {
@@ -73,48 +81,27 @@ public class LDAPAuthenticationManager extends AbstractAuthenticationManager {
         throw new AuthenticationException("Not Implemented");
     }
 
-    private void createLdapInitContext(String username, Object credential) throws Exception {
-        Properties env = new Properties();
-        // Map all option into the JNDI InitialLdapContext env
-        Iterator<Entry<String, Object>> iter = options.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry<String, Object> entry = iter.next();
-            env.put(entry.getKey(), entry.getValue());
-        }
+    private void createLdapInitContext(String username, Object credential) throws AuthenticationException {
 
-        // Set defaults for key values if they are missing
-        String factoryName = env.getProperty(Context.INITIAL_CONTEXT_FACTORY);
-        if (factoryName == null) {
-            factoryName = "com.sun.jndi.ldap.LdapCtxFactory";
-            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, factoryName);
-        }
-        String authType = env.getProperty(Context.SECURITY_AUTHENTICATION);
-        if (authType == null)
-            env.setProperty(Context.SECURITY_AUTHENTICATION, "simple");
-        String protocol = env.getProperty(Context.SECURITY_PROTOCOL);
-        String providerURL = (String) options.get(Context.PROVIDER_URL);
-        if (providerURL == null)
-            providerURL = "ldap://localhost:" + ((protocol != null && protocol.equals("ssl")) ? "636" : "389");
+        String userDNString = (String) options.get("userDN");
+        if (userDNString == null)
+            throw PicketBoxMessages.MESSAGES.userDNStringMissing();
 
-        String principalDNPrefix = (String) options.get(PRINCIPAL_DN_PREFIX_OPT);
-        if (principalDNPrefix == null)
-            principalDNPrefix = "";
-        String principalDNSuffix = (String) options.get(PRINCIPAL_DN_SUFFIX_OPT);
-        if (principalDNSuffix == null)
-            principalDNSuffix = "";
+        if (ldapStoreConfig == null)
+            throw PicketBoxMessages.MESSAGES.ldapStoreConfigMissing();
 
-        String userDN = principalDNPrefix + username + principalDNSuffix;
-        env.setProperty(Context.PROVIDER_URL, providerURL);
-        env.setProperty(Context.SECURITY_PRINCIPAL, userDN);
-        env.put(Context.SECURITY_CREDENTIALS, credential);
-
-        InitialLdapContext ctx = null;
-        try {
-            ctx = new InitialLdapContext(env, null);
-        } finally {
-            // Close the context to release the connection
-            if (ctx != null)
-                ctx.close();
+        if (ldapStoreConfig != null) {
+            LDAPContextHandler handler = new LDAPContextHandler();
+            String user = userDNString.replace("CHANGE_USER", username);
+            ldapStoreConfig.setUserName(user);
+            ldapStoreConfig.setUserPassword(credential.toString().toCharArray());
+            handler.setLdapStoreConfig(ldapStoreConfig);
+            DirContext dir = handler.execute();
+            if (dir != null) {
+                return;
+            } else {
+                throw PicketBoxMessages.MESSAGES.authenticationFailed(null);
+            }
         }
     }
 }
