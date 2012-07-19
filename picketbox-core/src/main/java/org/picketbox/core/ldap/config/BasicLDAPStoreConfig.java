@@ -32,7 +32,7 @@ import org.picketbox.core.config.BasicIdentityStoreConfig;
 public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
 
     protected String storeURL, userName, factoryName = "com.sun.jndi.ldap.LdapCtxFactory", securityAuthentication = "simple";
-    protected char[] userPassword;
+    protected String userPassword;
 
     protected String securityProtocol;
 
@@ -62,7 +62,7 @@ public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
      *
      * @param adminPassword
      */
-    public void setUserPassword(char[] adminPassword) {
+    public void setUserPassword(String adminPassword) {
         this.userPassword = adminPassword;
     }
 
@@ -77,7 +77,7 @@ public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
     }
 
     @Override
-    public char[] getUserPassword() {
+    public String getUserPassword() {
         return userPassword;
     }
 

@@ -47,5 +47,5 @@ public interface BasicIdentityStoreConfig {
      *
      * @return
      */
-    char[] getUserPassword();
+    String getUserPassword();
 }
