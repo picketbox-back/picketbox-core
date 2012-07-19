@@ -32,7 +32,9 @@ import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.authentication.PicketBoxConstants;
 
 /**
- * <p>This class provides the basic functionalities for the logout process.</p>
+ * <p>
+ * This class provides the basic functionalities for the logout process.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -40,17 +42,23 @@ import org.picketbox.core.authentication.PicketBoxConstants;
 public class LogoutManager {
 
     /**
-     * <p>URL used to start the logout process.</p>
+     * <p>
+     * URL used to start the logout process.
+     * </p>
      */
     private String logoutUrl;
 
     /**
-     * <p>Page URL to redirect the user after a successful logout.</p>
+     * <p>
+     * Page URL to redirect the user after a successful logout.
+     * </p>
      */
     private String logoutPage;
 
     /**
-     * <p>Process the logout.</p>
+     * <p>
+     * Process the logout.
+     * </p>
      *
      * @param request
      * @param response
@@ -80,7 +88,9 @@ public class LogoutManager {
     }
 
     /**
-     * <p>Checks if the request is asking for a logout.</p>
+     * <p>
+     * Checks if the request is asking for a logout.
+     * </p>
      *
      * @param request
      * @return

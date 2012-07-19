@@ -21,15 +21,19 @@
  */
 package org.picketbox.test.authentication;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.authentication.impl.LDAPAuthenticationManager;
+import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.test.ldap.BaseOpenDS;
 
 /**
@@ -52,12 +56,20 @@ public class LDAPAuthenticationManagerUnitTestCase extends BaseOpenDS {
         LDAPAuthenticationManager auth = new LDAPAuthenticationManager();
 
         Map<String, Object> options = new HashMap<String, Object>();
-        options.put("java.naming.provider.url", "ldap://localhost:10389/");
-        options.put("principalDNPrefix", "uid=");
-        options.put("principalDNSuffix", ",ou=People,dc=jboss,dc=org");
+
+        options.put("userDN", "uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
 
         auth.setOptions(options);
 
-        assertTrue(auth.authenticate("jduke", "theduke") != null);
+        BasicLDAPStoreConfig config = new BasicLDAPStoreConfig();
+        config.setUserName("uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
+        config.setUserPassword("WILL_BE_REPLACED".toCharArray());
+        config.setStoreURL("ldap://localhost:10389/");
+
+        auth.setLdapStoreConfig(config);
+        Principal principal = auth.authenticate("jduke", "theduke");
+
+        assertNotNull(principal);
+        assertEquals("jduke", principal.getName());
     }
 }

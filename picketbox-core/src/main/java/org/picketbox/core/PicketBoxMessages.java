@@ -140,4 +140,10 @@ public interface PicketBoxMessages {
 
     @Message(id = 33, value = "Ldap Search Base is missing")
     RuntimeException ldapSearchBaseMissing();
+
+    @Message(id = 34, value = "Ldap Store Config is missing")
+    RuntimeException ldapStoreConfigMissing();
+
+    @Message(id = 35, value = "User Dn String is missing")
+    RuntimeException userDNStringMissing();
 }

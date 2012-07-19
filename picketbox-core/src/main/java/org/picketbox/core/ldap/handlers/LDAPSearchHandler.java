@@ -79,6 +79,8 @@ public class LDAPSearchHandler {
         }
         SearchControls searchControl = new SearchControls();
 
+        searchControl.setTimeLimit(ldapSearchConfig.getSearchTimeLimit());
+
         searchControl.setSearchScope(ldapSearchConfig.getSearchScope());
         String[] searchAttributes = ldapSearchConfig.getSearchAttributes();
 
