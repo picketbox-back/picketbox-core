@@ -63,7 +63,7 @@ public class LDAPSearchHandlerTestCase extends BaseOpenDS {
 
         BasicLDAPStoreConfig ldapStoreConfig = new BasicLDAPStoreConfig();
         ldapStoreConfig.setUserName(adminDN);
-        ldapStoreConfig.setUserPassword(adminPW.toCharArray());
+        ldapStoreConfig.setUserPassword(adminPW);
         ldapStoreConfig.setStoreURL("ldap://localhost:" + port);
 
         LDAPContextHandler ctx = new LDAPContextHandler();

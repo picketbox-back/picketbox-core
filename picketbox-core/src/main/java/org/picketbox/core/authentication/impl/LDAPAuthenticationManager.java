@@ -51,6 +51,8 @@ public class LDAPAuthenticationManager extends AbstractAuthenticationManager {
 
     private BasicLDAPStoreConfig ldapStoreConfig = null;
 
+    private String userDN;
+
     /**
      * Set an instance of {@link BasicLDAPStoreConfig}
      *
@@ -84,6 +86,11 @@ public class LDAPAuthenticationManager extends AbstractAuthenticationManager {
     private void createLdapInitContext(String username, Object credential) throws AuthenticationException {
 
         String userDNString = (String) options.get("userDN");
+
+        if (userDNString == null) {
+            userDNString = getUserDN();
+        }
+
         if (userDNString == null)
             throw PicketBoxMessages.MESSAGES.userDNStringMissing();
 
@@ -94,7 +101,7 @@ public class LDAPAuthenticationManager extends AbstractAuthenticationManager {
             LDAPContextHandler handler = new LDAPContextHandler();
             String user = userDNString.replace("CHANGE_USER", username);
             ldapStoreConfig.setUserName(user);
-            ldapStoreConfig.setUserPassword(credential.toString().toCharArray());
+            ldapStoreConfig.setUserPassword(credential.toString());
             handler.setLdapStoreConfig(ldapStoreConfig);
             DirContext dir = handler.execute();
             if (dir != null) {
@@ -104,4 +111,19 @@ public class LDAPAuthenticationManager extends AbstractAuthenticationManager {
             }
         }
     }
+
+    /**
+     * @return the userDN
+     */
+    public String getUserDN() {
+        return userDN;
+    }
+
+    /**
+     * @param userDN the userDN to set
+     */
+    public void setUserDN(String userDN) {
+        this.userDN = userDN;
+    }
+
 }
