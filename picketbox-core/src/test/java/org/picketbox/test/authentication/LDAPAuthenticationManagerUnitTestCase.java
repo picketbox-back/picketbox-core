@@ -63,7 +63,7 @@ public class LDAPAuthenticationManagerUnitTestCase extends BaseOpenDS {
 
         BasicLDAPStoreConfig config = new BasicLDAPStoreConfig();
         config.setUserName("uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
-        config.setUserPassword("WILL_BE_REPLACED".toCharArray());
+        config.setUserPassword("WILL_BE_REPLACED");
         config.setStoreURL("ldap://localhost:10389/");
 
         auth.setLdapStoreConfig(config);
