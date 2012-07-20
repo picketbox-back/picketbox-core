@@ -135,9 +135,6 @@ public class EmbeddedApacheDS {
 
         schemaPartition.setWrappedPartition(ldifPartition);
 
-        /*URL schemaDir = getClass().getClassLoader().getResource("apacheds/schema");
-        File schemaRepository = new File(schemaDir.getPath());*/
-        
         SchemaLoader loader = new LdifSchemaLoader(schemaRepository);
         SchemaManager schemaManager = new DefaultSchemaManager(loader);
         service.setSchemaManager(schemaManager);
