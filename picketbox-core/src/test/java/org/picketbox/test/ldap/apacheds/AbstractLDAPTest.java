@@ -31,6 +31,7 @@ import org.junit.Before;
 
 /**
  * Base class for ldap tests
+ *
  * @author anil saldhana
  * @since Jul 20, 2012
  */
@@ -39,49 +40,72 @@ public class AbstractLDAPTest {
     protected String dn = "dc=jboss,dc=org";
     protected String adminDN = "uid=admin,ou=system";
     protected String port = "10389";
-    
+
     protected String serverHost = "localhost";
- 
-    protected EmbeddedApacheDS ds =null;
-    
+
+    protected EmbeddedApacheDS ds = null;
+
     @Before
     public void setup() throws Exception {
-        String tempDir = System.getProperty( "java.io.tmpdir" );
+        String tempDir = System.getProperty("java.io.tmpdir");
         System.out.println(tempDir);
-        
-        File workDir = new File(  tempDir+ "/server-work" );
+
+        File workDir = new File(tempDir + "/server-work");
         workDir.mkdirs();
-        
+
         ds = new EmbeddedApacheDS(workDir);
         ds.createBaseDN("apache", "dc=apache,dc=org");
-        
+
         ds.createBaseDN("jboss", "dc=jboss,dc=org");
-    
+
         long current = System.currentTimeMillis();
         System.out.println("Starting Apache DS server");
         ds.startServer();
 
-        System.out.println("Time taken = " + (System.currentTimeMillis() - current ) + "milisec");
-        
+        System.out.println("Time taken = " + (System.currentTimeMillis() - current) + "milisec");
+
         InputStream is = getClass().getClassLoader().getResourceAsStream("ldap/users.ldif");
         assertNotNull(is);
         ds.importLdif(is);
     }
-    
+
     @After
-    public void tearDown() throws Exception
-    {
-        if(ds != null){
+    public void tearDown() throws Exception {
+        if (ds != null) {
             ds.stopServer();
         }
+        String tempDir = System.getProperty("java.io.tmpdir");
+        System.out.println(tempDir);
+
+        File workDir = new File(tempDir + "/server-work");
+        if (workDir != null) {
+            recursiveDeleteDir(workDir);
+        }
     }
-    
-    protected void importLDIF(String fileName) throws Exception{
+
+    protected void importLDIF(String fileName) throws Exception {
         long current = System.currentTimeMillis();
         System.out.println("Going to import LDIF:" + fileName);
-        InputStream is = getClass().getClassLoader().getResourceAsStream(fileName); 
+        InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
         assertNotNull(is);
         ds.importLdif(is);
-        System.out.println("Time taken = " + (System.currentTimeMillis() - current ) + "milisec");
+        System.out.println("Time taken = " + (System.currentTimeMillis() - current) + "milisec");
+    }
+
+    protected boolean recursiveDeleteDir(File dirPath) {
+        if (dirPath.exists()) {
+            File[] files = dirPath.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
+                    recursiveDeleteDir(files[i]);
+                } else {
+                    files[i].delete();
+                }
+            }
+        }
+        if (dirPath.exists())
+            return dirPath.delete();
+        else
+            return true;
     }
 }

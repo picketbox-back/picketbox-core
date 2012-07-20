@@ -35,7 +35,7 @@ public class TestAuthorizationManager implements AuthorizationManager {
 
     private boolean started;
     private boolean stopped = true;
-    
+
     @Override
     public boolean started() {
         return this.started;

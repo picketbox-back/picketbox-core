@@ -75,24 +75,21 @@ public class EmbeddedApacheDS {
 
         // Disable the ChangeLog system
         service.getChangeLog().setEnabled(false);
-        service.setDenormalizeOpAttrsEnabled(true);    
+        service.setDenormalizeOpAttrsEnabled(true);
     }
 
     @SuppressWarnings("unused")
-    public void createBaseDN(String partitionName, String baseDN) throws Exception{
+    public void createBaseDN(String partitionName, String baseDN) throws Exception {
         Partition partition = addPartition(partitionName, baseDN);
 
         // And start the service
         service.startup();
 
-        /*// Inject the apache root entry
-        if (!service.getAdminSession().exists(partition.getSuffixDn())) {
-            DN dnApache = new DN(baseDN);
-            ServerEntry entryApache = service.newEntry(dnApache);
-            entryApache.add("objectClass", "top", "domain", "extensibleObject");
-            entryApache.add("dc", "Apache");
-            service.getAdminSession().add(entryApache);
-        }*/
+        /*
+         * // Inject the apache root entry if (!service.getAdminSession().exists(partition.getSuffixDn())) { DN dnApache = new
+         * DN(baseDN); ServerEntry entryApache = service.newEntry(dnApache); entryApache.add("objectClass", "top", "domain",
+         * "extensibleObject"); entryApache.add("dc", "Apache"); service.getAdminSession().add(entryApache); }
+         */
     }
 
     /**
@@ -103,7 +100,7 @@ public class EmbeddedApacheDS {
      * @return The newly added partition
      * @throws Exception If the partition can't be added
      */
-    private Partition addPartition(String partitionId, String partitionDn) throws Exception { 
+    private Partition addPartition(String partitionId, String partitionDn) throws Exception {
         JdbmPartition partition = new JdbmPartition();
         partition.setId(partitionId);
         partition.setPartitionDir(new File(service.getWorkingDirectory(), partitionId));
@@ -111,8 +108,8 @@ public class EmbeddedApacheDS {
         service.addPartition(partition);
 
         return partition;
-    } 
-    
+    }
+
     /**
      * initialize the schema manager and add the schema partition to diectory service
      *
@@ -130,8 +127,6 @@ public class EmbeddedApacheDS {
         File schemaRepository = new File(workingDirectory, "schema");
         SchemaLdifExtractor extractor = new DefaultSchemaLdifExtractor(new File(workingDirectory));
         extractor.extractOrCopy(true);
-        if(extractor.isExtracted() == false)
-            throw new RuntimeException("Schema not extracted");
 
         schemaPartition.setWrappedPartition(ldifPartition);
 
@@ -153,41 +148,36 @@ public class EmbeddedApacheDS {
         }
     }
 
-    public void importLdif( InputStream in ) throws Exception
-    { 
+    public void importLdif(InputStream in) throws Exception {
         /** the context root for the rootDSE */
         CoreSession rootDSE = service.getAdminSession();
-        for ( LdifEntry ldifEntry:new LdifReader( in ) )
-        {
-            DefaultServerEntry entry = new DefaultServerEntry( 
-                    rootDSE.getDirectoryService().getSchemaManager(), ldifEntry.getEntry() );
+        for (LdifEntry ldifEntry : new LdifReader(in)) {
+            DefaultServerEntry entry = new DefaultServerEntry(rootDSE.getDirectoryService().getSchemaManager(),
+                    ldifEntry.getEntry());
 
-            if(!rootDSE.exists(entry.getDn())){ 
-                rootDSE.add( entry);   
-            } 
+            if (!rootDSE.exists(entry.getDn())) {
+                rootDSE.add(entry);
+            }
         }
     }
-
 
     /**
      * starts the LdapServer
      *
      * @throws Exception
      */
-    public void startServer() throws Exception
-    {
+    public void startServer() throws Exception {
         server = new LdapServer();
         int serverPort = 10389;
-        server.setTransports( new TcpTransport( serverPort ) );
-        server.setDirectoryService( service );
+        server.setTransports(new TcpTransport(serverPort));
+        server.setDirectoryService(service);
 
         server.start();
     }
 
-    public void stopServer() throws Exception
-    {
-        if(server != null){
-            if(server.isStarted()){
+    public void stopServer() throws Exception {
+        if (server != null) {
+            if (server.isStarted()) {
                 server.stop();
             }
         }
