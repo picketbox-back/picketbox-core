@@ -79,6 +79,8 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
 
     private String jpaConfigName;
 
+    private String jpaJNDIName;
+
     private String passwordQuery;
 
     public DataSource getDataSource() {
@@ -103,6 +105,14 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
 
     public void setJpaConfigName(String configuration) {
         this.jpaConfigName = configuration;
+    }
+
+    public String getJpaJNDIName() {
+        return jpaJNDIName;
+    }
+
+    public void setJpaJNDIName(String jpaJNDIName) {
+        this.jpaJNDIName = jpaJNDIName;
     }
 
     public String getPasswordQuery() {
@@ -154,7 +164,7 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
             throw PicketBoxMessages.MESSAGES.missingRequiredProperty("passwordQuery");
 
         // if the name of a JPA configuration has been set, use it to execute the query via JPA.
-        if (this.getJpaConfigName() != null) {
+        if (this.getJpaConfigName() != null || this.getJpaJNDIName() != null) {
             return this.retrievePasswordViaJPA(username);
         }
 
@@ -248,7 +258,16 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
 
         try {
             // get an entity manager factory using the jpa configuration name.
-            EntityManagerFactory factory = Persistence.createEntityManagerFactory(this.getJpaConfigName());
+            EntityManagerFactory factory = null;
+
+            if (this.getJpaConfigName() != null) {
+                factory = Persistence.createEntityManagerFactory(this.getJpaConfigName());
+            } else if (this.getJpaJNDIName() != null) {
+                InitialContext context = new InitialContext();
+
+                factory = (EntityManagerFactory) context.lookup(this.getJpaJNDIName());
+            }
+
             EntityManager manager = factory.createEntityManager();
 
             // create a query instance and run the configured principals query.
