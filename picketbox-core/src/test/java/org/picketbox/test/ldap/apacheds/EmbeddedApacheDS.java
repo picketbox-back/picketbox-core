@@ -23,6 +23,7 @@ package org.picketbox.test.ldap.apacheds;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import org.apache.directory.server.constants.ServerDNConstants;
@@ -39,8 +40,6 @@ import org.apache.directory.shared.ldap.entry.DefaultServerEntry;
 import org.apache.directory.shared.ldap.ldif.LdifEntry;
 import org.apache.directory.shared.ldap.ldif.LdifReader;
 import org.apache.directory.shared.ldap.schema.SchemaManager;
-import org.apache.directory.shared.ldap.schema.ldif.extractor.SchemaLdifExtractor;
-import org.apache.directory.shared.ldap.schema.ldif.extractor.impl.DefaultSchemaLdifExtractor;
 import org.apache.directory.shared.ldap.schema.loader.ldif.LdifSchemaLoader;
 import org.apache.directory.shared.ldap.schema.manager.impl.DefaultSchemaManager;
 import org.apache.directory.shared.ldap.schema.registries.SchemaLoader;
@@ -127,12 +126,17 @@ public class EmbeddedApacheDS {
         ldifPartition.setWorkingDirectory(workingDirectory + "/schema");
 
         // Extract the schema on disk (a brand new one) and load the registries
-        File schemaRepository = new File(workingDirectory, "schema");
+        /*File schemaRepository = new File(workingDirectory, "schema");
         SchemaLdifExtractor extractor = new DefaultSchemaLdifExtractor(new File(workingDirectory));
         extractor.extractOrCopy(true);
+        if(extractor.isExtracted() == false)
+            throw new RuntimeException("Schema not extracted");*/
 
         schemaPartition.setWrappedPartition(ldifPartition);
 
+        URL schemaDir = getClass().getClassLoader().getResource("apacheds/schema");
+        File schemaRepository = new File(schemaDir.getPath());
+        
         SchemaLoader loader = new LdifSchemaLoader(schemaRepository);
         SchemaManager schemaManager = new DefaultSchemaManager(loader);
         service.setSchemaManager(schemaManager);
