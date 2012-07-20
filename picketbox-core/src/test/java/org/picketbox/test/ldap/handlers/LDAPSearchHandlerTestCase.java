@@ -24,7 +24,6 @@ package org.picketbox.test.ldap.handlers;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +35,7 @@ import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.core.ldap.config.LDAPSearchConfig;
 import org.picketbox.core.ldap.handlers.LDAPContextHandler;
 import org.picketbox.core.ldap.handlers.LDAPSearchHandler;
-import org.picketbox.test.ldap.BaseOpenDS;
+import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
 
 /**
  * Unit test the {@link LDAPSearchHandler}
@@ -44,18 +43,12 @@ import org.picketbox.test.ldap.BaseOpenDS;
  * @author anil saldhana
  * @since Jul 18, 2012
  */
-public class LDAPSearchHandlerTestCase extends BaseOpenDS {
-
-    protected String adminPW = "password";
-    protected String dn = "dc=jboss,dc=org";
-    protected String adminDN = "cn=Directory Manager";
-    String port = "10389";
-
+public class LDAPSearchHandlerTestCase extends AbstractLDAPTest{
+    
     @Before
     public void setup() throws Exception {
-        URL ldif = getClass().getClassLoader().getResource("ldap/users.ldif");
-        boolean op = util.addLDIF(serverHost, port, adminDN, adminPW, ldif);
-        assertTrue(op);
+        super.setup();
+        importLDIF("ldap/users.ldif");
     }
 
     @Test

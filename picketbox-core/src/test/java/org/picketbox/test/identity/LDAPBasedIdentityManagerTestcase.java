@@ -24,7 +24,6 @@ package org.picketbox.test.identity;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ import org.junit.Test;
 import org.picketbox.core.PicketBoxPrincipal;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
-import org.picketbox.test.ldap.BaseOpenDS;
+import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
 
 /**
  * Unit test the {@link LDAPBasedIdentityManager}
@@ -44,13 +43,12 @@ import org.picketbox.test.ldap.BaseOpenDS;
  * @author anil saldhana
  * @since Jul 18, 2012
  */
-public class LDAPBasedIdentityManagerTestcase extends BaseOpenDS {
+public class LDAPBasedIdentityManagerTestcase extends AbstractLDAPTest {
 
     @Before
     public void setup() throws Exception {
-        URL ldif = getClass().getClassLoader().getResource("ldap/users.ldif");
-        boolean op = util.addLDIF(serverHost, port, adminDN, adminPW, ldif);
-        assertTrue(op);
+        super.setup();
+        importLDIF("ldap/users.ldif");
     }
 
     @Test
