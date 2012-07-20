@@ -178,11 +178,11 @@
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>org.apache.directory.server</groupId>
-					<artifactId>shared-ldap-schema</artifactId>
+					<artifactId>shared-ldap</artifactId>
+					<groupId>org.apache.directory.shared</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>shared-ldap</artifactId>
+					<artifactId>shared-ldap-schema</artifactId>
 					<groupId>org.apache.directory.shared</groupId>
 				</exclusion>
 			</exclusions>
