@@ -12,7 +12,9 @@
 	this software; if not, write to the Free ~ Software Foundation, Inc., 51 
 	Franklin St, Fifth Floor, Boston, MA ~ 02110-1301 USA, or see the FSF site: 
 	http://www.fsf.org. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.picketbox</groupId>
@@ -109,7 +111,6 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
-
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -170,28 +171,20 @@
 			<version>3.6.6.Final</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Apache DS -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.5.10</version>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.apache.directory.server</groupId>
 			<artifactId>apacheds-all</artifactId>
 			<version>1.5.7</version>
 			<scope>test</scope>
 			<exclusions>
-			  <exclusion>
-			    <groupId>org.apache.directory.server</groupId>
-			    <artifactId>shared-ldap-schema</artifactId>
-			  </exclusion>
-			  <exclusion>
-			    <groupId>org.apache.directory.server</groupId>
-			    <artifactId>shared-ldap</artifactId>
-			  </exclusion>
+				<exclusion>
+					<groupId>org.apache.directory.server</groupId>
+					<artifactId>shared-ldap-schema</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>shared-ldap</artifactId>
+					<groupId>org.apache.directory.shared</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 	</dependencies>
@@ -213,7 +206,7 @@
 						${project.version} API Reference" -bottom "Copyright ©
 						${project.inceptionYear}-Present ${project.organization.name}. All
 						Rights Reserved." -link http://java.sun.com/javase/6/docs/api/
-						-sourceclasspath ${project.build.outputDirectory}
+						-sourceclasspath ${project.build.outputDirectory} 
 					</additionalparam>
 					<encoding>UTF-8</encoding>
 				</configuration>
