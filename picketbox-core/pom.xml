@@ -185,10 +185,6 @@
 					<artifactId>shared-ldap</artifactId>
 					<groupId>org.apache.directory.shared</groupId>
 				</exclusion>
-				<exclusion>
-					<artifactId>shared-ldap-schema</artifactId>
-					<groupId>org.apache.directory.shared</groupId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 	</dependencies>

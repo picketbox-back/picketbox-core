@@ -23,7 +23,6 @@ package org.picketbox.test.ldap.apacheds;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
 import org.apache.directory.server.constants.ServerDNConstants;
@@ -136,9 +135,6 @@ public class EmbeddedApacheDS {
 
         schemaPartition.setWrappedPartition(ldifPartition);
 
-//        URL schemaDir = getClass().getClassLoader().getResource("apacheds/schema");
-//        File schemaRepository = new File(schemaDir.getPath());
-        
         SchemaLoader loader = new LdifSchemaLoader(schemaRepository);
         SchemaManager schemaManager = new DefaultSchemaManager(loader);
         service.setSchemaManager(schemaManager);
