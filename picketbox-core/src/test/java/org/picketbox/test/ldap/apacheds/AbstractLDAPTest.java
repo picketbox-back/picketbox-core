@@ -46,7 +46,10 @@ public class AbstractLDAPTest {
     
     @Before
     public void setup() throws Exception {
-        File workDir = new File( System.getProperty( "java.io.tmpdir" ) + "/server-work" );
+        String tempDir = System.getProperty( "java.io.tmpdir" );
+        System.out.println(tempDir);
+        
+        File workDir = new File(  tempDir+ "/server-work" );
         workDir.mkdirs();
         
         ds = new EmbeddedApacheDS(workDir);
