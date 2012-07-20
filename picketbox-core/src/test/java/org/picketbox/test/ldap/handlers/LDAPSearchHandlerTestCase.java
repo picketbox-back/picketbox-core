@@ -43,8 +43,8 @@ import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
  * @author anil saldhana
  * @since Jul 18, 2012
  */
-public class LDAPSearchHandlerTestCase extends AbstractLDAPTest{
-    
+public class LDAPSearchHandlerTestCase extends AbstractLDAPTest {
+
     @Before
     public void setup() throws Exception {
         super.setup();

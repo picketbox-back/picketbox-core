@@ -43,15 +43,20 @@ public class ProtectedResource {
 
     public static final String ANY_RESOURCE_PATTERN = "/*";
 
-    public static final ProtectedResource DEFAULT_RESOURCE = new ProtectedResource(ANY_RESOURCE_PATTERN, ProtectedResourceConstraint.ALL);
+    public static final ProtectedResource DEFAULT_RESOURCE = new ProtectedResource(ANY_RESOURCE_PATTERN,
+            ProtectedResourceConstraint.ALL);
 
     /**
-     * <p>Defines the pattern used to protecte a specific resource. It must begin with /.</p>
+     * <p>
+     * Defines the pattern used to protecte a specific resource. It must begin with /.
+     * </p>
      */
     private String pattern;
 
     /**
-     * <p>Security constraints to be applied. See {@link ProtectedResourceConstraint} for the possible values.</p>
+     * <p>
+     * Security constraints to be applied. See {@link ProtectedResourceConstraint} for the possible values.
+     * </p>
      */
     private String constraint = ProtectedResourceConstraint.ALL.name();
 
@@ -92,7 +97,9 @@ public class ProtectedResource {
     }
 
     /**
-     * <p>Checks if the resources requires authentication.</p>
+     * <p>
+     * Checks if the resources requires authentication.
+     * </p>
      *
      * @return
      */
@@ -107,7 +114,9 @@ public class ProtectedResource {
     }
 
     /**
-     * <p>Checks if the resource requires authorization.</p>
+     * <p>
+     * Checks if the resource requires authorization.
+     * </p>
      *
      * @return
      */
@@ -121,7 +130,9 @@ public class ProtectedResource {
     }
 
     /**
-     * <p>Checks if the provided URI matches the pattern defined for this resource.</p>
+     * <p>
+     * Checks if the provided URI matches the pattern defined for this resource.
+     * </p>
      *
      * @param uri
      * @return

@@ -161,7 +161,8 @@ public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
     }
 
     private boolean isPerformAuthorization(HttpServletRequest httpRequest, ProtectedResource protectedResource) {
-        return this.authorizationManager != null && this.isAuthenticated(httpRequest) && protectedResource.requiresAuthorization();
+        return this.authorizationManager != null && this.isAuthenticated(httpRequest)
+                && protectedResource.requiresAuthorization();
     }
 
     /**

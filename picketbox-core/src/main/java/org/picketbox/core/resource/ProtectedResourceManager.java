@@ -56,8 +56,8 @@ public class ProtectedResourceManager extends AbstractPicketBoxLifeCycle {
 
     /**
      * <p>
-     * Returns a {@link ProtectedResource} instance that matches the specified {@link HttpServletRequest} instance.
-     * If no match is found, it will be returned a default resource. See <code>ProtectedResource.DEFAULT_RESOURCE</code>.
+     * Returns a {@link ProtectedResource} instance that matches the specified {@link HttpServletRequest} instance. If no match
+     * is found, it will be returned a default resource. See <code>ProtectedResource.DEFAULT_RESOURCE</code>.
      * </p>
      *
      * @param servletReq
@@ -100,7 +100,9 @@ public class ProtectedResourceManager extends AbstractPicketBoxLifeCycle {
     }
 
     /**
-     * <p>Add a new {@link ProtectedResource} to the list of protected resources.</p>
+     * <p>
+     * Add a new {@link ProtectedResource} to the list of protected resources.
+     * </p>
      *
      * @param pattern
      * @param constraint
