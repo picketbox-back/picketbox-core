@@ -53,7 +53,6 @@ public class LDAPSearchHandlerTestCase extends AbstractLDAPTest{
 
     @Test
     public void testSearch() throws Exception {
-
         BasicLDAPStoreConfig ldapStoreConfig = new BasicLDAPStoreConfig();
         ldapStoreConfig.setUserName(adminDN);
         ldapStoreConfig.setUserPassword(adminPW);
