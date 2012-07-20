@@ -54,9 +54,10 @@ public abstract class AbstractPicketBoxManagerTestCase {
     }
 
     protected PicketBoxConfiguration createConfiguration() {
-        return new PicketBoxConfiguration().authentication(createAuthenticationScheme()).authorization(createAuthorizationManager());
+        return new PicketBoxConfiguration().authentication(createAuthenticationScheme()).authorization(
+                createAuthorizationManager());
     }
-    
+
     protected TestServletResponse createResponse() {
         return new TestServletResponse(new OutputStream() {
 
@@ -74,40 +75,42 @@ public abstract class AbstractPicketBoxManagerTestCase {
                 return 0;
             }
         });
-        
+
         request.setMethod("GET");
         request.setContextPath("/unittestapp");
         request.setRequestURI(request.getContextPath() + uri);
-        
+
         return request;
     }
 
     protected HTTPFormAuthentication createAuthenticationScheme() {
         HTTPFormAuthentication authenticator = new HTTPFormAuthentication();
-        
+
         authenticator.setAuthManager(new PropertiesFileBasedAuthenticationManager());
         authenticator.setServletContext(this.servletContext);
-        
+
         return authenticator;
     }
 
     protected AuthorizationManager createAuthorizationManager() {
         return new TestAuthorizationManager() {
-            
+
             @Override
             public boolean authorize(Resource resource, PicketBoxSubject subject) throws AuthorizationException {
                 return doAuthorize(resource, subject);
             }
         };
     }
-    
+
     protected boolean doAuthorize(Resource resource, PicketBoxSubject subject) {
         return true;
     }
 
     /**
-     * <p>Forces the creation of a security context. This is the same as authenticating the user.</p>
-     * 
+     * <p>
+     * Forces the creation of a security context. This is the same as authenticating the user.
+     * </p>
+     *
      * @param req
      */
     protected void forceSecurityContextCreation(TestServletRequest req) {

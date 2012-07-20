@@ -280,7 +280,9 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
     }
 
     /**
-     * <p>Resolves the configured {@link EntityManagerFactory} instance.</p>
+     * <p>
+     * Resolves the configured {@link EntityManagerFactory} instance.
+     * </p>
      *
      * @return
      * @throws NamingException

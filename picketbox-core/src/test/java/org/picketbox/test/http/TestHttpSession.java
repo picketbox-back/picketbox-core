@@ -96,7 +96,7 @@ public class TestHttpSession implements HttpSession {
 
     @Override
     public void setAttribute(String name, Object value) {
-        this.attributes .put(name, value);
+        this.attributes.put(name, value);
     }
 
     @Override

@@ -23,7 +23,10 @@
 package org.picketbox.core.resource;
 
 /**
- * <p>This {@link Enum} class defines the possible values for the security constraints that can be applied in {@link ProtectedResource}.</p>
+ * <p>
+ * This {@link Enum} class defines the possible values for the security constraints that can be applied in
+ * {@link ProtectedResource}.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -31,22 +34,30 @@ package org.picketbox.core.resource;
 public enum ProtectedResourceConstraint {
 
     /**
-     * <p>Applies ALL constraints.</p>
+     * <p>
+     * Applies ALL constraints.
+     * </p>
      */
     ALL,
 
     /**
-     * <p>Performs only authentication.</p>
+     * <p>
+     * Performs only authentication.
+     * </p>
      */
     AUTHENTICATION,
 
     /**
-     * <p>Performs authentication and authorization.</p>
+     * <p>
+     * Performs authentication and authorization.
+     * </p>
      */
     AUTHORIZATION,
 
     /**
-     * <p>Mark the resources as a no protected resource.</p>
+     * <p>
+     * Mark the resources as a no protected resource.
+     * </p>
      */
     NOT_PROTECTED
 
