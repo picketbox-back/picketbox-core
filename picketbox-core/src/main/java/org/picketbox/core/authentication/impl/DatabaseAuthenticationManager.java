@@ -52,6 +52,7 @@ import org.picketbox.core.util.HTTPDigestUtil;
  * When using JPA, the following properties MUST be configured;
  * <ul>
  * <li>jpaConfigName; the name of the persistence unit as configured in the persistence.xml file</li>
+ * <li>jpaJNDIName; the JNDI name of the persistence unit as configured in the persistence.xml file</li>
  * <li>passwordQuery; the query that must be run in order to obtain the password associated with the incoming username. It must
  * return a single result and must accept the username as a query parameter.</li>
  * </ul>
@@ -79,6 +80,8 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
 
     private String jpaConfigName;
 
+    private String jpaJNDIName;
+
     private String passwordQuery;
 
     public DataSource getDataSource() {
@@ -103,6 +106,14 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
 
     public void setJpaConfigName(String configuration) {
         this.jpaConfigName = configuration;
+    }
+
+    public String getJpaJNDIName() {
+        return jpaJNDIName;
+    }
+
+    public void setJpaJNDIName(String jpaJNDIName) {
+        this.jpaJNDIName = jpaJNDIName;
     }
 
     public String getPasswordQuery() {
@@ -154,7 +165,7 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
             throw PicketBoxMessages.MESSAGES.missingRequiredProperty("passwordQuery");
 
         // if the name of a JPA configuration has been set, use it to execute the query via JPA.
-        if (this.getJpaConfigName() != null) {
+        if (this.getJpaConfigName() != null || this.getJpaJNDIName() != null) {
             return this.retrievePasswordViaJPA(username);
         }
 
@@ -245,11 +256,12 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
      * @throws AuthenticationException if an error occurs while retrieving the password via JPA.
      */
     private String retrievePasswordViaJPA(String username) throws AuthenticationException {
+        EntityManager manager = null;
 
         try {
-            // get an entity manager factory using the jpa configuration name.
-            EntityManagerFactory factory = Persistence.createEntityManagerFactory(this.getJpaConfigName());
-            EntityManager manager = factory.createEntityManager();
+            EntityManagerFactory factory = getEntityManagerFactory();
+
+            manager = factory.createEntityManager();
 
             // create a query instance and run the configured principals query.
             Query query = manager.createNativeQuery(this.getPasswordQuery());
@@ -259,7 +271,30 @@ public class DatabaseAuthenticationManager extends AbstractAuthenticationManager
             return result.toString();
         } catch (Exception e) {
             throw new AuthenticationException(e);
+        } finally {
+            if (manager != null) {
+                manager.close();
+            }
         }
 
+    }
+
+    /**
+     * <p>Resolves the configured {@link EntityManagerFactory} instance.</p>
+     *
+     * @return
+     * @throws NamingException
+     */
+    private EntityManagerFactory getEntityManagerFactory() throws NamingException {
+        // get an entity manager factory using the jpa configuration name.
+        EntityManagerFactory factory = null;
+
+        if (this.getJpaConfigName() != null) {
+            factory = Persistence.createEntityManagerFactory(this.getJpaConfigName());
+        } else if (this.getJpaJNDIName() != null) {
+            factory = (EntityManagerFactory) new InitialContext().lookup(this.getJpaJNDIName());
+        }
+
+        return factory;
     }
 }
