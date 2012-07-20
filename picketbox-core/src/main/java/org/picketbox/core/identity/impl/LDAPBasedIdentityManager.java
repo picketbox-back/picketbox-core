@@ -61,7 +61,7 @@ import org.picketbox.core.identity.IdentityManager;
  */
 public class LDAPBasedIdentityManager implements IdentityManager {
 
-    protected Map<String, Object> options = new HashMap<String, Object>();
+    protected Map<String, String> options = new HashMap<String, String>();
 
     protected String bindDN, bindCredential;
 
@@ -85,7 +85,7 @@ public class LDAPBasedIdentityManager implements IdentityManager {
      *
      * @param options
      */
-    public void setOptions(Map<String, Object> options) {
+    public void setOptions(Map<String, String> options) {
         this.options.putAll(options);
         initialize();
     }
@@ -103,9 +103,9 @@ public class LDAPBasedIdentityManager implements IdentityManager {
 
         Properties env = new Properties();
         // Map all option into the JNDI InitialLdapContext env
-        Iterator<Entry<String, Object>> iter = options.entrySet().iterator();
+        Iterator<Entry<String, String>> iter = options.entrySet().iterator();
         while (iter.hasNext()) {
-            Entry<String, Object> entry = iter.next();
+            Entry<String, String> entry = iter.next();
             env.put(entry.getKey(), entry.getValue());
         }
 

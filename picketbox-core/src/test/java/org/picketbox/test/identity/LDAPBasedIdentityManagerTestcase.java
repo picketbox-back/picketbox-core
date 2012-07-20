@@ -55,14 +55,14 @@ public class LDAPBasedIdentityManagerTestcase extends AbstractLDAPTest {
     public void testIdentity() throws Exception {
         LDAPBasedIdentityManager im = new LDAPBasedIdentityManager();
 
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, String> options = new HashMap<String, String>();
         options.put("java.naming.provider.url", "ldap://localhost:10389/");
         options.put("principalDNPrefix", "uid=");
         options.put("principalDNSuffix", ",ou=People,dc=jboss,dc=org");
 
-        options.put(Context.SECURITY_PRINCIPAL, "cn=Directory Manager");
-        options.put(Context.SECURITY_CREDENTIALS, "password");
-        options.put("rolesCtxDN", "ou=Roles,dc=jboss,dc=org");
+        options.put(Context.SECURITY_PRINCIPAL, "uid=jduke,ou=People,dc=jboss,dc=org");
+        options.put(Context.SECURITY_CREDENTIALS, "theduke");
+        options.put("rolesCtxDN", ",ou=Roles,dc=jboss,dc=org");
         options.put("uidAttributeID", "member");
         options.put("matchOnUserDN", "true");
         options.put("roleAttributeID", "cn");
