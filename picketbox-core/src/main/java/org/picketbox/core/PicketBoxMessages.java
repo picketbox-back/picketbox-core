@@ -146,4 +146,10 @@ public interface PicketBoxMessages {
 
     @Message(id = 35, value = "User Dn String is missing")
     RuntimeException userDNStringMissing();
+
+    @Message(id = 36, value = "LDAP Search Failed.")
+    RuntimeException ldapSearchFailed(@Cause Throwable t);
+
+    @Message(id = 37, value = "Basic LDAP Config Missing.")
+    RuntimeException basicLdapConfigMissing();
 }
