@@ -1,0 +1,46 @@
+dn: dc=jboss,dc=org
+objectclass: dcObject
+objectclass: organization
+dc: JBoss
+o: JBoss
+
+dn: o=example3,dc=jboss,dc=org
+objectclass: top
+objectclass: dcObject
+objectclass: organization
+dc: jboss
+o: JBoss
+
+dn: ou=People,o=example3,dc=jboss,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: People
+
+dn: uid=jduke,ou=People,o=example3,dc=jboss,dc=org
+objectclass: top
+objectclass: uidObject
+objectclass: person
+objectClass: inetOrgPerson
+uid: jduke
+employeeNumber: judke-123
+cn: Java Duke
+sn: Duke
+userPassword: theduke
+
+dn: ou=Roles,o=example3,dc=jboss,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: Roles
+
+dn: cn=Echo,ou=Roles,o=example3,dc=jboss,dc=org
+objectClass: top
+objectClass: groupOfNames
+cn: Echo
+description: the JBossAdmin group
+member: uid=jduke,ou=People,o=example3,dc=jboss,dc=org
+
+dn: cn=TheDuke,ou=Roles,o=example3,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: TheDuke
+member: uid=jduke,ou=People,o=example3,dc=jboss,dc=org

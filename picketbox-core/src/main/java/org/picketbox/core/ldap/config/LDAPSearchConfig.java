@@ -44,6 +44,8 @@ public class LDAPSearchConfig {
 
     private int searchTimeLimit = 10000;
 
+    private int recursion = 0;
+
     /**
      * Get the search time limit
      *
@@ -176,6 +178,24 @@ public class LDAPSearchConfig {
      */
     public void setFilterArgs(Object[] filterArgs) {
         this.filterArgs = filterArgs;
+    }
+
+    /**
+     * Get the recursion count. Default is 0.
+     *
+     * @return
+     */
+    public int getRecursion() {
+        return recursion;
+    }
+
+    /**
+     * Set the recursion count. Default is 0.
+     *
+     * @param recursion
+     */
+    public void setRecursion(int recursion) {
+        this.recursion = recursion;
     }
 
     /**

@@ -1,0 +1,80 @@
+version: 1
+dn: dc=jboss,dc=org
+objectclass: dcObject
+objectclass: organization
+dc: JBoss
+o: JBoss
+
+dn: o=example2,dc=jboss,dc=org
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+dc: jboss
+o: JBoss
+
+dn: ou=People,o=example2,dc=jboss,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: People
+
+dn: uid=jduke,ou=People,o=example2,dc=jboss,dc=org
+objectClass: top
+objectClass: uidObject
+objectClass: person
+objectClass: inetOrgPerson
+cn: Java Duke
+employeeNumber: judke-123
+sn: Duke
+uid: jduke
+userPassword:: dGhlZHVrZQ==
+
+dn: uid=jduke2,ou=People,o=example2,dc=jboss,dc=org
+objectClass: top
+objectClass: uidObject
+objectClass: person
+objectClass: inetOrgPerson
+cn: Java Duke2
+employeeNumber: judke2-123
+sn: Duke2
+uid: jduke2
+userPassword:: dGhlZHVrZTI=
+
+dn: ou=Roles,o=example2,dc=jboss,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: Roles
+
+dn: cn=Echo,ou=Roles,o=example2,dc=jboss,dc=org
+objectClass: top
+objectClass: groupOfNames
+cn: Echo
+description: the echo role
+member: uid=jduke,ou=People,dc=jboss,dc=org
+
+dn: cn=TheDuke,ou=Roles,o=example2,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: TheDuke
+description: the duke role
+member: uid=jduke,ou=People,o=example2,dc=jboss,dc=org
+
+dn: cn=Echo2,ou=Roles,o=example2,dc=jboss,dc=org
+objectClass: top
+objectClass: groupOfNames
+cn: Echo2
+description: the Echo2 role
+member: uid=jduke2,ou=People,dc=jboss,dc=org
+
+dn: cn=TheDuke2,ou=Roles,o=example2,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: TheDuke2
+description: the duke2 role
+member: uid=jduke2,ou=People,o=example2,dc=jboss,dc=org
+
+dn: cn=JBossAdmin,ou=Roles,o=example2,dc=jboss,dc=org
+objectClass: top
+objectClass: groupOfNames
+cn: JBossAdmin
+description: the JBossAdmin group
+member: uid=jduke,ou=People,dc=jboss,dc=org

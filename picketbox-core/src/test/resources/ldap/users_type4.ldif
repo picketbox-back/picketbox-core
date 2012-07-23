@@ -1,0 +1,84 @@
+dn: dc=jboss,dc=org
+objectclass: dcObject
+objectclass: organization
+dc: JBoss
+o: JBoss
+
+dn: o=example4,dc=jboss,dc=org
+objectclass: top
+objectclass: dcObject
+objectclass: organization
+dc: jboss
+o: JBoss
+
+dn: ou=People,o=example4,dc=jboss,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: People
+
+dn: uid=jduke,ou=People,o=example4,dc=jboss,dc=org
+objectClass: top
+objectClass: uidObject
+objectClass: person
+objectClass: inetOrgPerson
+cn: Java Duke
+employeeNumber: jduke-123
+sn: Duke
+uid: jduke
+userPassword:: dGhlZHVrZQ==
+
+dn: ou=Roles,o=example4,dc=jboss,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: Roles
+
+dn: cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: RG1
+member: cn=empty
+
+dn: cn=RG2,cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: RG2
+member: cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+member: uid=jduke,ou=People,o=example4,dc=jboss,dc=org
+
+dn: cn=RG3,cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: RG3
+member: cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+
+dn: cn=R1,ou=Roles,o=example4,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: R1
+member: cn=RG2,cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+
+dn: cn=R2,ou=Roles,o=example4,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: R2
+member: cn=RG2,cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+
+dn: cn=R3,ou=Roles,o=example4,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: R3
+member: cn=RG2,cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+member: cn=RG3,cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+
+dn: cn=R4,ou=Roles,o=example4,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: R4
+member: cn=RG3,cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+
+dn: cn=R5,ou=Roles,o=example4,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: R5
+member: cn=RG3,cn=RG1,ou=Roles,o=example4,dc=jboss,dc=org
+member: uid=jduke,ou=People,o=example4,dc=jboss,dc=org
