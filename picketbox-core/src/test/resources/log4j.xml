@@ -72,7 +72,7 @@
     <priority value="TRACE"/>
   </category>
   <category name="org.apache.directory">
-    <priority value="TRACE"/>
+    <priority value="INFO"/>
   </category>
 
   <!-- ======================= -->
