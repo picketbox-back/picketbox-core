@@ -212,4 +212,19 @@ public class LDAPSearchConfig {
 
         return SearchControls.OBJECT_SCOPE;
     }
+
+    /**
+     * Call this method when there is a need to substitute the filter args with the real user name
+     *
+     * @param userName
+     */
+    public void substituteUser(String userName) {
+        if (filterArgs != null) {
+            int len = filterArgs.length;
+            for (int i = 0; i < len; i++) {
+                String str = (String) filterArgs[i];
+                filterArgs[i] = str.replace("CHANGE_USER", userName);
+            }
+        }
+    }
 }
