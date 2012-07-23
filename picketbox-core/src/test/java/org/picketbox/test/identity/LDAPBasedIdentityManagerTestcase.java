@@ -24,17 +24,15 @@ package org.picketbox.test.identity;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.naming.Context;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.PicketBoxPrincipal;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
+import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
+import org.picketbox.core.ldap.config.LDAPSearchConfig;
 import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
 
 /**
@@ -53,22 +51,22 @@ public class LDAPBasedIdentityManagerTestcase extends AbstractLDAPTest {
 
     @Test
     public void testIdentity() throws Exception {
+        BasicLDAPStoreConfig basicLdapStoreConfig = new BasicLDAPStoreConfig();
+        basicLdapStoreConfig.setStoreURL("ldap://localhost:10389/");
+        basicLdapStoreConfig.setUserName("uid=jduke,ou=People,dc=jboss,dc=org");
+        basicLdapStoreConfig.setUserPassword("theduke");
+
+        LDAPSearchConfig searchConfig = new LDAPSearchConfig();
+
+        searchConfig.setScope("subtree");
+        searchConfig.setSearchBase("ou=Roles,dc=jboss,dc=org");
+        searchConfig.setSearchAttributes(new String[] { "cn" });
+        searchConfig.setSearchFilterExpression("member={0}");
+        searchConfig.setFilterArgs(new Object[] { "uid=jduke,ou=People,dc=jboss,dc=org" });
+
         LDAPBasedIdentityManager im = new LDAPBasedIdentityManager();
-
-        Map<String, String> options = new HashMap<String, String>();
-        options.put("java.naming.provider.url", "ldap://localhost:10389/");
-        options.put("principalDNPrefix", "uid=");
-        options.put("principalDNSuffix", ",ou=People,dc=jboss,dc=org");
-
-        options.put(Context.SECURITY_PRINCIPAL, "uid=jduke,ou=People,dc=jboss,dc=org");
-        options.put(Context.SECURITY_CREDENTIALS, "theduke");
-        options.put("rolesCtxDN", ",ou=Roles,dc=jboss,dc=org");
-        options.put("uidAttributeID", "member");
-        options.put("matchOnUserDN", "true");
-        options.put("roleAttributeID", "cn");
-        options.put("roleAttributeIsDN", "false");
-
-        im.setOptions(options);
+        im.setBasicLdapConfig(basicLdapStoreConfig);
+        im.setLdapSearchConfig(searchConfig);
 
         PicketBoxSubject subject = im.getIdentity(new PicketBoxPrincipal("jduke"));
         assertNotNull(subject);
