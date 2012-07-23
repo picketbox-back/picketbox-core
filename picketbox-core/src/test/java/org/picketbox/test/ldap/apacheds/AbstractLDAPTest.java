@@ -63,10 +63,6 @@ public class AbstractLDAPTest {
         ds.startServer();
 
         System.out.println("Time taken = " + (System.currentTimeMillis() - current) + "milisec");
-
-        InputStream is = getClass().getClassLoader().getResourceAsStream("ldap/users.ldif");
-        assertNotNull(is);
-        ds.importLdif(is);
     }
 
     @After
@@ -77,6 +73,7 @@ public class AbstractLDAPTest {
         String tempDir = System.getProperty("java.io.tmpdir");
         System.out.println(tempDir);
 
+        System.out.println("Going to delete the server-work directory");
         File workDir = new File(tempDir + "/server-work");
         if (workDir != null) {
             recursiveDeleteDir(workDir);
@@ -87,7 +84,7 @@ public class AbstractLDAPTest {
         long current = System.currentTimeMillis();
         System.out.println("Going to import LDIF:" + fileName);
         InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
-        assertNotNull(is);
+        assertNotNull("LDIF file is not null?", is);
         ds.importLdif(is);
         System.out.println("Time taken = " + (System.currentTimeMillis() - current) + "milisec");
     }

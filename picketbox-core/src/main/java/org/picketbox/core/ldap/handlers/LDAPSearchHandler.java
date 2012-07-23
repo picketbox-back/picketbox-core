@@ -86,29 +86,108 @@ public class LDAPSearchHandler {
 
         searchControl.setReturningAttributes(searchAttributes);
 
+        String searchBase = ldapSearchConfig.getSearchBase();
+        String searchFilter = ldapSearchConfig.getSearchFilter();
+        String searchFilterExpression = ldapSearchConfig.getSearchFilterExpression();
+        Object[] searchFilterArgs = ldapSearchConfig.getFilterArgs();
+
+        int recursion = ldapSearchConfig.getRecursion();
+
         NamingEnumeration<SearchResult> ne = null;
-        if (ldapSearchConfig.getSearchFilterExpression() == null) {
-            ne = dc.search(ldapSearchConfig.getSearchBase(), ldapSearchConfig.getSearchFilter(), searchControl);
+        if (searchFilterExpression == null && searchFilter != null) {
+            ne = dc.search(searchBase, searchFilter, searchControl);
+        } else if (searchFilterExpression != null && searchFilterExpression.isEmpty() == false) {
+            ne = dc.search(searchBase, searchFilterExpression, searchFilterArgs, searchControl);
         } else {
-            ne = dc.search(ldapSearchConfig.getSearchBase(), ldapSearchConfig.getSearchFilterExpression(),
-                    ldapSearchConfig.getFilterArgs(), searchControl);
+            ne = dc.search(searchBase, searchFilter, searchControl);
+        }
+        while (ne.hasMore()) {
+            SearchResult result = ne.next();
+            String dn = canonicalize(result.getName(), ldapSearchConfig);
+            Attributes attributes = result.getAttributes();
+            if (attributes != null) {
+                values.addAll(getValues(attributes, searchAttributes));
+            }
+
+            while (recursion-- > 0 && ldapSearchConfig.getSearchFilterExpression() != null) {
+                values.addAll(getRecursiveValues(dc, ldapSearchConfig, dn, searchControl));
+            }
+        }
+
+        return values;
+    }
+
+    /**
+     * Use recursion and get the attribute values
+     *
+     * @param dc
+     * @param ldapSearchConfig
+     * @param dn
+     * @param searchControl
+     * @return
+     * @throws NamingException
+     */
+    private List<String> getRecursiveValues(DirContext dc, LDAPSearchConfig ldapSearchConfig, String dn,
+            SearchControls searchControl) throws NamingException {
+        String searchBase = ldapSearchConfig.getSearchBase();
+        String searchFilterExpression = ldapSearchConfig.getSearchFilterExpression();
+        Object[] searchFilterArgs = ldapSearchConfig.getFilterArgs();
+        String[] searchAttributes = ldapSearchConfig.getSearchAttributes();
+
+        List<String> values = new ArrayList<String>();
+
+        NamingEnumeration<SearchResult> ne = null;
+        if (searchFilterExpression != null && searchFilterExpression.isEmpty() == false) {
+            searchFilterArgs = new Object[] { dn };
+            ne = dc.search(searchBase, searchFilterExpression, searchFilterArgs, searchControl);
         }
         while (ne.hasMore()) {
             SearchResult result = ne.next();
             Attributes attributes = result.getAttributes();
             if (attributes != null) {
-                if (searchAttributes != null) {
-                    for (String searchAttribute : searchAttributes) {
-                        Attribute attribute = attributes.get(searchAttribute);
-                        int size = attribute.size();
-                        for (int i = 0; i < size; i++) {
-                            values.add((String) attribute.get(i));
-                        }
+                values.addAll(getValues(attributes, searchAttributes));
+            }
+        }
+        return values;
+    }
+
+    /**
+     * Given a search, get the list the attribute values
+     *
+     * @param attributes
+     * @param searchAttributes
+     * @return
+     * @throws NamingException
+     */
+    private List<String> getValues(Attributes attributes, String[] searchAttributes) throws NamingException {
+        List<String> values = new ArrayList<String>();
+        if (attributes != null) {
+            if (searchAttributes != null) {
+                for (String searchAttribute : searchAttributes) {
+                    Attribute attribute = attributes.get(searchAttribute);
+                    int size = attribute.size();
+                    for (int i = 0; i < size; i++) {
+                        values.add((String) attribute.get(i));
                     }
                 }
             }
         }
-
         return values;
+    }
+
+    // JBAS-3438 : Handle "/" correctly
+    private String canonicalize(String searchResult, LDAPSearchConfig searchConfig) {
+        String base = searchConfig.getSearchBase();
+
+        String result = searchResult;
+        int len = searchResult.length();
+
+        String appendRolesCtxDN = "" + ("".equals(base) ? "" : "," + base);
+        if (searchResult.endsWith("\"")) {
+            result = searchResult.substring(0, len - 1) + appendRolesCtxDN + "\"";
+        } else {
+            result = searchResult + appendRolesCtxDN;
+        }
+        return result;
     }
 }
