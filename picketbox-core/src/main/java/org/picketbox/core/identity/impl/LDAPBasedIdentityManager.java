@@ -91,6 +91,8 @@ public class LDAPBasedIdentityManager implements IdentityManager {
         if (ldapSearchConfig == null) {
             throw PicketBoxMessages.MESSAGES.ldapSearchConfigMissing();
         }
+        ldapSearchConfig.substituteUser(principal.getName());
+
         PicketBoxSubject subject = new PicketBoxSubject();
         subject.setUser(principal);
 
