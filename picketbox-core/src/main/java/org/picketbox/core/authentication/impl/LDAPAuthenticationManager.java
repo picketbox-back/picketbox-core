@@ -66,6 +66,9 @@ public class LDAPAuthenticationManager extends AbstractAuthenticationManager {
     public Principal authenticate(String username, Object credential) throws AuthenticationException {
         boolean isValid = false;
         try {
+            ldapStoreConfig.substituteUser(username);// substitute the username
+            ldapStoreConfig.setUserPassword((String) credential);
+
             // Validate the password by trying to create an initial context
             createLdapInitContext(username, credential);
             isValid = true;

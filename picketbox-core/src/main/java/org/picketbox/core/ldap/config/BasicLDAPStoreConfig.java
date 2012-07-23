@@ -36,6 +36,8 @@ public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
 
     protected String securityProtocol;
 
+    protected String userDN = null;
+
     public BasicLDAPStoreConfig() {
     }
 
@@ -86,6 +88,16 @@ public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
     }
 
     /**
+     * In use cases, where the admin DN is different from user DN, then the {@link #substituteUser(String)} method is
+     * ineffective
+     *
+     * @param userDN
+     */
+    public void setUserDN(String userDN) {
+        this.userDN = userDN;
+    }
+
+    /**
      * Set the factory name of the JNDI Implementation
      *
      * @param factoryName
@@ -118,5 +130,30 @@ public class BasicLDAPStoreConfig implements BasicIdentityStoreConfig {
      */
     public void setSecurityProtocol(String securityProtocol) {
         this.securityProtocol = securityProtocol;
+    }
+
+    /**
+     * Call this method when there is a need to substitute the current username with the real user name
+     *
+     * @param un
+     */
+    public void substituteUser(String un) {
+        if (this.userName.contains("CHANGE_USER")) {
+            this.userName = this.userName.replace("CHANGE_USER", un);
+        } else if (userDN != null) {
+            this.userName = userDN.replace("CHANGE_USER", un);
+        } else {
+            // Look for the first '=' sign
+            int index = this.userName.indexOf('=');
+            if (index > 0) {
+                String uid = this.userName.substring(0, index);
+
+                int commaIndex = this.userName.indexOf(',', index);
+                if (commaIndex > 0) {
+                    String afterComma = this.userName.substring(commaIndex + 1);
+                    this.userName = uid + "=" + un + "," + afterComma;
+                }
+            }
+        }
     }
 }
