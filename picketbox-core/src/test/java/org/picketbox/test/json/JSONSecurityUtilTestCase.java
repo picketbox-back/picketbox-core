@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
 
@@ -33,6 +34,9 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Test;
 import org.picketbox.core.json.JSONWebKey;
+import org.picketbox.core.json.JSONWebSignature;
+import org.picketbox.core.json.JSONWebSignature.JSONWebSignatureHeader;
+import org.picketbox.core.json.PicketBoxJSONConstants;
 import org.picketbox.core.json.RSAKey;
 
 /**
@@ -66,5 +70,23 @@ public class JSONSecurityUtilTestCase {
 
         RSAKey convertedKey = RSAKey.convert(publicKey);
         assertNotNull(convertedKey);
+    }
+
+    @Test
+    public void testJSONWebSignature() throws Exception {
+        JSONWebSignature sig = new JSONWebSignature();
+        String text = "{\"iss\":\"joe\", \"exp\":1300819380, \"http://example.com/is_root\":true}";
+
+        JSONTokener tokener = new JSONTokener(new StringReader(text));
+        JSONObject payload = new JSONObject(tokener);
+
+        sig.setPayload(payload);
+        JSONWebSignatureHeader header = new JSONWebSignatureHeader(PicketBoxJSONConstants.HMAC_SHA_256);
+        sig.setHeader(header);
+
+        String encodedString = sig.encode();
+
+        JSONWebSignature decodedString = JSONWebSignature.decode(encodedString);
+        assertNotNull(decodedString);
     }
 }
