@@ -162,4 +162,10 @@ public interface PicketBoxMessages {
 
     @Message(id = 40, value = "Processing Exception.")
     ProcessingException processingException(@Cause Throwable throwable);
+
+    @Message(id = 41, value = "No such algorithm.")
+    ProcessingException noSuchAlgorithm(@Cause Throwable throwable);
+
+    @Message(id = 42, value = "JSON Web Signature Validation Failed.")
+    ProcessingException jsonWebSignatureValidationFailed();
 }
