@@ -33,6 +33,7 @@ import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.exceptions.AuthorizationException;
 import org.picketbox.core.exceptions.ConfigurationException;
 import org.picketbox.core.exceptions.PicketBoxSessionException;
+import org.picketbox.core.exceptions.ProcessingException;
 
 /**
  * An instance of {@link MessageBundle} from JBoss Logging
@@ -152,4 +153,13 @@ public interface PicketBoxMessages {
 
     @Message(id = 37, value = "Basic LDAP Config Missing.")
     RuntimeException basicLdapConfigMissing();
+
+    @Message(id = 38, value = "JSON Web Keys Missing.")
+    RuntimeException jsonWebKeysMissing();
+
+    @Message(id = 39, value = "Wrong Type of JSON Key.")
+    RuntimeException wrongJsonKey();
+
+    @Message(id = 40, value = "Processing Exception.")
+    ProcessingException processingException(@Cause Throwable throwable);
 }
