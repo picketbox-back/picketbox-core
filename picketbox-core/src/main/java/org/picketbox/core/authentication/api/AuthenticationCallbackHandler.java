@@ -22,17 +22,29 @@
 
 package org.picketbox.core.authentication.api;
 
-import java.security.Principal;
 import java.util.List;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 
 /**
+ * <p>
+ * Base interface for {@link CallbackHandler} classes used to start the authentication process.
+ * </p>
+ * <p>
+ * {@link AuthenticationCallbackHandler} classes are used to provide informations used during the authentication process. They
+ * define what informations are required by a specific {@link AuthenticationClient} or {@link AuthenticationService} given a {@link AuthenticationMechanism}.</p>
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public interface AuthenticationCallbackHandler extends CallbackHandler {
 
+    /**
+     * <p>Returns a list of the expected {@link Callback} classes used by this handler.</p>
+     *
+     * @return
+     */
     List<Class<? extends Callback>> getSupportedCallbacks();
 }

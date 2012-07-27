@@ -25,6 +25,9 @@ package org.picketbox.core.authentication.api;
 import java.security.Principal;
 
 /**
+ * <p>Represents an authenticated user.</p>
+ * <p>This class is used as a visitor during the authentication processo to collect all necessary informations about the user being authenticated.</p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
