@@ -30,6 +30,8 @@ package org.picketbox.core.authentication.api;
 public interface AuthenticationMechanism {
 
     AuthenticationClient getClient();
+    
+    AuthenticationClient getClient(String host);
 
     AuthenticationService getService();
 
