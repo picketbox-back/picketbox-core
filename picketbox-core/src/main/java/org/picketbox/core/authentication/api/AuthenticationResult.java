@@ -22,39 +22,52 @@
 
 package org.picketbox.core.authentication.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>This interface defines a client view of a specific {@link AuthenticationMechanism}.</p>
- * <p>{@link AuthenticationClient} implementations provide an abstraction for users hiding from them the complexity and specific logic for a specific {@link AuthenticationMechanism}.</p>
+ * <p>This class provides informations collected during the authentication process.</p>
+ * <p>It can be used to check the authentication status as well to get a {@link AuthenticationUser} instance.</p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationClient {
+public class AuthenticationResult {
+
+    private List<String> messages = new ArrayList<String>();
+    private AuthenticationStatus status = AuthenticationStatus.NONE;
+    private AuthenticationUser authenticatedUser;
 
     /**
-     * <p>Checks if the specified {@link AuthenticationCallbackHandler} class is supported by this client.</p>
-     *
-     * @param handlerClass
-     * @return
+     * @return the messages
      */
-    boolean supportsHandler(Class<? extends AuthenticationCallbackHandler> handlerClass);
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public void addMessage(String message) {
+        this.messages.add(message);
+    }
 
     /**
-     * <p>Returns a list of {@link AuthenticationInfo} with informations about what is needed before to procedding with the authentication.</p>
-     *
-     * @return
+     * @return the status
      */
-    List<AuthenticationInfo> getAuthenticationInfo();
+    public AuthenticationStatus getStatus() {
+        return status;
+    }
 
     /**
-     * <p>Performs authentication given the informations provided by the {@link AuthenticationCallbackHandler} instance.</p>
-     *
-     * @param handler
-     *
-     * @return see {@link AuthenticationStatus} for the possible return values.
+     * @param status the status to set
      */
-    AuthenticationResult authenticate(AuthenticationCallbackHandler handler);
+    public void setStatus(AuthenticationStatus status) {
+        this.status = status;
+    }
 
+    public AuthenticationUser getUser() {
+        return this.authenticatedUser;
+    }
+
+    public void setAuthenticatedUser(AuthenticationUser authenticatedUser) {
+        this.authenticatedUser = authenticatedUser;
+    }
 }

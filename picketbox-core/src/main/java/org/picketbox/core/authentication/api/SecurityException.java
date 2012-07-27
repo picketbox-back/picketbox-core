@@ -23,6 +23,8 @@
 package org.picketbox.core.authentication.api;
 
 /**
+ * <p>Base exception for security related problems. This class should allow to get all security related exceptions raised during the application execution.</p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
