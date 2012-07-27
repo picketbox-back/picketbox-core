@@ -25,17 +25,39 @@ package org.picketbox.core.authentication.spi;
 import org.picketbox.core.authentication.api.AuthenticationMechanism;
 
 /**
+ * <p>This interface defines the contract for a Authentication Provider.</p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public interface AuthenticationProvider {
 
+    /**
+     * <p>Initialize</p>
+     */
     void initialize();
 
+    /**
+     * <p>Returns the names for each supported mechanism.</p>
+     *
+     * @return
+     */
     String[] getSupportedMechanisms();
 
+    /**
+     * <p>Checks if a specific mechanism is supported.</p>
+     *
+     * @param mechanismName
+     * @return
+     */
     boolean supports(String mechanismName);
 
+    /**
+     * <p>Returns a specific {@link AuthenticationMechanism} instance.</p>
+     *
+     * @param string
+     * @return
+     */
     AuthenticationMechanism getMechanism(String string);
 
 }

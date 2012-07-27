@@ -27,13 +27,53 @@ import java.util.List;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
+ * <p>
+ * This interface defines a server view of a specific {@link AuthenticationMechanism}.
+ * </p>
+ * <p>
+ * {@link AuthenticationService} implementations provide an abstraction for servers hiding from them the complexity and specific
+ * logic for a specific {@link AuthenticationMechanism}.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public interface AuthenticationService {
 
-    List<CallbackInfo> getAuthenticationInfo();
+    /**
+     * <p>
+     * Checks if the specified {@link AuthenticationCallbackHandler} class is supported by this service.
+     * </p>
+     *
+     * @param handlerClass
+     * @return
+     */
+    boolean supportsHandler(Class<? extends AuthenticationCallbackHandler> handlerClass);
 
-    AuthenticationStatus authenticate(AuthenticationUser authenticationUser, AuthenticationCallbackHandler callbackHandler) throws AuthenticationException;
+    /**
+     * <p>
+     * Returns a list of {@link AuthenticationInfo} with informations about what is needed before to proceeding with the
+     * authentication.
+     * </p>
+     *
+     * @return
+     */
+    List<AuthenticationInfo> getAuthenticationInfo();
+
+    /**
+     * <p>
+     * Performs authentication given the informations provided by the {@link AuthenticationCallbackHandler} instance.
+     * </p>
+     * <p>
+     * To perform the authentication you should also provide a {@link AuthenticationUser} instance that will be used to populate
+     * with all security info collected during the authentication process.
+     * </p>
+     *
+     * @param callbackHandler
+     * @return
+     * @throws AuthenticationException
+     */
+    AuthenticationResult authenticate(AuthenticationCallbackHandler callbackHandler)
+            throws AuthenticationException;
 
 }

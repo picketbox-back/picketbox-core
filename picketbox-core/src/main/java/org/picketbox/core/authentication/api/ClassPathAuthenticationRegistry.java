@@ -33,12 +33,21 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.picketbox.core.authentication.spi.AuthenticationProvider;
+
 /**
+ * <p>A {@link AuthenticationRegistry} implementations that looks for the {@link AuthenticationProvider} configurations from the classpath.</p>
+ * <p>In order to provide this configuration you need a <code>CONFIGURATION_FILE</code> with a content like:</p>
+ * SASL=org.picketbox.core.test.authentication.spi.sasl.TestSASLAuthenticationProvider<br/>
+ * HTTP=org.picketbox.core.test.authentication.spi.http.TestHTTPAuthenticationProvider<br/>
+ * JAAS=org.picketbox.core.test.authentication.spi.TestJAASAuthenticationProvider<br/>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 final class ClassPathAuthenticationRegistry implements AuthenticationRegistry {
 
+    private static final String CONFIGURATION_FILE = "META-INF/services/org.picketbox.core.authentication.provider";
     private static final AuthenticationRegistry instance;
 
     static {
@@ -56,12 +65,10 @@ final class ClassPathAuthenticationRegistry implements AuthenticationRegistry {
     }
 
     private void loadRegistry() {
-        String resource = "META-INF/services/org.picketbox.core.authentication.provider";
-
         ClassLoader classLoader = SecurityActions.getContextClassLoader();
 
         try {
-            Enumeration<URL> resources = classLoader.getResources(resource);
+            Enumeration<URL> resources = classLoader.getResources(CONFIGURATION_FILE);
 
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
