@@ -22,23 +22,42 @@
 
 package org.picketbox.core.authentication.spi;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.picketbox.core.authentication.api.AuthenticationMechanism;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+
+import org.picketbox.core.authentication.DigestHolder;
 
 /**
- * <p>A implementation of {@link AuthenticationProvider} that provides some simple authentication mechanisms.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
+public class DigestAuthHandler extends AbstractAuthenticationCallbackHandler {
+
+    private DigestHolder digest;
+
+    public DigestAuthHandler(DigestHolder digest) {
+        this.digest = digest;
+    }
 
     @Override
-    protected void doAddMechanisms(Map<String, AuthenticationMechanism> mechanisms) {
-        mechanisms.put("USERNAME_PASSWORD", new UserNamePasswordMechanism());
-        mechanisms.put("HTTP-DIGEST", new DigestMechanism());
-        mechanisms.put("CERT", new CertificateMechanism());
+    public List<Class<? extends Callback>> getSupportedCallbacks() {
+        ArrayList<Class<? extends Callback>> supportedCallbacks = new ArrayList<Class<? extends Callback>>();
+
+        supportedCallbacks.add(TokenCallback.class);
+
+        return supportedCallbacks;
+    }
+
+    @Override
+    protected void doHandle(Callback callback) throws UnsupportedCallbackException {
+        if (callback instanceof TokenCallback) {
+            TokenCallback tokenCallback = (TokenCallback) callback;
+
+            tokenCallback.setToken(this.digest);
+        }
     }
 
 }

@@ -27,10 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 
 import org.picketbox.core.authentication.AuthenticationManager;
+import org.picketbox.core.authentication.DigestHolder;
 import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
 import org.picketbox.core.authentication.api.AuthenticationInfo;
 import org.picketbox.core.authentication.api.AuthenticationResult;
@@ -40,34 +39,44 @@ import org.picketbox.core.exceptions.AuthenticationException;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class UserNamePasswordAuthenticationService extends AbstractAuthenticationService {
+public class DigestAuthenticationService extends AbstractAuthenticationService {
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.api.AuthenticationService#getAuthenticationInfo()
+     */
+    @Override
     public List<AuthenticationInfo> getAuthenticationInfo() {
         List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();
 
-        arrayList.add(new AuthenticationInfo("Username and Password authentication service.", "A simple authentication service using a username and password as credentials.", UsernamePasswordAuthHandler.class));
+        arrayList.add(new AuthenticationInfo("HTTP Digest authentication service.",
+                "A simple authentication service using HTTP Digest.", DigestAuthHandler.class));
 
         return arrayList;
+
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.spi.AbstractAuthenticationService#doAuthenticate(org.picketbox.core.authentication.AuthenticationManager, org.picketbox.core.authentication.api.AuthenticationCallbackHandler, org.picketbox.core.authentication.api.AuthenticationResult)
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.picketbox.core.authentication.spi.AbstractAuthenticationService#doAuthenticate(org.picketbox.core.authentication.
+     * AuthenticationManager, org.picketbox.core.authentication.api.AuthenticationCallbackHandler,
+     * org.picketbox.core.authentication.api.AuthenticationResult)
      */
     @Override
     protected Principal doAuthenticate(AuthenticationManager authenticationManager,
             AuthenticationCallbackHandler callbackHandler, AuthenticationResult result) throws AuthenticationException {
-        NameCallback nameCallback = new NameCallback("User name:");
-        PasswordCallback passwordCallback = new PasswordCallback("Password:", false);
+        TokenCallback tokenCallback = new TokenCallback();
 
         try {
-            callbackHandler.handle(new Callback[]{nameCallback, passwordCallback});
+            callbackHandler.handle(new Callback[] { tokenCallback });
         } catch (Exception e) {
             throw new AuthenticationException(e);
         }
 
-        String userName = nameCallback.getName();
-        String password = String.valueOf(passwordCallback.getPassword());
-
-        return authenticationManager.authenticate(userName, password);
+        return authenticationManager.authenticate((DigestHolder) tokenCallback.getToken());
     }
+
 }

@@ -46,9 +46,4 @@ public class UserNamePasswordMechanism extends AbstractAuthenticationMechanism {
         return new UserNamePasswordAuthenticationService();
     }
 
-    @Override
-    public AuthenticationService getService(AuthenticationManager... authenticationManagers) {
-        return super.getService(authenticationManagers);
-    }
-
 }

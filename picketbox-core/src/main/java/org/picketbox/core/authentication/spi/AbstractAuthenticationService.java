@@ -64,6 +64,12 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         return false;
     }
 
+    @Override
+    public AuthenticationResult authenticate(AuthenticationCallbackHandler callbackHandler) throws AuthenticationException {
+        AuthenticationResult result = new AuthenticationResult();
+        return performAuthentication(result, callbackHandler);
+    }
+
     /* (non-Javadoc)
      * @see org.picketbox.core.authentication.api.AuthenticationService#authenticate(java.lang.String, org.picketbox.core.authentication.api.AuthenticationCallbackHandler)
      */
@@ -86,7 +92,7 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         return result;
     }
 
-    protected AuthenticationResult performAuthentication(AuthenticationResult result, String userName, String password) throws AuthenticationException {
+    protected AuthenticationResult performAuthentication(AuthenticationResult result, AuthenticationCallbackHandler callbackHandler) throws AuthenticationException {
         SecurityRealm defaultRealm = AuthenticationProviderFactory.instance().getDefaultRealm();
 
         List<AuthenticationManager> authenticationManagers = defaultRealm.getAuthenticationManagers();
@@ -94,14 +100,16 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         Principal principal = null;
 
         for (AuthenticationManager authenticationManager : authenticationManagers) {
-            try {
-                principal = authenticationManager.authenticate(userName, password);
-            } catch (AuthenticationException e) {
-                throw new AuthenticationException(e);
-            }
+            if (supportsHandler(callbackHandler.getClass())) {
+                try {
+                    principal = doAuthenticate(authenticationManager, callbackHandler, result);
+                } catch (AuthenticationException e) {
+                    throw new AuthenticationException(e);
+                }
 
-            if (principal != null) {
-                break;
+                if (principal != null) {
+                    break;
+                }
             }
         }
 
@@ -119,6 +127,8 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
 
         return result;
     }
+
+    protected abstract Principal doAuthenticate(AuthenticationManager authenticationManager, AuthenticationCallbackHandler callbackHandler, AuthenticationResult result) throws AuthenticationException;
 
     /**
      * <p>Populates the result with the informations required to continue with the authentication process.</p>

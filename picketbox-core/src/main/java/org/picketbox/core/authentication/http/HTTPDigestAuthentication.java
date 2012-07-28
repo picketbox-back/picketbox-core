@@ -22,23 +22,21 @@
 package org.picketbox.core.authentication.http;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 
-import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.authentication.DigestHolder;
 import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
+import org.picketbox.core.authentication.spi.DigestAuthHandler;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.nonce.NonceGenerator;
 import org.picketbox.core.nonce.UUIDNonceGenerator;
@@ -89,121 +87,6 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
         INVALID, STALE, VALID
     }
 
-    ;
-
-    /**
-     * Authenticate an user
-     *
-     * @param servletReq
-     * @param servletResp
-     * @return
-     * @throws AuthenticationException
-     */
-    public Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
-        HttpServletRequest request = (HttpServletRequest) servletReq;
-        HttpServletResponse response = (HttpServletResponse) servletResp;
-        HttpSession session = request.getSession(true);
-        String sessionId = session.getId();
-
-        // Get the Authorization Header
-        String authorizationHeader = request.getHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER);
-
-        if (authorizationHeader != null && authorizationHeader.isEmpty() == false) {
-
-            if (authorizationHeader.startsWith(PicketBoxConstants.HTTP_DIGEST)) {
-                authorizationHeader = authorizationHeader.substring(7).trim();
-            }
-            String[] tokens = HTTPDigestUtil.quoteTokenize(authorizationHeader);
-
-            int len = tokens.length;
-            if (len == 0) {
-                challengeClient(request, response, false);
-                return null;
-            }
-
-            DigestHolder digest = HTTPDigestUtil.digest(tokens);
-
-            // Pre-verify the client response
-            if (digest.getUsername() == null || digest.getRealm() == null || digest.getNonce() == null
-                    || digest.getUri() == null || digest.getClientResponse() == null) {
-                challengeClient(request, response, false);
-                return null;
-            }
-
-            // Validate Opaque
-            if (digest.getOpaque() != null && digest.getOpaque().equals(this.opaque) == false) {
-                challengeClient(request, response, false);
-                return null;
-            }
-
-            // Validate realm
-            if (digest.getRealm().equals(this.realmName) == false) {
-                challengeClient(request, response, false);
-                return null;
-            }
-
-            // Validate qop
-            if (digest.getQop().equals(this.qop) == false) {
-                challengeClient(request, response, false);
-                return null;
-            }
-
-            digest.setRequestMethod(request.getMethod());
-
-            // Validate the nonce
-            NONCE_VALIDATION_RESULT nonceResult = validateNonce(digest, sessionId);
-
-            if (nonceResult == NONCE_VALIDATION_RESULT.VALID) {
-                if (authManager == null) {
-                    throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
-                }
-
-                return authManager.authenticate(digest);
-            }
-        }
-
-        challengeClient(request, response, false);
-
-        return null;
-    }
-
-    private boolean challengeClient(HttpServletRequest request, HttpServletResponse response, boolean isStale)
-            throws AuthenticationException {
-        HttpSession session = request.getSession();
-        String sessionId = session.getId();
-
-        String domain = request.getContextPath();
-        if (domain == null)
-            domain = "/";
-
-        String newNonce = nonceGenerator.get();
-
-        List<String> storedNonces = idVersusNonce.get(sessionId);
-        if (storedNonces == null) {
-            storedNonces = new ArrayList<String>();
-            idVersusNonce.put(sessionId, storedNonces);
-        }
-        storedNonces.add(newNonce);
-
-        StringBuilder str = new StringBuilder("Digest realm=\"");
-        str.append(realmName).append("\",");
-        str.append("domain=\"").append(domain).append("\",");
-        str.append("nonce=\"").append(newNonce).append("\",");
-        str.append("algorithm=MD5,");
-        str.append("qop=").append(this.qop).append(",");
-        str.append("opaque=\"").append(this.opaque).append("\",");
-        str.append("stale=\"").append(isStale).append("\"");
-
-        response.setHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE, str.toString());
-
-        try {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        } catch (IOException e) {
-            throw new AuthenticationException(e);
-        }
-        return false;
-    }
-
     private NONCE_VALIDATION_RESULT validateNonce(DigestHolder digest, String sessionId) {
         String nonce = digest.getNonce();
 
@@ -227,5 +110,103 @@ public class HTTPDigestAuthentication extends AbstractHTTPAuthentication {
         HttpSession session = se.getSession();
         String id = session.getId();
         idVersusNonce.remove(id);
+    }
+
+    @Override
+    protected boolean isAuthenticationRequest(HttpServletRequest request) {
+        return request.getHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER) != null;
+    }
+
+    @Override
+    protected AuthenticationCallbackHandler getAuthenticationCallbackHandler(HttpServletRequest request,
+            HttpServletResponse response) {
+        HttpSession session = request.getSession(true);
+        String sessionId = session.getId();
+
+        // Get the Authorization Header
+        String authorizationHeader = request.getHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER);
+
+        if (authorizationHeader != null && authorizationHeader.isEmpty() == false) {
+
+            if (authorizationHeader.startsWith(PicketBoxConstants.HTTP_DIGEST)) {
+                authorizationHeader = authorizationHeader.substring(7).trim();
+            }
+            String[] tokens = HTTPDigestUtil.quoteTokenize(authorizationHeader);
+
+            int len = tokens.length;
+            if (len == 0) {
+                return null;
+            }
+
+            DigestHolder digest = HTTPDigestUtil.digest(tokens);
+
+            // Pre-verify the client response
+            if (digest.getUsername() == null || digest.getRealm() == null || digest.getNonce() == null
+                    || digest.getUri() == null || digest.getClientResponse() == null) {
+                return null;
+            }
+
+            // Validate Opaque
+            if (digest.getOpaque() != null && digest.getOpaque().equals(this.opaque) == false) {
+                return null;
+            }
+
+            // Validate realm
+            if (digest.getRealm().equals(this.realmName) == false) {
+                return null;
+            }
+
+            // Validate qop
+            if (digest.getQop().equals(this.qop) == false) {
+                return null;
+            }
+
+            digest.setRequestMethod(request.getMethod());
+
+            // Validate the nonce
+            NONCE_VALIDATION_RESULT nonceResult = validateNonce(digest, sessionId);
+
+            if (nonceResult == NONCE_VALIDATION_RESULT.VALID) {
+                return new DigestAuthHandler(digest);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    protected void challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+
+        String domain = request.getContextPath();
+        if (domain == null)
+            domain = "/";
+
+        String newNonce = nonceGenerator.get();
+
+        List<String> storedNonces = idVersusNonce.get(sessionId);
+        if (storedNonces == null) {
+            storedNonces = new ArrayList<String>();
+            idVersusNonce.put(sessionId, storedNonces);
+        }
+        storedNonces.add(newNonce);
+
+        StringBuilder str = new StringBuilder("Digest realm=\"");
+        str.append(realmName).append("\",");
+        str.append("domain=\"").append(domain).append("\",");
+        str.append("nonce=\"").append(newNonce).append("\",");
+        str.append("algorithm=MD5,");
+        str.append("qop=").append(this.qop).append(",");
+        str.append("opaque=\"").append(this.opaque).append("\",");
+        str.append("stale=\"").append(false).append("\"");
+
+        response.setHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE, str.toString());
+
+        try {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (IOException e) {
+            throw new AuthenticationException(e);
+        }
     }
 }

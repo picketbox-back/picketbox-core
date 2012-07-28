@@ -22,23 +22,30 @@
 
 package org.picketbox.core.authentication.spi;
 
-import java.util.Map;
+import java.security.cert.X509Certificate;
 
-import org.picketbox.core.authentication.api.AuthenticationMechanism;
+import javax.security.auth.callback.Callback;
 
 /**
- * <p>A implementation of {@link AuthenticationProvider} that provides some simple authentication mechanisms.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
+public class CertificateCallback implements Callback {
 
-    @Override
-    protected void doAddMechanisms(Map<String, AuthenticationMechanism> mechanisms) {
-        mechanisms.put("USERNAME_PASSWORD", new UserNamePasswordMechanism());
-        mechanisms.put("HTTP-DIGEST", new DigestMechanism());
-        mechanisms.put("CERT", new CertificateMechanism());
+    private X509Certificate[] certificates;
+
+    /**
+     * @return the certificates
+     */
+    public X509Certificate[] getCertificates() {
+        return certificates;
+    }
+
+    /**
+     * @param certificates2 the certificates to set
+     */
+    public void setCertificates(X509Certificate[] certificates) {
+        this.certificates = certificates;
     }
 
 }

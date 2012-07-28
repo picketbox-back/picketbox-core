@@ -22,23 +22,28 @@
 
 package org.picketbox.core.authentication.spi;
 
-import java.util.Map;
-
-import org.picketbox.core.authentication.api.AuthenticationMechanism;
+import org.picketbox.core.authentication.AuthenticationManager;
+import org.picketbox.core.authentication.api.AuthenticationClient;
+import org.picketbox.core.authentication.api.AuthenticationService;
 
 /**
- * <p>A implementation of {@link AuthenticationProvider} that provides some simple authentication mechanisms.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
+public class DigestMechanism extends AbstractAuthenticationMechanism {
 
-    @Override
-    protected void doAddMechanisms(Map<String, AuthenticationMechanism> mechanisms) {
-        mechanisms.put("USERNAME_PASSWORD", new UserNamePasswordMechanism());
-        mechanisms.put("HTTP-DIGEST", new DigestMechanism());
-        mechanisms.put("CERT", new CertificateMechanism());
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getClient()
+     */
+    public AuthenticationClient getClient() {
+        throw new IllegalStateException("This mechanisms does not provide a client implementation.");
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getService()
+     */
+    public AuthenticationService getService() {
+        return new DigestAuthenticationService();
     }
 
 }

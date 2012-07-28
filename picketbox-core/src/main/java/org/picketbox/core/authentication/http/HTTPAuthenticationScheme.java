@@ -27,6 +27,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSessionListener;
 
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.exceptions.AuthenticationException;
 
@@ -55,4 +56,6 @@ public interface HTTPAuthenticationScheme extends HttpSessionListener {
      * @param authMgr
      */
     void setAuthManager(AuthenticationManager authMgr);
+
+    void setPicketBoxManager(PicketBoxManager securityManager);
 }

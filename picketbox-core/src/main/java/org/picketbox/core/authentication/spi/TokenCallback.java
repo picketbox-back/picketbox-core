@@ -22,23 +22,24 @@
 
 package org.picketbox.core.authentication.spi;
 
-import java.util.Map;
-
-import org.picketbox.core.authentication.api.AuthenticationMechanism;
+import javax.security.auth.callback.Callback;
 
 /**
- * <p>A implementation of {@link AuthenticationProvider} that provides some simple authentication mechanisms.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
+public class TokenCallback implements Callback {
 
-    @Override
-    protected void doAddMechanisms(Map<String, AuthenticationMechanism> mechanisms) {
-        mechanisms.put("USERNAME_PASSWORD", new UserNamePasswordMechanism());
-        mechanisms.put("HTTP-DIGEST", new DigestMechanism());
-        mechanisms.put("CERT", new CertificateMechanism());
+    private Object token;
+
+    /**
+     * @return the token
+     */
+    public Object getToken() {
+        return token;
     }
 
+    public void setToken(Object token) {
+        this.token = token;
+    }
 }

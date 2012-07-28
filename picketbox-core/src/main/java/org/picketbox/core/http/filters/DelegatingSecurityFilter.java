@@ -62,6 +62,8 @@ public class DelegatingSecurityFilter implements Filter {
 
     private FilterConfig filterConfig;
 
+    private HTTPAuthenticationScheme authenticationScheme;
+
     @Override
     public void init(FilterConfig fc) throws ServletException {
         this.filterConfig = fc;
@@ -74,7 +76,6 @@ public class DelegatingSecurityFilter implements Filter {
         // Let us try the servlet context
         String authValue = sc.getInitParameter(PicketBoxConstants.AUTHENTICATION_KEY);
         AuthorizationManager authorizationManager = null;
-        HTTPAuthenticationScheme authenticationScheme = null;
 
         if (authValue != null && authValue.isEmpty() == false) {
             // Look for auth mgr also
@@ -115,6 +116,8 @@ public class DelegatingSecurityFilter implements Filter {
         this.securityManager = new PicketBoxConfiguration().authentication(authenticationScheme)
                 .authorization(authorizationManager).buildAndStart();
 
+        authenticationScheme.setPicketBoxManager(this.securityManager);
+
         sc.setAttribute(PicketBoxConstants.PICKETBOX_MANAGER, this.securityManager);
     }
 
@@ -151,7 +154,8 @@ public class DelegatingSecurityFilter implements Filter {
         }
 
         try {
-            this.securityManager.authenticate(httpRequest, httpResponse);
+//            this.securityManager.authenticate(httpRequest, httpResponse);
+            this.authenticationScheme.authenticate(httpRequest, httpResponse);
         } catch (AuthenticationException e) {
             throw new ServletException(e);
         }

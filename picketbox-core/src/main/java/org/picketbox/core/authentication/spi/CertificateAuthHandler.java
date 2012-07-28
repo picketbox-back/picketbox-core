@@ -22,23 +22,41 @@
 
 package org.picketbox.core.authentication.spi;
 
-import java.util.Map;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.picketbox.core.authentication.api.AuthenticationMechanism;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 
 /**
- * <p>A implementation of {@link AuthenticationProvider} that provides some simple authentication mechanisms.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
+public class CertificateAuthHandler extends AbstractAuthenticationCallbackHandler {
+
+    private X509Certificate[] certificates;
+
+    public CertificateAuthHandler(X509Certificate[] certificates) {
+        this.certificates = certificates;
+    }
 
     @Override
-    protected void doAddMechanisms(Map<String, AuthenticationMechanism> mechanisms) {
-        mechanisms.put("USERNAME_PASSWORD", new UserNamePasswordMechanism());
-        mechanisms.put("HTTP-DIGEST", new DigestMechanism());
-        mechanisms.put("CERT", new CertificateMechanism());
+    public List<Class<? extends Callback>> getSupportedCallbacks() {
+        ArrayList<Class<? extends Callback>> supportedCallbacks = new ArrayList<Class<? extends Callback>>();
+
+        supportedCallbacks.add(CertificateCallback.class);
+
+        return supportedCallbacks;
+    }
+
+    @Override
+    protected void doHandle(Callback callback) throws UnsupportedCallbackException {
+        if (callback instanceof CertificateCallback) {
+            CertificateCallback certificateCallback = (CertificateCallback) callback;
+
+            certificateCallback.setCertificates(certificates);
+        }
     }
 
 }

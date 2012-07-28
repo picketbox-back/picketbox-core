@@ -27,8 +27,17 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
+import org.picketbox.core.authentication.api.AuthenticationMechanism;
+import org.picketbox.core.authentication.api.AuthenticationProviderFactory;
+import org.picketbox.core.authentication.api.AuthenticationResult;
+import org.picketbox.core.authentication.api.AuthenticationService;
+import org.picketbox.core.authentication.api.AuthenticationStatus;
+import org.picketbox.core.authentication.api.SecurityRealm;
 import org.picketbox.core.authentication.http.HTTPAuthenticationScheme;
+import org.picketbox.core.authentication.spi.AuthenticationProvider;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.EntitlementsManager;
 import org.picketbox.core.authorization.resource.WebResource;
@@ -70,6 +79,7 @@ public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
         }
 
         this.authenticationScheme = authenticationScheme;
+        this.authenticationScheme.setPicketBoxManager(this);
         this.logoutManager = logoutManager;
         this.protectedResourceManager = protectedResourceManager;
     }
@@ -298,6 +308,46 @@ public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
     @Override
     protected void doStop() {
 
+    }
+
+    /**
+     * @param authenticationCallbackHandler
+     */
+    public PicketBoxSubject authenticate(AuthenticationCallbackHandler authenticationCallbackHandler) {
+        String[] providers = AuthenticationProviderFactory.instance().getProviders();
+
+        AuthenticationResult result = null;
+
+        for (String providerName : providers) {
+            AuthenticationProvider provider = AuthenticationProviderFactory.instance().getProvider(providerName);
+
+            String[] mechanisms = provider.getSupportedMechanisms();
+
+            for (String mechanismName : mechanisms) {
+                AuthenticationMechanism mechanism = provider.getMechanism(mechanismName);
+                AuthenticationService service = mechanism.getService();
+
+                if (service.supportsHandler(authenticationCallbackHandler.getClass())) {
+                    try {
+                        result = service.authenticate(authenticationCallbackHandler);
+                    } catch (AuthenticationException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        PicketBoxSubject subject = null;
+
+        if (result.getStatus().equals(AuthenticationStatus.SUCCESS)) {
+            subject = this.identityManager.getIdentity(result.getUser().getPrincipal());
+        }
+
+        return subject;
+    }
+
+    public void addAuthenticationManager(AuthenticationManager authenticationManager) {
+        AuthenticationProviderFactory.instance().getDefaultRealm().addAuthenticationManager(authenticationManager);
     }
 
 }
