@@ -20,33 +20,16 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.api;
+package org.picketbox.core.authentication.spi;
 
-
+import org.picketbox.core.authentication.api.AuthenticationEventHandler;
 
 /**
- * <p>This interface provides the contract for a specific authentication mechanisms.</p>
- * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
- * to be used to perform user authentication.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationMechanism {
+public interface UserAuthenticationEventHandler extends AuthenticationEventHandler {
 
-    /**
-     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
-     *
-     * @return
-     */
-    AuthenticationClient getClient();
+    void onSucessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
 
-    /**
-     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
-     *
-     * @return
-     */
-    AuthenticationService getService();
-
-    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
 }

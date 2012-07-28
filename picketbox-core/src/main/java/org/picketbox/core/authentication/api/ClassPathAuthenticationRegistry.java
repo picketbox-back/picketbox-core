@@ -47,14 +47,16 @@ import org.picketbox.core.authentication.spi.AuthenticationProvider;
  */
 final class ClassPathAuthenticationRegistry implements AuthenticationRegistry {
 
-    private static final String CONFIGURATION_FILE = "META-INF/services/org.picketbox.core.authentication.provider";
+    private static final String PROVIDERS_CONFIGURATION_FILE = "META-INF/services/org.picketbox.core.authentication.provider";
+    private static final String REALMS_CONFIGURATION_FILE = "META-INF/services/org.picketbox.core.authentication.realms";
     private static final AuthenticationRegistry instance;
 
     static {
         instance = new ClassPathAuthenticationRegistry();
     }
 
-    private final Map<String, String> registry = new HashMap<String, String>();
+    private final Map<String, String> providersRegistry = new HashMap<String, String>();
+    private final Map<String, String> realmsRegistry = new HashMap<String, String>();
 
     public static AuthenticationRegistry instance() {
         return instance;
@@ -68,7 +70,7 @@ final class ClassPathAuthenticationRegistry implements AuthenticationRegistry {
         ClassLoader classLoader = SecurityActions.getContextClassLoader();
 
         try {
-            Enumeration<URL> resources = classLoader.getResources(CONFIGURATION_FILE);
+            Enumeration<URL> resources = classLoader.getResources(PROVIDERS_CONFIGURATION_FILE);
 
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
@@ -82,7 +84,7 @@ final class ClassPathAuthenticationRegistry implements AuthenticationRegistry {
                 Set<Entry<Object, Object>> entrySet = properties.entrySet();
 
                 for (Entry<Object, Object> entry : entrySet) {
-                    this.registry.put(entry.getKey().toString(), entry.getValue().toString());
+                    this.providersRegistry.put(entry.getKey().toString(), entry.getValue().toString());
                 }
 
                 fis.close();
@@ -90,6 +92,37 @@ final class ClassPathAuthenticationRegistry implements AuthenticationRegistry {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            Enumeration<URL> resources = classLoader.getResources(REALMS_CONFIGURATION_FILE);
+
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+
+                Properties properties = new Properties();
+
+                FileInputStream fis = new FileInputStream(url.getPath());
+
+                properties.load(fis);
+
+                Set<Entry<Object, Object>> entrySet = properties.entrySet();
+
+                boolean markAsDefault = false;
+
+                for (Entry<Object, Object> entry : entrySet) {
+                    if (!markAsDefault) {
+                        this.realmsRegistry.put("DEFAULT", entry.getValue().toString());
+                        markAsDefault = true;
+                    }
+                    this.realmsRegistry.put(entry.getKey().toString(), entry.getValue().toString());
+                }
+
+                fis.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /* (non-Javadoc)
@@ -97,7 +130,15 @@ final class ClassPathAuthenticationRegistry implements AuthenticationRegistry {
      */
     @Override
     public Map<String, String> allProviders() {
-        return Collections.unmodifiableMap(this.registry);
+        return Collections.unmodifiableMap(this.providersRegistry);
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationRegistry#allRealms()
+     */
+    @Override
+    public Map<String, String> allRealms() {
+        return Collections.unmodifiableMap(this.realmsRegistry);
     }
 
 }

@@ -22,19 +22,13 @@
 package org.picketbox.core.authentication.spi;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
-import org.picketbox.core.authentication.api.CredentialValidationCallback;
-import org.picketbox.core.authentication.api.DigestCredentialValidationCallback;
-import org.picketbox.core.authentication.api.SecurityException;
-import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
  * <p>Base class for {@link AuthenticationCallbackHandler} implementations.</p>
@@ -44,12 +38,6 @@ import org.picketbox.core.exceptions.AuthenticationException;
  */
 public abstract class AbstractAuthenticationCallbackHandler implements AuthenticationCallbackHandler {
 
-    private AuthenticationManager authManager;
-
-    public AbstractAuthenticationCallbackHandler(AuthenticationManager authManager) {
-        this.authManager = authManager;
-    }
-
     /* (non-Javadoc)
      * @see javax.security.auth.callback.CallbackHandler#handle(javax.security.auth.callback.Callback[])
      */
@@ -58,9 +46,7 @@ public abstract class AbstractAuthenticationCallbackHandler implements Authentic
             if (!isSupported(callback)) {
                 throw new UnsupportedCallbackException(callback);
             }
-
             doHandle(callback);
-            performCredentialsVailidation(callback);
         }
     }
 
@@ -73,8 +59,6 @@ public abstract class AbstractAuthenticationCallbackHandler implements Authentic
 
         List<Class<? extends Callback>> supportedCallbacks = new ArrayList<Class<? extends Callback>>(getSupportedCallbacks());
 
-        supportedCallbacks.add(CredentialValidationCallback.class);
-
         for (Class<? extends Callback> supportedCallback : supportedCallbacks) {
             if (supportedCallback.equals(callback.getClass())) {
                 isSupported = true;
@@ -82,32 +66,6 @@ public abstract class AbstractAuthenticationCallbackHandler implements Authentic
             }
         }
         return isSupported;
-    }
-
-    private void performCredentialsVailidation(Callback callback) {
-        if (callback instanceof CredentialValidationCallback) {
-            CredentialValidationCallback credentialValidationCallback = (CredentialValidationCallback) callback;
-
-            try {
-                Principal authenticate = this.authManager.authenticate(credentialValidationCallback.getUserName(), credentialValidationCallback.getCredential().toString());
-
-                credentialValidationCallback.setPrincipal(authenticate);
-            } catch (AuthenticationException e) {
-                throw new SecurityException("Error validating user's credentials.");
-            }
-        }
-
-        if (callback instanceof DigestCredentialValidationCallback) {
-            DigestCredentialValidationCallback credentialValidationCallback = (DigestCredentialValidationCallback) callback;
-
-            try {
-                Principal authenticate = this.authManager.authenticate(credentialValidationCallback.getDigestInfo());
-
-                credentialValidationCallback.setPrincipal(authenticate);
-            } catch (AuthenticationException e) {
-                throw new SecurityException("Error validating user's credentials.");
-            }
-        }
     }
 
     protected abstract void doHandle(Callback callback) throws UnsupportedCallbackException;

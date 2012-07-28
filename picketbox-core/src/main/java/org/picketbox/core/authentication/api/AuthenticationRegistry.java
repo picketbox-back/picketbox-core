@@ -19,4 +19,11 @@ interface AuthenticationRegistry {
      */
     Map<String, String> allProviders();
 
+    /**
+     * <p>Returns an {@link Map} where the key is the name for a specific {@link AuthenticationProvider} and the value is its the class name.</p>
+     *
+     * @return
+     */
+    Map<String, String> allRealms();
+
 }

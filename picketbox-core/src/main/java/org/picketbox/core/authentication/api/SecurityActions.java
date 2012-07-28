@@ -56,4 +56,19 @@ public final class SecurityActions {
         });
     }
 
+    public static SecurityRealm newSecurityRealm(final String className) {
+        return AccessController.doPrivileged(new PrivilegedAction<SecurityRealm>() {
+
+            public SecurityRealm run() {
+                try {
+                    return (SecurityRealm) getContextClassLoader().loadClass(className).newInstance();
+                } catch (ClassCastException cce) {
+                    throw new SecurityException("Instance of " + className + " is not a type of AuthenticationProvider.");
+                } catch (Exception e) {
+                    throw new SecurityException("Unable to load class " + className);
+                }
+            }
+        });
+    }
+
 }

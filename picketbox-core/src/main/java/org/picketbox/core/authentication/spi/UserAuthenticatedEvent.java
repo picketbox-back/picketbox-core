@@ -20,33 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.api;
+package org.picketbox.core.authentication.spi;
 
-
+import org.picketbox.core.authentication.api.AuthenticationEvent;
+import org.picketbox.core.authentication.api.AuthenticationResult;
 
 /**
- * <p>This interface provides the contract for a specific authentication mechanisms.</p>
- * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
- * to be used to perform user authentication.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationMechanism {
+public class UserAuthenticatedEvent implements AuthenticationEvent<UserAuthenticationEventHandler> {
 
-    /**
-     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
-     *
-     * @return
+    private AuthenticationResult result;
+
+    public UserAuthenticatedEvent(AuthenticationResult result) {
+        this.result = result;
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationEvent#dispatch(org.picketbox.core.authentication.api.AuthenticationEventHandler)
      */
-    AuthenticationClient getClient();
+    @Override
+    public void dispatch(UserAuthenticationEventHandler handler) {
+        handler.onSucessfullAuthentication(this);
+    }
 
-    /**
-     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
-     *
-     * @return
-     */
-    AuthenticationService getService();
-
-    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
 }

@@ -22,31 +22,46 @@
 
 package org.picketbox.core.authentication.api;
 
+import java.util.List;
 
+import org.picketbox.core.authentication.AuthenticationManager;
 
 /**
- * <p>This interface provides the contract for a specific authentication mechanisms.</p>
- * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
- * to be used to perform user authentication.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationMechanism {
+public class SecurityRealm {
+
+    private String name;
+
+    private List<AuthenticationManager> authenticationManagers;
 
     /**
-     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
-     *
-     * @return
+     * @return the name
      */
-    AuthenticationClient getClient();
+    public String getName() {
+        return name;
+    }
 
     /**
-     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
-     *
-     * @return
+     * @param name the name to set
      */
-    AuthenticationService getService();
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
+    /**
+     * @return the authenticationManagers
+     */
+    public List<AuthenticationManager> getAuthenticationManagers() {
+        return authenticationManagers;
+    }
+
+    /**
+     * @param authenticationManagers the authenticationManagers to set
+     */
+    public void setAuthenticationManagers(List<AuthenticationManager> authenticationManagers) {
+        this.authenticationManagers = authenticationManagers;
+    }
+
 }

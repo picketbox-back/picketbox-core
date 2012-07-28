@@ -79,6 +79,7 @@ public final class AuthenticationProviderFactory {
     }
 
     private final Map<String, AuthenticationProvider> cachedProviders = new HashMap<String, AuthenticationProvider>();
+    private Map<String, SecurityRealm> cachedRealms = new HashMap<String, SecurityRealm>();;
 
     private AuthenticationProviderFactory() {
 
@@ -138,6 +139,34 @@ public final class AuthenticationProviderFactory {
         }
 
         return authenticationProvider;
+    }
+
+    public SecurityRealm getRealm(String realm) {
+        SecurityRealm securityRealm = this.cachedRealms.get(realm);
+
+        if (securityRealm == null) {
+            securityRealm = SecurityActions.newSecurityRealm(ClassPathAuthenticationRegistry
+                    .instance().allRealms().get(realm));
+
+            this.cachedRealms.put(realm, securityRealm);
+        }
+
+        return securityRealm;
+    }
+
+    public SecurityRealm getDefaultRealm() {
+        String realm = "DEFAULT";
+
+        SecurityRealm securityRealm = this.cachedRealms.get(realm);
+
+        if (securityRealm == null) {
+            securityRealm = SecurityActions.newSecurityRealm(ClassPathAuthenticationRegistry
+                    .instance().allRealms().get(realm));
+
+            this.cachedRealms.put(realm, securityRealm);
+        }
+
+        return securityRealm;
     }
 
 }

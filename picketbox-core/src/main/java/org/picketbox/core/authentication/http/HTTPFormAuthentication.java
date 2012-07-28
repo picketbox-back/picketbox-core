@@ -31,11 +31,16 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.api.AuthenticationProviderFactory;
+import org.picketbox.core.authentication.api.AuthenticationResult;
+import org.picketbox.core.authentication.api.AuthenticationService;
+import org.picketbox.core.authentication.api.AuthenticationStatus;
+import org.picketbox.core.authentication.spi.UserAuthenticatedEvent;
+import org.picketbox.core.authentication.spi.UserAuthenticationEventHandler;
+import org.picketbox.core.authentication.spi.UsernamePasswordAuthHandler;
 import org.picketbox.core.exceptions.AuthenticationException;
-import org.picketbox.core.util.Base64;
 
 /**
  * Perform HTTP Form Authentication
@@ -46,6 +51,19 @@ import org.picketbox.core.util.Base64;
 public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
 
     private static final String DEFAULT_PAGE_URL = "/";
+
+    private AuthenticationService service;
+
+    public HTTPFormAuthentication() {
+        this.service = AuthenticationProviderFactory.instance().getProvider("PICKETBOX_DEFAULT").getMechanism("USERNAME_PASSWORD").getService();
+        this.service.addObserver(UserAuthenticatedEvent.class, new UserAuthenticationEventHandler() {
+
+            @Override
+            public void onSucessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
+                System.out.println("User authenticated");
+            }
+        });
+    }
 
     private RequestCache requestCache = new RequestCache();
 
@@ -98,70 +116,42 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
 
         HttpServletRequest request = (HttpServletRequest) servletReq;
         HttpServletResponse response = (HttpServletResponse) servletResp;
-        HttpSession session = request.getSession(true);
 
         boolean jSecurityCheck = request.getRequestURI().contains(PicketBoxConstants.HTTP_FORM_J_SECURITY_CHECK);
 
         username = request.getParameter(PicketBoxConstants.HTTP_FORM_J_USERNAME);
         password = request.getParameter(PicketBoxConstants.HTTP_FORM_J_PASSWORD);
 
-        if (jSecurityCheck == false && principalExists(session) == false) {
+        if (jSecurityCheck == false) {
             challengeClient(request, response);
             return null;
         }
 
         if (username != null && password != null) {
-            if (authManager == null) {
-                throw MESSAGES.invalidNullAuthenticationManager();
-            }
+            AuthenticationResult result = this.service.authenticate(new UsernamePasswordAuthHandler(username, password));
+            AuthenticationStatus status = result.getStatus();
 
-            Principal principal = authManager.authenticate(username, password);
+            if (status.equals(AuthenticationStatus.SUCCESS)) {
+                Principal principal = result.getUser().getPrincipal();
 
-            if (principal != null) {
-                // remove from the cache the saved request and store it in the session for further use.
-                String savedRequest = this.requestCache.removeAndStoreSavedRequestInSession(request).getRequestURI();
+                if (principal != null) {
+                    // remove from the cache the saved request and store it in the session for further use.
+                    String savedRequest = this.requestCache.removeAndStoreSavedRequestInSession(request).getRequestURI();
 
-                // if the user has explicit defined a default page url, use it to redirect the user after a successful
-                // authentication.
-                if (!this.defaultPage.equals(DEFAULT_PAGE_URL)) {
-                    sendRedirect(response, request.getContextPath() + this.defaultPage);
-                } else {
-                    sendRedirect(response, savedRequest);
-                }
-
-                return principal;
-            }
-        }
-
-        // Get the Authorization Header
-        String authorizationHeader = request.getHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER);
-
-        if (authorizationHeader != null && authorizationHeader.isEmpty() == false) {
-
-            int whitespaceIndex = authorizationHeader.indexOf(' ');
-
-            if (whitespaceIndex > 0) {
-                String method = authorizationHeader.substring(0, whitespaceIndex);
-
-                if (PicketBoxConstants.HTTP_BASIC.equalsIgnoreCase(method)) {
-                    authorizationHeader = authorizationHeader.substring(whitespaceIndex + 1);
-                    authorizationHeader = new String(Base64.decode(authorizationHeader));
-                    int indexOfColon = authorizationHeader.indexOf(':');
-                    if (indexOfColon > 0) {
-                        username = authorizationHeader.substring(0, indexOfColon);
-                        password = authorizationHeader.substring(indexOfColon + 1);
-
-                        if (authManager == null) {
-                            throw MESSAGES.invalidNullAuthenticationManager();
-                        }
-
-                        return authManager.authenticate(username, password);
+                    // if the user has explicit defined a default page url, use it to redirect the user after a successful
+                    // authentication.
+                    if (!this.defaultPage.equals(DEFAULT_PAGE_URL)) {
+                        sendRedirect(response, request.getContextPath() + this.defaultPage);
+                    } else {
+                        sendRedirect(response, savedRequest);
                     }
+
+                    return principal;
                 }
+            } else {
+                sendRedirect(response, request.getContextPath() + this.formErrorPage);
             }
         }
-
-        challengeClient(request, response);
 
         return null;
     }
@@ -172,10 +162,6 @@ public class HTTPFormAuthentication extends AbstractHTTPAuthentication {
         } catch (IOException e) {
             throw MESSAGES.failRedirectToDefaultPage(redirectUrl, e);
         }
-    }
-
-    private boolean principalExists(HttpSession session) {
-        return session.getAttribute(PicketBoxConstants.PRINCIPAL) != null;
     }
 
     private boolean challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {

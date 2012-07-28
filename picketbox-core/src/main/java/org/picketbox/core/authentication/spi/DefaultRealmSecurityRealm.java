@@ -20,33 +20,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.api;
+package org.picketbox.core.authentication.spi;
 
+import java.util.ArrayList;
+import java.util.List;
 
+import org.picketbox.core.authentication.AuthenticationManager;
+import org.picketbox.core.authentication.api.SecurityRealm;
+import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
 
 /**
- * <p>This interface provides the contract for a specific authentication mechanisms.</p>
- * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
- * to be used to perform user authentication.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationMechanism {
+public class DefaultRealmSecurityRealm extends SecurityRealm {
 
-    /**
-     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
-     *
-     * @return
-     */
-    AuthenticationClient getClient();
+    @Override
+    public String getName() {
+        return "MY_REALM";
+    }
 
-    /**
-     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
-     *
-     * @return
-     */
-    AuthenticationService getService();
+    public List<AuthenticationManager> getAuthenticationManagers() {
+        List<AuthenticationManager> authenticators = new ArrayList<AuthenticationManager>();
 
-    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
+        authenticators.add(new PropertiesFileBasedAuthenticationManager());
+
+        return authenticators;
+    };
 }

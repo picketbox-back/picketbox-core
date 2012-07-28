@@ -20,33 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.api;
+package org.picketbox.core.authentication.spi;
 
+import java.util.Map;
 
+import org.picketbox.core.authentication.api.AuthenticationMechanism;
 
 /**
- * <p>This interface provides the contract for a specific authentication mechanisms.</p>
- * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
- * to be used to perform user authentication.</p>
+ * <p>A implementation of {@link AuthenticationProvider} that provides some simple authentication mechanisms.</p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationMechanism {
+public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
 
-    /**
-     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
-     *
-     * @return
-     */
-    AuthenticationClient getClient();
+    @Override
+    protected void doAddMechanisms(Map<String, AuthenticationMechanism> mechanisms) {
+        mechanisms.put("USERNAME_PASSWORD", new UserNamePasswordMechanism());
+    }
 
-    /**
-     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
-     *
-     * @return
-     */
-    AuthenticationService getService();
-
-    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
 }

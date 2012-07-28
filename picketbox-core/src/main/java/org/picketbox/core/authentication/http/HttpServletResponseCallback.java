@@ -20,33 +20,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.api;
+package org.picketbox.core.authentication.http;
 
-
+import javax.security.auth.callback.Callback;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * <p>This interface provides the contract for a specific authentication mechanisms.</p>
- * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
- * to be used to perform user authentication.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationMechanism {
+public class HttpServletResponseCallback implements Callback {
+
+    private HttpServletResponse response;
+
+    public HttpServletResponseCallback() {
+    }
 
     /**
-     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
-     *
-     * @return
+     * @return the request
      */
-    AuthenticationClient getClient();
+    public HttpServletResponse getResponse() {
+        return response;
+    }
 
-    /**
-     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
-     *
-     * @return
-     */
-    AuthenticationService getService();
+    public void setResponse(HttpServletResponse response) {
+        this.response = response;
+    }
 
-    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
 }

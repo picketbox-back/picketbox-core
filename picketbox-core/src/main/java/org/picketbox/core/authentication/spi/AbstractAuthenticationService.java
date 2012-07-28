@@ -21,13 +21,22 @@
  */
 package org.picketbox.core.authentication.spi;
 
+import java.security.Principal;
 import java.util.List;
 
+import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
+import org.picketbox.core.authentication.api.AuthenticationEvent;
+import org.picketbox.core.authentication.api.AuthenticationEventHandler;
+import org.picketbox.core.authentication.api.AuthenticationEventManager;
 import org.picketbox.core.authentication.api.AuthenticationInfo;
+import org.picketbox.core.authentication.api.AuthenticationProviderFactory;
 import org.picketbox.core.authentication.api.AuthenticationResult;
 import org.picketbox.core.authentication.api.AuthenticationService;
 import org.picketbox.core.authentication.api.AuthenticationStatus;
+import org.picketbox.core.authentication.api.AuthenticationUser;
+import org.picketbox.core.authentication.api.SecurityRealm;
+import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
  * <p>Base class for {@link AuthenticationService} implementations.</p>
@@ -36,6 +45,8 @@ import org.picketbox.core.authentication.api.AuthenticationStatus;
  *
  */
 public abstract class AbstractAuthenticationService implements AuthenticationService {
+
+    private AuthenticationEventManager eventManager = new DefaultAuthenticationEventManager();
 
     /* (non-Javadoc)
      * @see org.picketbox.core.authentication.api.AuthenticationService#supportsHandler(java.lang.Class)
@@ -53,6 +64,14 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationService#authenticate(java.lang.String, org.picketbox.core.authentication.api.AuthenticationCallbackHandler)
+     */
+    public AuthenticationResult authenticate(String realm, AuthenticationCallbackHandler callbackHandler)
+            throws AuthenticationException {
+        return null;
+    }
+
     /**
      * <p>Populates the result with the informations after a successful authentication.</p>
      * <p>This method should provide hooks or raise events for additional processing.</p>
@@ -61,7 +80,43 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
      * @return
      */
     protected AuthenticationResult performSuccessfulAuthentication(AuthenticationResult result) {
+        result.getUser().setAuthenticated(true);
         result.setStatus(AuthenticationStatus.SUCCESS);
+        this.eventManager.raiseEvent(new UserAuthenticatedEvent(result));
+        return result;
+    }
+
+    protected AuthenticationResult performAuthentication(AuthenticationResult result, String userName, String password) throws AuthenticationException {
+        SecurityRealm defaultRealm = AuthenticationProviderFactory.instance().getDefaultRealm();
+
+        List<AuthenticationManager> authenticationManagers = defaultRealm.getAuthenticationManagers();
+
+        Principal principal = null;
+
+        for (AuthenticationManager authenticationManager : authenticationManagers) {
+            try {
+                principal = authenticationManager.authenticate(userName, password);
+            } catch (AuthenticationException e) {
+                throw new AuthenticationException(e);
+            }
+
+            if (principal != null) {
+                break;
+            }
+        }
+
+        if (principal != null) {
+            AuthenticationUser authenticatedUser = new AuthenticationUser();
+
+            authenticatedUser.setPrincipal(principal);
+
+            result.setAuthenticatedUser(authenticatedUser);
+
+            performSuccessfulAuthentication(result);
+        } else {
+            invalidCredentials(result);
+        }
+
         return result;
     }
 
@@ -101,4 +156,8 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         return result;
     }
 
+    @Override
+    public void addObserver(Class<? extends AuthenticationEvent> eventType, AuthenticationEventHandler handler) {
+        this.eventManager.addHandler(eventType, handler);
+    }
 }
