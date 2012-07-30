@@ -34,7 +34,7 @@ import org.jboss.logging.MessageLogger;
  * @author Stefan Guilhen
  * @since Jul 10, 2012
  */
-@MessageLogger(projectCode = "PBOX")
+@MessageLogger(projectCode = "PBOXCORE")
 public interface PicketBoxLogger extends BasicLogger {
 
     PicketBoxLogger LOGGER = Logger.getMessageLogger(PicketBoxLogger.class, PicketBoxLogger.class.getPackage().getName());
