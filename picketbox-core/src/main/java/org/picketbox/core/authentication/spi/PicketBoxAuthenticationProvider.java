@@ -22,9 +22,10 @@
 
 package org.picketbox.core.authentication.spi;
 
-import java.util.Map;
+import java.util.List;
 
 import org.picketbox.core.authentication.api.AuthenticationMechanism;
+import org.picketbox.core.authentication.api.AuthenticationProvider;
 
 /**
  * <p>A implementation of {@link AuthenticationProvider} that provides some simple authentication mechanisms.</p>
@@ -35,10 +36,10 @@ import org.picketbox.core.authentication.api.AuthenticationMechanism;
 public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
 
     @Override
-    protected void doAddMechanisms(Map<String, AuthenticationMechanism> mechanisms) {
-        mechanisms.put("USERNAME_PASSWORD", new UserNamePasswordMechanism());
-        mechanisms.put("HTTP-DIGEST", new DigestMechanism());
-        mechanisms.put("CERT", new CertificateMechanism());
+    protected void doAddMechanisms(List<AuthenticationMechanism> mechanisms) {
+        mechanisms.add(new UserNamePasswordMechanism());
+        mechanisms.add(new DigestMechanism());
+        mechanisms.add(new CertificateMechanism());
     }
 
 }

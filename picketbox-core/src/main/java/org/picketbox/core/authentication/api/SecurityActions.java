@@ -25,7 +25,6 @@ package org.picketbox.core.authentication.api;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-import org.picketbox.core.authentication.spi.AuthenticationProvider;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>

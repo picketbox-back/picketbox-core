@@ -34,10 +34,12 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.PicketBoxConfiguration;
-import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPFormAuthentication;
 import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.spi.CertificateMechanism;
+import org.picketbox.core.authentication.spi.DigestMechanism;
+import org.picketbox.core.authentication.spi.UserNamePasswordMechanism;
 import org.picketbox.test.http.TestServletContext;
 import org.picketbox.test.http.TestServletContext.TestRequestDispatcher;
 import org.picketbox.test.http.TestServletRequest;
@@ -55,8 +57,6 @@ public class HTTPFormAuthenticationTestCase {
 
     private TestServletContext sc = new TestServletContext(new HashMap<String, String>());
 
-    private PicketBoxManager securityManager;
-
     @Before
     public void setup() throws Exception {
         httpForm = new HTTPFormAuthentication();
@@ -65,8 +65,14 @@ public class HTTPFormAuthenticationTestCase {
 
         httpForm.setServletContext(sc);
         
-        this.securityManager = new PicketBoxConfiguration().authentication(httpForm).buildAndStart();
-        httpForm.setPicketBoxManager(this.securityManager);
+        PicketBoxConfiguration configuration = new PicketBoxConfiguration();
+
+        configuration.authentication().addMechanism(new UserNamePasswordMechanism()).addMechanism(new DigestMechanism())
+                .addMechanism(new CertificateMechanism());
+        
+        configuration.authentication().addAuthManager(new PropertiesFileBasedAuthenticationManager());
+        
+        httpForm.setPicketBoxManager(configuration.buildAndStart());
     }
 
     @Test

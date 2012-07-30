@@ -22,7 +22,6 @@
 
 package org.picketbox.core.authentication.spi;
 
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.api.AuthenticationClient;
 import org.picketbox.core.authentication.api.AuthenticationService;
 
@@ -43,7 +42,7 @@ public class DigestMechanism extends AbstractAuthenticationMechanism {
      * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getService()
      */
     public AuthenticationService getService() {
-        return new DigestAuthenticationService();
+        return new DigestAuthenticationService(this);
     }
 
 }

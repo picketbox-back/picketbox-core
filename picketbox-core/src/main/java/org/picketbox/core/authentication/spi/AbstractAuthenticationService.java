@@ -26,16 +26,12 @@ import java.util.List;
 
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
-import org.picketbox.core.authentication.api.AuthenticationEvent;
-import org.picketbox.core.authentication.api.AuthenticationEventHandler;
-import org.picketbox.core.authentication.api.AuthenticationEventManager;
 import org.picketbox.core.authentication.api.AuthenticationInfo;
-import org.picketbox.core.authentication.api.AuthenticationProviderFactory;
+import org.picketbox.core.authentication.api.AuthenticationMechanism;
 import org.picketbox.core.authentication.api.AuthenticationResult;
 import org.picketbox.core.authentication.api.AuthenticationService;
 import org.picketbox.core.authentication.api.AuthenticationStatus;
 import org.picketbox.core.authentication.api.AuthenticationUser;
-import org.picketbox.core.authentication.api.SecurityRealm;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
@@ -46,7 +42,11 @@ import org.picketbox.core.exceptions.AuthenticationException;
  */
 public abstract class AbstractAuthenticationService implements AuthenticationService {
 
-    private AuthenticationEventManager eventManager = new DefaultAuthenticationEventManager();
+    private AuthenticationMechanism authenticationMechanism;
+
+    public AbstractAuthenticationService(AuthenticationMechanism mechanism) {
+        this.authenticationMechanism = mechanism;
+    }
 
     /* (non-Javadoc)
      * @see org.picketbox.core.authentication.api.AuthenticationService#supportsHandler(java.lang.Class)
@@ -88,18 +88,14 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
     protected AuthenticationResult performSuccessfulAuthentication(AuthenticationResult result) {
         result.getUser().setAuthenticated(true);
         result.setStatus(AuthenticationStatus.SUCCESS);
-        this.eventManager.raiseEvent(new UserAuthenticatedEvent(result));
+        this.authenticationMechanism.getAuthenticationProvider().getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
         return result;
     }
 
     protected AuthenticationResult performAuthentication(AuthenticationResult result, AuthenticationCallbackHandler callbackHandler) throws AuthenticationException {
-        SecurityRealm defaultRealm = AuthenticationProviderFactory.instance().getDefaultRealm();
-
-        List<AuthenticationManager> authenticationManagers = defaultRealm.getAuthenticationManagers();
-
         Principal principal = null;
 
-        for (AuthenticationManager authenticationManager : authenticationManagers) {
+        for (AuthenticationManager authenticationManager : this.authenticationMechanism.getAuthenticationProvider().getAuthenticationManagers()) {
             if (supportsHandler(callbackHandler.getClass())) {
                 try {
                     principal = doAuthenticate(authenticationManager, callbackHandler, result);
@@ -166,8 +162,4 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         return result;
     }
 
-    @Override
-    public void addObserver(Class<? extends AuthenticationEvent> eventType, AuthenticationEventHandler handler) {
-        this.eventManager.addHandler(eventType, handler);
-    }
 }

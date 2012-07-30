@@ -41,6 +41,10 @@ import org.picketbox.core.exceptions.AuthenticationException;
  */
 public class DigestAuthenticationService extends AbstractAuthenticationService {
 
+    public DigestAuthenticationService(DigestMechanism digestMechanism) {
+        super(digestMechanism);
+    }
+
     /*
      * (non-Javadoc)
      *

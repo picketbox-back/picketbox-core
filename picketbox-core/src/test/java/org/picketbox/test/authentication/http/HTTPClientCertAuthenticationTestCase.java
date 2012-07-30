@@ -35,10 +35,10 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.PicketBoxConfiguration;
-import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.authentication.AbstractAuthenticationManager;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPClientCertAuthentication;
+import org.picketbox.core.authentication.spi.CertificateMechanism;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.test.http.TestServletContext;
 import org.picketbox.test.http.TestServletRequest;
@@ -55,8 +55,6 @@ public class HTTPClientCertAuthenticationTestCase {
     private HTTPClientCertAuthentication httpClientCert = null;
 
     private TestServletContext sc = new TestServletContext(new HashMap<String, String>());
-
-    private PicketBoxManager securityManager;
 
     private class HTTPClientCertAuthenticationTestCaseAM extends AbstractAuthenticationManager {
         @Override
@@ -95,12 +93,15 @@ public class HTTPClientCertAuthenticationTestCase {
     public void setup() throws Exception {
         httpClientCert = new HTTPClientCertAuthentication();
 
-        httpClientCert.setAuthManager(new HTTPClientCertAuthenticationTestCaseAM());
-
         httpClientCert.setServletContext(sc);
-        this.securityManager = new PicketBoxConfiguration().authentication(httpClientCert).buildAndStart();
-        httpClientCert.setPicketBoxManager(this.securityManager);
-        this.securityManager.addAuthenticationManager(new HTTPClientCertAuthenticationTestCaseAM());
+
+        PicketBoxConfiguration configuration = new PicketBoxConfiguration();
+
+        configuration.authentication().addMechanism(new CertificateMechanism());
+        
+        configuration.authentication().addAuthManager(new HTTPClientCertAuthenticationTestCaseAM());
+        
+        httpClientCert.setPicketBoxManager(configuration.buildAndStart());
     }
 
     @Test

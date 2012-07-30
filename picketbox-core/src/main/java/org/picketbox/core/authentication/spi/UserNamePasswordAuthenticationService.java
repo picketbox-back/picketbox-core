@@ -33,6 +33,7 @@ import javax.security.auth.callback.PasswordCallback;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
 import org.picketbox.core.authentication.api.AuthenticationInfo;
+import org.picketbox.core.authentication.api.AuthenticationMechanism;
 import org.picketbox.core.authentication.api.AuthenticationResult;
 import org.picketbox.core.exceptions.AuthenticationException;
 
@@ -41,6 +42,10 @@ import org.picketbox.core.exceptions.AuthenticationException;
  *
  */
 public class UserNamePasswordAuthenticationService extends AbstractAuthenticationService {
+
+    public UserNamePasswordAuthenticationService(AuthenticationMechanism mechanism) {
+        super(mechanism);
+    }
 
     public List<AuthenticationInfo> getAuthenticationInfo() {
         List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();

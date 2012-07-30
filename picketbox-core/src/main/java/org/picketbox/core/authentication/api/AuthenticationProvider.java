@@ -22,35 +22,55 @@
 
 package org.picketbox.core.authentication.api;
 
+import java.util.List;
+
+import org.picketbox.core.authentication.AuthenticationManager;
 
 
 /**
- * <p>This interface provides the contract for a specific authentication mechanisms.</p>
- * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
- * to be used to perform user authentication.</p>
+ * <p>This interface defines the contract for a Authentication Provider.</p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationMechanism {
+public interface AuthenticationProvider {
 
     /**
-     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
+     * <p>Initialize</p>
+     */
+    void initialize();
+
+    /**
+     * <p>Returns the names for each supported mechanism.</p>
      *
      * @return
      */
-    AuthenticationClient getClient();
+    String[] getSupportedMechanisms();
 
     /**
-     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
+     * <p>Checks if a specific mechanism is supported.</p>
      *
+     * @param mechanismName
      * @return
      */
-    AuthenticationService getService();
+    boolean supports(String mechanismName);
 
-    AuthenticationProvider getAuthenticationProvider();
+    /**
+     * <p>Returns a specific {@link AuthenticationMechanism} instance.</p>
+     *
+     * @param string
+     * @return
+     */
+    AuthenticationMechanism getMechanism(String string);
 
-    void setAuthenticationProvider(AuthenticationProvider provider);
+    void addMechanism(AuthenticationMechanism mechanism);
 
-    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
+    void addAuthManager(AuthenticationManager manager);
+
+    List<AuthenticationManager> getAuthenticationManagers();
+
+    AuthenticationEventManager getEventManager();
+
+    void setEventManager(AuthenticationEventManager eventManager);
+
 }

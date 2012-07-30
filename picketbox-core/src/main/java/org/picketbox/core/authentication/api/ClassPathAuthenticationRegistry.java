@@ -33,7 +33,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import org.picketbox.core.authentication.spi.AuthenticationProvider;
 
 /**
  * <p>A {@link AuthenticationRegistry} implementations that looks for the {@link AuthenticationProvider} configurations from the classpath.</p>

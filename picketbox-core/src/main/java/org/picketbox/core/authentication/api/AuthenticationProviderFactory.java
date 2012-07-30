@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.picketbox.core.authentication.spi.AuthenticationProvider;
 
 /**
  * <p>
@@ -139,34 +138,6 @@ public final class AuthenticationProviderFactory {
         }
 
         return authenticationProvider;
-    }
-
-    public SecurityRealm getRealm(String realm) {
-        SecurityRealm securityRealm = this.cachedRealms.get(realm);
-
-        if (securityRealm == null) {
-            securityRealm = SecurityActions.newSecurityRealm(ClassPathAuthenticationRegistry
-                    .instance().allRealms().get(realm));
-
-            this.cachedRealms.put(realm, securityRealm);
-        }
-
-        return securityRealm;
-    }
-
-    public SecurityRealm getDefaultRealm() {
-        String realm = "DEFAULT";
-
-        SecurityRealm securityRealm = this.cachedRealms.get(realm);
-
-        if (securityRealm == null) {
-            securityRealm = SecurityActions.newSecurityRealm(ClassPathAuthenticationRegistry
-                    .instance().allRealms().get(realm));
-
-            this.cachedRealms.put(realm, securityRealm);
-        }
-
-        return securityRealm;
     }
 
 }

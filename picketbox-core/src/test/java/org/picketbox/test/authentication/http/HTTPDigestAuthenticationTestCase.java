@@ -33,11 +33,13 @@ import java.security.Principal;
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.PicketBoxConfiguration;
-import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.authentication.DigestHolder;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPDigestAuthentication;
 import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.spi.CertificateMechanism;
+import org.picketbox.core.authentication.spi.DigestMechanism;
+import org.picketbox.core.authentication.spi.UserNamePasswordMechanism;
 import org.picketbox.core.exceptions.FormatException;
 import org.picketbox.core.util.Base64;
 import org.picketbox.core.util.HTTPDigestUtil;
@@ -53,7 +55,6 @@ import org.picketbox.test.http.TestServletResponse;
 public class HTTPDigestAuthenticationTestCase {
 
     private HTTPDigestAuthentication httpDigest = null;
-    private PicketBoxManager securityManager;
 
     @Before
     public void setup() throws Exception {
@@ -63,8 +64,15 @@ public class HTTPDigestAuthenticationTestCase {
 
         httpDigest.setRealmName("testrealm@host.com");
         httpDigest.setOpaque("5ccc069c403ebaf9f0171e9517f40e41");
-        this.securityManager = new PicketBoxConfiguration().authentication(httpDigest).buildAndStart();
-        httpDigest.setPicketBoxManager(this.securityManager);
+
+        PicketBoxConfiguration configuration = new PicketBoxConfiguration();
+
+        configuration.authentication().addMechanism(new DigestMechanism());
+        
+        configuration.authentication().addAuthManager(new PropertiesFileBasedAuthenticationManager());
+
+        
+        httpDigest.setPicketBoxManager(configuration.buildAndStart());
     }
 
     @Test
