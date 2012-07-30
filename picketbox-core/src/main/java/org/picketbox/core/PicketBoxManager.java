@@ -297,4 +297,8 @@ public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
         return subject;
     }
 
+    public AuthenticationProvider getAuthenticationProvider() {
+        return this.authenticationProvider;
+    }
+
 }

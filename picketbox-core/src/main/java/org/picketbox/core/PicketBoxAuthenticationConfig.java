@@ -30,6 +30,7 @@ import org.picketbox.core.authentication.api.AuthenticationEventHandler;
 import org.picketbox.core.authentication.api.AuthenticationEventManager;
 import org.picketbox.core.authentication.api.AuthenticationMechanism;
 import org.picketbox.core.authentication.api.AuthenticationProvider;
+import org.picketbox.core.authentication.spi.DefaultAuthenticationEventManager;
 import org.picketbox.core.authentication.spi.PicketBoxAuthenticationProvider;
 
 /**
@@ -41,7 +42,7 @@ public class PicketBoxAuthenticationConfig {
     private AuthenticationProvider provider;
     private List<AuthenticationMechanism> mechanisms = new ArrayList<AuthenticationMechanism>();
     private List<AuthenticationManager> authManagers = new ArrayList<AuthenticationManager>();
-    private AuthenticationEventManager eventManager;
+    private AuthenticationEventManager eventManager = new DefaultAuthenticationEventManager();
 
     public PicketBoxAuthenticationConfig provider(AuthenticationProvider provider) {
         this.provider = provider;

@@ -117,8 +117,6 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
             result.setAuthenticatedUser(authenticatedUser);
 
             performSuccessfulAuthentication(result);
-        } else {
-            invalidCredentials(result);
         }
 
         return result;
