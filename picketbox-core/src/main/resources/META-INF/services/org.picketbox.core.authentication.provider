@@ -1,1 +1,0 @@
-PICKETBOX_DEFAULT=org.picketbox.core.authentication.spi.PicketBoxAuthenticationProvider
