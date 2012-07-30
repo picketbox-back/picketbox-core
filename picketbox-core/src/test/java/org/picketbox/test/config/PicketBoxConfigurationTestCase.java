@@ -25,6 +25,7 @@ package org.picketbox.test.config;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.picketbox.core.PicketBoxAuthenticationConfig;
 import org.picketbox.core.PicketBoxConfiguration;
 import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
@@ -49,12 +50,14 @@ public class PicketBoxConfigurationTestCase {
     public void testConfiguration() throws Exception {
         PicketBoxConfiguration configuration = new PicketBoxConfiguration();
 
-        configuration.authentication().addMechanism(new UserNamePasswordMechanism()).addMechanism(new DigestMechanism())
+        PicketBoxAuthenticationConfig authentication = configuration.authentication();
+        
+        authentication.addMechanism(new UserNamePasswordMechanism()).addMechanism(new DigestMechanism())
                 .addMechanism(new CertificateMechanism());
         
-        configuration.authentication().addAuthManager(new PropertiesFileBasedAuthenticationManager());
-        configuration.authentication().addEventManager(new DefaultAuthenticationEventManager());
-        configuration.authentication().addObserver(new UserAuthenticationEventHandler() {
+        authentication.addAuthManager(new PropertiesFileBasedAuthenticationManager());
+        authentication.addEventManager(new DefaultAuthenticationEventManager());
+        authentication.addObserver(new UserAuthenticationEventHandler() {
             
             @Override
             public Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType() {
