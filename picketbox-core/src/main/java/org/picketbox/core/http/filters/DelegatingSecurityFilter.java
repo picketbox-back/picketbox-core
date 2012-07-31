@@ -35,20 +35,22 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.picketbox.core.PicketBoxConfiguration;
 import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPAuthenticationScheme;
-import org.picketbox.core.authentication.http.HTTPAuthenticationSchemeLoader;
-import org.picketbox.core.authentication.http.impl.HTTPBasicAuthenticationSchemeLoader;
-import org.picketbox.core.authentication.http.impl.HTTPClientCertAuthenticationSchemeLoader;
-import org.picketbox.core.authentication.http.impl.HTTPDigestAuthenticationSchemeLoader;
-import org.picketbox.core.authentication.http.impl.HTTPFormAuthenticationSchemeLoader;
-import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
-import org.picketbox.core.authentication.impl.SimpleCredentialAuthenticationManager;
+import org.picketbox.core.authentication.http.HTTPBasicAuthentication;
+import org.picketbox.core.authentication.http.HTTPClientCertAuthentication;
+import org.picketbox.core.authentication.http.HTTPDigestAuthentication;
+import org.picketbox.core.authentication.http.HTTPFormAuthentication;
+import org.picketbox.core.authentication.impl.CertificateMechanism;
+import org.picketbox.core.authentication.impl.DigestMechanism;
+import org.picketbox.core.authentication.impl.UserNamePasswordMechanism;
+import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.manager.SimpleCredentialAuthenticationManager;
 import org.picketbox.core.authorization.AuthorizationManager;
+import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
@@ -62,6 +64,8 @@ public class DelegatingSecurityFilter implements Filter {
 
     private FilterConfig filterConfig;
 
+    private HTTPAuthenticationScheme authenticationScheme;
+
     @Override
     public void init(FilterConfig fc) throws ServletException {
         this.filterConfig = fc;
@@ -74,7 +78,7 @@ public class DelegatingSecurityFilter implements Filter {
         // Let us try the servlet context
         String authValue = sc.getInitParameter(PicketBoxConstants.AUTHENTICATION_KEY);
         AuthorizationManager authorizationManager = null;
-        HTTPAuthenticationScheme authenticationScheme = null;
+        AuthenticationManager am = null;
 
         if (authValue != null && authValue.isEmpty() == false) {
             // Look for auth mgr also
@@ -88,7 +92,9 @@ public class DelegatingSecurityFilter implements Filter {
                 contextData.put(PicketBoxConstants.AUTHZ_MGR, authorizationManager);
             }
 
-            contextData.put(PicketBoxConstants.AUTH_MGR, getAuthMgr(authMgrStr));
+            am = getAuthMgr(authMgrStr);
+
+            contextData.put(PicketBoxConstants.AUTH_MGR, am);
 
             authenticationScheme = getAuthenticationScheme(authValue, contextData);
         } else {
@@ -98,7 +104,7 @@ public class DelegatingSecurityFilter implements Filter {
             }
             String authManagerStr = filterConfig.getInitParameter(PicketBoxConstants.AUTH_MGR);
             if (authManagerStr != null && authManagerStr.isEmpty() == false) {
-                AuthenticationManager am = getAuthMgr(authManagerStr);
+                am = getAuthMgr(authManagerStr);
                 contextData.put(PicketBoxConstants.AUTH_MGR, am);
             }
             String authzManagerStr = filterConfig.getInitParameter(PicketBoxConstants.AUTHZ_MGR);
@@ -107,13 +113,21 @@ public class DelegatingSecurityFilter implements Filter {
                 authorizationManager.start();
                 contextData.put(PicketBoxConstants.AUTHZ_MGR, authorizationManager);
             }
-            HTTPAuthenticationSchemeLoader authLoader = (HTTPAuthenticationSchemeLoader) SecurityActions.instance(getClass(),
+            authenticationScheme = (HTTPAuthenticationScheme) SecurityActions.instance(getClass(),
                     loader);
-            authenticationScheme = authLoader.get(contextData);
         }
 
-        this.securityManager = new PicketBoxConfiguration().authentication(authenticationScheme)
-                .authorization(authorizationManager).buildAndStart();
+        PicketBoxConfiguration configuration = new PicketBoxConfiguration();
+
+        configuration.authentication().addMechanism(new UserNamePasswordMechanism()).addMechanism(new DigestMechanism())
+                .addMechanism(new CertificateMechanism());
+
+        configuration.authentication().addAuthManager(am);
+        configuration.authorization(authorizationManager);
+
+        this.securityManager = configuration.buildAndStart();
+
+        authenticationScheme.setPicketBoxManager(this.securityManager);
 
         sc.setAttribute(PicketBoxConstants.PICKETBOX_MANAGER, this.securityManager);
     }
@@ -151,7 +165,8 @@ public class DelegatingSecurityFilter implements Filter {
         }
 
         try {
-            this.securityManager.authenticate(httpRequest, httpResponse);
+//            this.securityManager.authenticate(httpRequest, httpResponse);
+            this.authenticationScheme.authenticate(httpRequest, httpResponse);
         } catch (AuthenticationException e) {
             throw new ServletException(e);
         }
@@ -170,16 +185,16 @@ public class DelegatingSecurityFilter implements Filter {
     private HTTPAuthenticationScheme getAuthenticationScheme(String value, Map<String, Object> contextData)
             throws ServletException {
         if (value.equals(PicketBoxConstants.BASIC)) {
-            return new HTTPBasicAuthenticationSchemeLoader().get(contextData);
+            return new HTTPBasicAuthentication();
         }
         if (value.equals(PicketBoxConstants.DIGEST)) {
-            return new HTTPDigestAuthenticationSchemeLoader().get(contextData);
+            return new HTTPDigestAuthentication();
         }
         if (value.equals(PicketBoxConstants.CLIENT_CERT)) {
-            return new HTTPClientCertAuthenticationSchemeLoader().get(contextData);
+            return new HTTPClientCertAuthentication();
         }
 
-        return new HTTPFormAuthenticationSchemeLoader().get(contextData);
+        return new HTTPFormAuthentication();
     }
 
     private AuthenticationManager getAuthMgr(String value) {

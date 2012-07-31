@@ -19,28 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.authentication;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+package org.picketbox.core.authentication;
 
 /**
- * Unit test the {@link PropertiesFileBasedAuthenticationManager}
+ * <p>Possible status values for the authentication process.</p>
  *
- * @author anil saldhana
- * @since Jul 10, 2012
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public class PropertiesFileBasedAuthenticationManagerTestCase {
+public enum AuthenticationStatus {
 
-    @Test
-    public void testAuth() throws Exception {
-        PropertiesFileBasedAuthenticationManager am = new PropertiesFileBasedAuthenticationManager();
-        assertNotNull(am);
-        assertTrue(am.authenticate("Aladdin", "Open Sesame") != null);
-        assertNull(am.authenticate("Aladdin", "Open"));
-    }
+    /**
+     * <p>Successful authentication.</p>
+     */
+    SUCCESS,
+
+    /**
+     * <p>Authentication failed.</p>
+     */
+    FAILED,
+
+    /**
+     * <p>Provided credentials are invalid.</p>
+     */
+    INVALID_CREDENTIALS,
+
+    /**
+     * <p>The authentication process is not finished. More steps are needed.</p>
+     */
+    CONTINUE,
+
+    /**
+     * <p>This status means that no status was provided.</p>
+     */
+    NONE
+
 }

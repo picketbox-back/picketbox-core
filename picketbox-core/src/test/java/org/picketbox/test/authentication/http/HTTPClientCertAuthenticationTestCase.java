@@ -37,6 +37,8 @@ import org.junit.Test;
 import org.picketbox.core.authentication.AbstractAuthenticationManager;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPClientCertAuthentication;
+import org.picketbox.core.authentication.impl.CertificateMechanism;
+import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.test.http.TestServletContext;
 import org.picketbox.test.http.TestServletRequest;
@@ -91,9 +93,13 @@ public class HTTPClientCertAuthenticationTestCase {
     public void setup() throws Exception {
         httpClientCert = new HTTPClientCertAuthentication();
 
-        httpClientCert.setAuthManager(new HTTPClientCertAuthenticationTestCaseAM());
+        PicketBoxConfiguration configuration = new PicketBoxConfiguration();
 
-        httpClientCert.setServletContext(sc);
+        configuration.authentication().addMechanism(new CertificateMechanism());
+        
+        configuration.authentication().addAuthManager(new HTTPClientCertAuthenticationTestCaseAM());
+        
+        httpClientCert.setPicketBoxManager(configuration.buildAndStart());
     }
 
     @Test

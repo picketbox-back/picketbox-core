@@ -35,7 +35,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPFormAuthentication;
-import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.impl.CertificateMechanism;
+import org.picketbox.core.authentication.impl.DigestMechanism;
+import org.picketbox.core.authentication.impl.UserNamePasswordMechanism;
+import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.test.http.TestServletContext;
 import org.picketbox.test.http.TestServletContext.TestRequestDispatcher;
 import org.picketbox.test.http.TestServletRequest;
@@ -57,14 +61,19 @@ public class HTTPFormAuthenticationTestCase {
     public void setup() throws Exception {
         httpForm = new HTTPFormAuthentication();
 
-        httpForm.setAuthManager(new PropertiesFileBasedAuthenticationManager());
+        PicketBoxConfiguration configuration = new PicketBoxConfiguration();
 
-        httpForm.setServletContext(sc);
+        configuration.authentication().addMechanism(new UserNamePasswordMechanism()).addMechanism(new DigestMechanism())
+                .addMechanism(new CertificateMechanism());
+        
+        configuration.authentication().addAuthManager(new PropertiesFileBasedAuthenticationManager());
+        
+        httpForm.setPicketBoxManager(configuration.buildAndStart());
     }
 
     @Test
     public void testHttpForm() throws Exception {
-        TestServletRequest req = new TestServletRequest(new InputStream() {
+        TestServletRequest req = new TestServletRequest(this.sc, new InputStream() {
             @Override
             public int read() throws IOException {
                 return 0;

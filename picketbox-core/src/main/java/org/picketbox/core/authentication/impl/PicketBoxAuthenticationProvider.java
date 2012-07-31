@@ -19,28 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.authentication;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+package org.picketbox.core.authentication.impl;
 
-import org.junit.Test;
-import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+import java.util.List;
+
+import org.picketbox.core.authentication.AuthenticationMechanism;
+import org.picketbox.core.authentication.AuthenticationProvider;
 
 /**
- * Unit test the {@link PropertiesFileBasedAuthenticationManager}
+ * <p>A implementation of {@link AuthenticationProvider} that provides some basic authentication mechanisms.</p>
  *
- * @author anil saldhana
- * @since Jul 10, 2012
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public class PropertiesFileBasedAuthenticationManagerTestCase {
+public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
 
-    @Test
-    public void testAuth() throws Exception {
-        PropertiesFileBasedAuthenticationManager am = new PropertiesFileBasedAuthenticationManager();
-        assertNotNull(am);
-        assertTrue(am.authenticate("Aladdin", "Open Sesame") != null);
-        assertNull(am.authenticate("Aladdin", "Open"));
+    @Override
+    protected void doAddMechanisms(List<AuthenticationMechanism> mechanisms) {
+        mechanisms.add(new UserNamePasswordMechanism());
+        mechanisms.add(new DigestMechanism());
+        mechanisms.add(new CertificateMechanism());
     }
+
 }

@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.PicketBoxPrincipal;
 import org.picketbox.core.PicketBoxSubject;
-import org.picketbox.core.authentication.impl.LDAPAuthenticationManager;
+import org.picketbox.core.authentication.manager.LDAPAuthenticationManager;
 import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
 import org.picketbox.core.authorization.resource.WebResource;

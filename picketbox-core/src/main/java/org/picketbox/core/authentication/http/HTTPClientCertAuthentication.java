@@ -21,17 +21,16 @@
  */
 package org.picketbox.core.authentication.http;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.picketbox.core.PicketBoxMessages;
+import org.picketbox.core.authentication.AuthenticationCallbackHandler;
 import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.handlers.CertificateAuthHandler;
+import org.picketbox.core.authentication.handlers.UsernamePasswordAuthHandler;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.util.Base64;
 
@@ -57,28 +56,20 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
         this.useCertificateValidation = useCertificateValidation;
     }
 
-    /**
-     * Authenticate an user
-     *
-     * @param servletReq
-     * @param servletResp
-     * @return
-     * @throws AuthenticationException
-     */
-    public Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
-        String username, password;
+    @Override
+    protected boolean isAuthenticationRequest(HttpServletRequest request) {
+        return request.getAttribute(PicketBoxConstants.HTTP_CERTIFICATE) != null;
+    }
 
-        HttpServletRequest request = (HttpServletRequest) servletReq;
-        HttpServletResponse response = (HttpServletResponse) servletResp;
+    @Override
+    protected AuthenticationCallbackHandler getAuthenticationCallbackHandler(HttpServletRequest request,
+            HttpServletResponse response) {
 
         X509Certificate[] certs = (X509Certificate[]) request.getAttribute(PicketBoxConstants.HTTP_CERTIFICATE);
 
-        if (authManager == null)
-            throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
-
         if (certs != null) {
             if (useCertificateValidation) {
-                return authManager.authenticate(certs);
+                return new CertificateAuthHandler(certs);
             }
 
             for (X509Certificate cert : certs) {
@@ -87,28 +78,23 @@ public class HTTPClientCertAuthentication extends AbstractHTTPAuthentication {
                 if (certprincipal == null) {
                     certprincipal = cert.getIssuerDN();
                 }
-                if (certprincipal == null)
-                    throw PicketBoxMessages.MESSAGES.unableToIdentifyCertPrincipal();
 
-                username = certprincipal.getName();
+                if (certprincipal == null)
+                    return null;
+
+                String username = certprincipal.getName();
 
                 // Credential is the certificate
-                password = Base64.encodeBytes(cert.getSignature());
+                String password = Base64.encodeBytes(cert.getSignature());
 
-                return authManager.authenticate(username, password);
+                return new UsernamePasswordAuthHandler(username, password);
             }
         }
-
-        forbidClient(response);
-
         return null;
     }
 
-    private void forbidClient(HttpServletResponse response) throws AuthenticationException {
-        try {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-        } catch (IOException e) {
-            throw new AuthenticationException(e);
-        }
+    @Override
+    protected void challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+
     }
 }

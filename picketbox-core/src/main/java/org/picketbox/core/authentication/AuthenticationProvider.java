@@ -19,35 +19,57 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.core.authentication.http;
 
-import java.security.Principal;
+package org.picketbox.core.authentication;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSessionListener;
+import java.util.List;
 
-import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.exceptions.AuthenticationException;
+
 
 /**
- * HTTP Authentication Scheme
+ * <p>This interface defines the contract for a Authentication Provider.</p>
  *
- * @author anil saldhana
- * @since Jul 6, 2012
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public interface HTTPAuthenticationScheme extends HttpSessionListener {
-    String REALM = "PicketBox Realm";
+public interface AuthenticationProvider {
 
     /**
-     * Authenticate an user
-     *
-     * @param servletReq
-     * @param servletResp
-     * @return
-     * @throws AuthenticationException
+     * <p>Initialize</p>
      */
-    Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException;
+    void initialize();
 
-    void setPicketBoxManager(PicketBoxManager securityManager);
+    /**
+     * <p>Returns the names for each supported mechanism.</p>
+     *
+     * @return
+     */
+    String[] getSupportedMechanisms();
+
+    /**
+     * <p>Checks if a specific mechanism is supported.</p>
+     *
+     * @param mechanismName
+     * @return
+     */
+    boolean supports(String mechanismName);
+
+    /**
+     * <p>Returns a specific {@link AuthenticationMechanism} instance.</p>
+     *
+     * @param string
+     * @return
+     */
+    AuthenticationMechanism getMechanism(String string);
+
+    void addMechanism(AuthenticationMechanism mechanism);
+
+    void addAuthManager(AuthenticationManager manager);
+
+    List<AuthenticationManager> getAuthenticationManagers();
+
+    AuthenticationEventManager getEventManager();
+
+    void setEventManager(AuthenticationEventManager eventManager);
+
 }
