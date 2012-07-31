@@ -89,7 +89,7 @@ public class HTTPBasicAuthenticationTestCase {
         assertNotNull(principal);
 
         req.clearHeaders();
-
+        req.getSession().setAttribute(PicketBoxConstants.SUBJECT, null);
         // Get Negative Authentication
         req.addHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER, "Basic " + getNegative());
         principal = httpBasic.authenticate(req, resp);
