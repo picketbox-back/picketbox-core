@@ -20,37 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.api;
+package org.picketbox.core.authentication.spi;
 
-
+import org.picketbox.core.authentication.api.AuthenticationClient;
+import org.picketbox.core.authentication.api.AuthenticationService;
 
 /**
- * <p>This interface provides the contract for a specific authentication mechanisms.</p>
- * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
- * to be used to perform user authentication.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationMechanism {
+public class CertificateMechanism extends AbstractAuthenticationMechanism {
 
-    /**
-     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
-     *
-     * @return
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getClient()
      */
-    AuthenticationClient getClient();
+    public AuthenticationClient getClient() {
+        throw new IllegalStateException("This mechanisms does not provide a client implementation.");
+    }
 
-    /**
-     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
-     *
-     * @return
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getService()
      */
-    AuthenticationService getService();
+    public AuthenticationService getService() {
+        return new CertificateAuthenticationService(this);
+    }
 
-    AuthenticationProvider getAuthenticationProvider();
-
-    void setAuthenticationProvider(AuthenticationProvider provider);
-
-    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
 }

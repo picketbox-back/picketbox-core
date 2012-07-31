@@ -41,18 +41,24 @@ import org.picketbox.core.exceptions.AuthenticationException;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class UserNamePasswordAuthenticationService extends AbstractAuthenticationService {
+public class CertificateAuthenticationService extends AbstractAuthenticationService {
 
-    public UserNamePasswordAuthenticationService(AuthenticationMechanism mechanism) {
+    public CertificateAuthenticationService(AuthenticationMechanism mechanism) {
         super(mechanism);
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationService#getAuthenticationInfo()
+     */
+    @Override
     public List<AuthenticationInfo> getAuthenticationInfo() {
         List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();
 
-        arrayList.add(new AuthenticationInfo("Username and Password authentication service.", "A simple authentication service using a username and password as credentials.", UsernamePasswordAuthHandler.class));
+        arrayList.add(new AuthenticationInfo("Certificate authentication service.", "A authentication service using certificates.", CertificateAuthHandler.class));
+        arrayList.add(new AuthenticationInfo("User name and password.", "Where the password is the certificate's signature.", UsernamePasswordAuthHandler.class));
 
         return arrayList;
+
     }
 
     /* (non-Javadoc)
@@ -61,18 +67,27 @@ public class UserNamePasswordAuthenticationService extends AbstractAuthenticatio
     @Override
     protected Principal doAuthenticate(AuthenticationManager authenticationManager,
             AuthenticationCallbackHandler callbackHandler, AuthenticationResult result) throws AuthenticationException {
-        NameCallback nameCallback = new NameCallback("User name:");
-        PasswordCallback passwordCallback = new PasswordCallback("Password:", false);
+        CertificateCallback certificateCallback = new CertificateCallback();
 
         try {
-            callbackHandler.handle(new Callback[]{nameCallback, passwordCallback});
+            callbackHandler.handle(new Callback[] { certificateCallback });
         } catch (Exception e) {
-            throw new AuthenticationException(e);
+            NameCallback nameCallback = new NameCallback("User name:");
+            PasswordCallback passwordCallback = new PasswordCallback("Password:", false);
+
+            try {
+                callbackHandler.handle(new Callback[]{nameCallback, passwordCallback});
+            } catch (Exception e1) {
+                throw new AuthenticationException(e);
+            }
+
+            String userName = nameCallback.getName();
+            String password = String.valueOf(passwordCallback.getPassword());
+
+            return authenticationManager.authenticate(userName, password);
         }
 
-        String userName = nameCallback.getName();
-        String password = String.valueOf(passwordCallback.getPassword());
-
-        return authenticationManager.authenticate(userName, password);
+        return authenticationManager.authenticate(certificateCallback.getCertificates());
     }
+
 }

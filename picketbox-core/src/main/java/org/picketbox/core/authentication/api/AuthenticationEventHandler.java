@@ -28,4 +28,6 @@ package org.picketbox.core.authentication.api;
  */
 public interface AuthenticationEventHandler {
 
+    Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType();
+
 }

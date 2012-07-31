@@ -21,10 +21,25 @@
  */
 package org.picketbox.core.authentication.http;
 
+import static org.picketbox.core.PicketBoxMessages.MESSAGES;
+
+import java.io.IOException;
+import java.security.Principal;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSessionEvent;
 
+import org.picketbox.core.PicketBoxManager;
+import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.AuthenticationManager;
+import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
+import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
  * Base class for all the HTTP authentication schemes
@@ -33,10 +48,10 @@ import org.picketbox.core.authentication.AuthenticationManager;
  * @since Jul 6, 2012
  */
 public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationScheme {
-    /**
-     * Injectable instance of Authentication Manager
-     */
-    protected AuthenticationManager authManager;
+
+    private RequestCache requestCache = new RequestCache();
+
+    private PicketBoxManager picketBoxManager;
 
     /**
      * Injectable realm name
@@ -48,13 +63,50 @@ public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationSc
      */
     protected ServletContext servletContext = null;
 
-    public AuthenticationManager getAuthManager() {
-        return authManager;
+    private static final String DEFAULT_PAGE_URL = "/";
+
+    /**
+     * The page used to redirect the user after a succesful authentication.
+     */
+    protected String defaultPage = DEFAULT_PAGE_URL;
+
+    /**
+     * The FORM login page. It should always start with a '/'
+     */
+    protected String formAuthPage = "/login.jsp";
+
+    /**
+     * The FORM error page. It should always start with a '/'
+     */
+    protected String formErrorPage = "/error.jsp";
+
+    private AuthenticationManager authManager;
+
+    public void setPicketBoxManager(PicketBoxManager picketBoxManager) {
+        this.picketBoxManager = picketBoxManager;
     }
 
-    public void setAuthManager(AuthenticationManager authManager) {
-        this.authManager = authManager;
+    /**
+     * The FORM login page. It should always start with a '/'
+     */
+    public void setFormAuthPage(String formAuthPage) {
+        this.formAuthPage = formAuthPage;
     }
+
+    /**
+     * The FORM error page. It should always start with a '/'
+     */
+    public void setFormErrorPage(String formErrorPage) {
+        this.formErrorPage = formErrorPage;
+    }
+
+    /**
+     * The default page. It should always start with a '/'
+     */
+    public void setDefaultPage(String defaultPage) {
+        this.defaultPage = defaultPage;
+    }
+
 
     public String getRealmName() {
         return realmName;
@@ -68,6 +120,14 @@ public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationSc
         this.servletContext = servletContext;
     }
 
+    public AuthenticationManager getAuthManager() {
+        return authManager;
+    }
+
+    public void setAuthManager(AuthenticationManager authManager) {
+        this.authManager = authManager;
+    }
+
     @Override
     public void sessionCreated(HttpSessionEvent se) {
     }
@@ -75,4 +135,101 @@ public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationSc
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
     }
+
+    @Override
+    public Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
+        HttpServletRequest request = (HttpServletRequest) servletReq;
+        HttpServletResponse response = (HttpServletResponse) servletResp;
+
+        if (this.picketBoxManager.isAuthenticated(request)) {
+            PicketBoxSubject subject = this.picketBoxManager.getAuthenticatedUser(request);
+
+            return subject.getUser();
+        }
+
+        boolean jSecurityCheck = isAuthenticationRequest(request);
+
+        if (jSecurityCheck == false) {
+            this.requestCache.saveRequest(request);
+            challengeClient(request, response);
+            return null;
+        }
+
+        PicketBoxSubject subject = performAuthentication(request, response);
+
+        if (subject == null) {
+            return null;
+        }
+
+        return subject.getUser();
+    }
+
+    protected abstract boolean isAuthenticationRequest(HttpServletRequest request);
+
+    protected PicketBoxSubject performAuthentication(HttpServletRequest request,
+            HttpServletResponse response) throws AuthenticationException {
+
+        AuthenticationCallbackHandler authenticationCallbackHandler = getAuthenticationCallbackHandler(request, response);
+
+        if (authenticationCallbackHandler == null) {
+            challengeClient(request, response);
+            return null;
+        }
+
+        PicketBoxSubject subject = this.picketBoxManager.authenticate(authenticationCallbackHandler);
+
+        if (subject != null) {
+            // remove from the cache the saved request and store it in the session for further use.
+            SavedRequest savedRequest = this.requestCache.removeAndStoreSavedRequestInSession(request);
+            String requestedURI = null;
+
+            if (savedRequest != null) {
+                requestedURI = savedRequest.getRequestURI();
+
+                request.getSession(true).setAttribute(PicketBoxConstants.SUBJECT, subject);
+            }
+
+            // if the user has explicit defined a default page url, use it to redirect the user after a successful
+            // authentication.
+            if (!this.defaultPage.equals(DEFAULT_PAGE_URL) || requestedURI == null) {
+                requestedURI = request.getContextPath() + this.defaultPage;
+            }
+
+            sendRedirect(response, requestedURI);
+        } else {
+            sendErrorPage(request, response);
+        }
+
+        return subject;
+    }
+
+    protected abstract AuthenticationCallbackHandler getAuthenticationCallbackHandler(HttpServletRequest request, HttpServletResponse response);
+
+    protected abstract void challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException;
+
+    protected void sendErrorPage(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        sendRedirect(response, request.getContextPath() + this.formErrorPage);
+    }
+
+    protected void sendRedirect(HttpServletResponse response, String redirectUrl) throws AuthenticationException {
+        try {
+            response.sendRedirect(redirectUrl);
+        } catch (IOException e) {
+            throw MESSAGES.failRedirectToDefaultPage(redirectUrl, e);
+        }
+    }
+
+    protected void forwardLoginPage(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        RequestDispatcher rd = servletContext.getRequestDispatcher(this.formAuthPage);
+        if (rd == null)
+            throw MESSAGES.unableToFindRequestDispatcher();
+
+        try {
+            rd.forward(request, response);
+        } catch (Exception e) {
+            throw new AuthenticationException(e);
+        }
+    }
+
+
 }

@@ -32,9 +32,11 @@ import java.security.Principal;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.picketbox.core.PicketBoxConfiguration;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPBasicAuthentication;
 import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.spi.UserNamePasswordMechanism;
 import org.picketbox.core.util.Base64;
 import org.picketbox.test.http.TestServletRequest;
 import org.picketbox.test.http.TestServletResponse;
@@ -52,7 +54,15 @@ public class HTTPBasicAuthenticationTestCase {
     @Before
     public void setup() throws Exception {
         httpBasic = new HTTPBasicAuthentication();
-        httpBasic.setAuthManager(new PropertiesFileBasedAuthenticationManager());
+
+        PicketBoxConfiguration configuration = new PicketBoxConfiguration();
+
+        configuration.authentication().addMechanism(new UserNamePasswordMechanism());
+        
+        configuration.authentication().addAuthManager(new PropertiesFileBasedAuthenticationManager());
+        
+        httpBasic.setPicketBoxManager(configuration.buildAndStart());
+
     }
 
     @Test

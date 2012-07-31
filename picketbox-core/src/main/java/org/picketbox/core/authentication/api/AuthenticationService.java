@@ -79,6 +79,4 @@ public interface AuthenticationService {
     AuthenticationResult authenticate(String realm, AuthenticationCallbackHandler callbackHandler)
             throws AuthenticationException;
 
-    void addObserver(Class<? extends AuthenticationEvent> eventType, AuthenticationEventHandler handler);
-
 }

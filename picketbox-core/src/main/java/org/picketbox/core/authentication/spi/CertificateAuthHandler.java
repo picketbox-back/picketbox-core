@@ -22,27 +22,41 @@
 
 package org.picketbox.core.authentication.spi;
 
-import org.picketbox.core.authentication.api.AuthenticationClient;
-import org.picketbox.core.authentication.api.AuthenticationService;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class UserNamePasswordMechanism extends AbstractAuthenticationMechanism {
+public class CertificateAuthHandler extends AbstractAuthenticationCallbackHandler {
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getClient()
-     */
-    public AuthenticationClient getClient() {
-        throw new IllegalStateException("This mechanisms does not provide a client implementation.");
+    private X509Certificate[] certificates;
+
+    public CertificateAuthHandler(X509Certificate[] certificates) {
+        this.certificates = certificates;
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getService()
-     */
-    public AuthenticationService getService() {
-        return new UserNamePasswordAuthenticationService(this);
+    @Override
+    public List<Class<? extends Callback>> getSupportedCallbacks() {
+        ArrayList<Class<? extends Callback>> supportedCallbacks = new ArrayList<Class<? extends Callback>>();
+
+        supportedCallbacks.add(CertificateCallback.class);
+
+        return supportedCallbacks;
+    }
+
+    @Override
+    protected void doHandle(Callback callback) throws UnsupportedCallbackException {
+        if (callback instanceof CertificateCallback) {
+            CertificateCallback certificateCallback = (CertificateCallback) callback;
+
+            certificateCallback.setCertificates(certificates);
+        }
     }
 
 }

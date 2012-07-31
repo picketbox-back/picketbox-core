@@ -33,6 +33,9 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPFormAuthentication;
 import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.spi.CertificateMechanism;
+import org.picketbox.core.authentication.spi.DigestMechanism;
+import org.picketbox.core.authentication.spi.UserNamePasswordMechanism;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.exceptions.AuthorizationException;
@@ -54,8 +57,14 @@ public abstract class AbstractPicketBoxManagerTestCase {
     }
 
     protected PicketBoxConfiguration createConfiguration() {
-        return new PicketBoxConfiguration().authentication(createAuthenticationScheme()).authorization(
-                createAuthorizationManager());
+        PicketBoxConfiguration configuration = new PicketBoxConfiguration();
+
+        configuration.authentication().addMechanism(new UserNamePasswordMechanism()).addMechanism(new DigestMechanism())
+                .addMechanism(new CertificateMechanism());
+        
+        configuration.authentication().addAuthManager(new PropertiesFileBasedAuthenticationManager());
+        
+        return configuration;
     }
 
     protected TestServletResponse createResponse() {

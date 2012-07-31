@@ -61,7 +61,7 @@ public class RequestCache {
      * </p>
      */
     private HttpSession getCurrentSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(true);
 
         if (session == null) {
             throw new IllegalStateException("Unable to cache the request. User session was not created.");

@@ -22,10 +22,6 @@
 
 package org.picketbox.core.authentication.spi;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.api.SecurityRealm;
 import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
 
@@ -35,16 +31,13 @@ import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationM
  */
 public class DefaultRealmSecurityRealm extends SecurityRealm {
 
+    public DefaultRealmSecurityRealm() {
+        getAuthenticationManagers().add(new PropertiesFileBasedAuthenticationManager());
+    }
+
     @Override
     public String getName() {
         return "MY_REALM";
     }
 
-    public List<AuthenticationManager> getAuthenticationManagers() {
-        List<AuthenticationManager> authenticators = new ArrayList<AuthenticationManager>();
-
-        authenticators.add(new PropertiesFileBasedAuthenticationManager());
-
-        return authenticators;
-    };
 }

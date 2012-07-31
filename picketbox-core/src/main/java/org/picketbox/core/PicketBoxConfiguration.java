@@ -22,7 +22,6 @@
 
 package org.picketbox.core;
 
-import org.picketbox.core.authentication.http.HTTPAuthenticationScheme;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.exceptions.ConfigurationException;
 import org.picketbox.core.identity.DefaultIdentityManager;
@@ -42,25 +41,23 @@ public final class PicketBoxConfiguration {
 
     private PicketBoxManager picketBoxManager;
 
-    private HTTPAuthenticationScheme authenticationScheme;
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;
     private LogoutManager logoutManager;
     private ProtectedResourceManager protectedResourceManager;
 
+    private PicketBoxAuthenticationConfig authConfig;
+
     public PicketBoxConfiguration() {
         this.protectedResourceManager = new ProtectedResourceManager();
     }
 
-    /**
-     * <pConfiguration method to register a @{link HTTPAuthenticationScheme} instance.</p>
-     *
-     * @param authenticationScheme
-     * @return the configuration with the {@link HTTPAuthenticationScheme} instance configured.
-     */
-    public PicketBoxConfiguration authentication(HTTPAuthenticationScheme authenticationScheme) {
-        this.authenticationScheme = authenticationScheme;
-        return this;
+    public PicketBoxAuthenticationConfig authentication() {
+        if (this.authConfig == null) {
+            this.authConfig = new PicketBoxAuthenticationConfig();
+        }
+
+        return this.authConfig;
     }
 
     /**
@@ -111,7 +108,7 @@ public final class PicketBoxConfiguration {
                 this.logoutManager = new LogoutManager();
             }
 
-            this.picketBoxManager = new PicketBoxManager(this.authenticationScheme, this.logoutManager,
+            this.picketBoxManager = new PicketBoxManager(this.authConfig.build(), this.logoutManager,
                     this.protectedResourceManager);
 
             this.picketBoxManager.setAuthorizationManager(this.authorizationManager);

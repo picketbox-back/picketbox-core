@@ -2,7 +2,6 @@ package org.picketbox.core.authentication.api;
 
 import java.util.Map;
 
-import org.picketbox.core.authentication.spi.AuthenticationProvider;
 
 /**
  * <p>This interface represents a registry from which the @{link AuthenticationProvider} implementations are loaded.</p>

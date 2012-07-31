@@ -21,13 +21,13 @@
  */
 package org.picketbox.core.authentication.spi;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.picketbox.core.authentication.AuthenticationManager;
+import org.picketbox.core.authentication.api.AuthenticationEventManager;
 import org.picketbox.core.authentication.api.AuthenticationMechanism;
-import org.picketbox.core.authentication.api.SecurityException;
+import org.picketbox.core.authentication.api.AuthenticationProvider;
 
 /**
  * <p>Base class for {@link AuthenticationProvider} implementations.</p>
@@ -37,7 +37,9 @@ import org.picketbox.core.authentication.api.SecurityException;
  */
 public abstract class AbstractAuthenticationProvider implements AuthenticationProvider {
 
-    private final Map<String, AuthenticationMechanism> mechanisms = new HashMap<String, AuthenticationMechanism>();
+    private AuthenticationEventManager authenticationEventManager = new DefaultAuthenticationEventManager();
+    private final List<AuthenticationMechanism> mechanisms = new ArrayList<AuthenticationMechanism>();
+    private final List<AuthenticationManager> authenticationManagers = new ArrayList<AuthenticationManager>();
 
     public AbstractAuthenticationProvider() {
         super();
@@ -55,20 +57,18 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
      *
      * @param mechanisms
      */
-    protected abstract void doAddMechanisms(Map<String, AuthenticationMechanism> mechanisms);
+    protected abstract void doAddMechanisms(List<AuthenticationMechanism> mechanisms);
 
     /* (non-Javadoc)
      * @see org.picketbox.core.authentication.spi.AuthenticationProvider#getSupportedMechanisms()
      */
     public String[] getSupportedMechanisms() {
-        Set<Entry<String, AuthenticationMechanism>> entrySet = this.mechanisms.entrySet();
-
-        String[] mechanisms = new String[entrySet.size()];
+        String[] mechanisms = new String[this.mechanisms.size()];
 
         int i = 0;
 
-        for (Entry<String, AuthenticationMechanism> entry : entrySet) {
-            mechanisms[i++] = entry.getKey();
+        for (AuthenticationMechanism entry : this.mechanisms) {
+            mechanisms[i++] = entry.getClass().getName();
         }
 
         return mechanisms;
@@ -78,18 +78,62 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
      * @see org.picketbox.core.authentication.spi.AuthenticationProvider#supports(java.lang.String)
      */
     public boolean supports(String mechanismName) {
-        return this.mechanisms.containsKey(mechanismName);
+        for (AuthenticationMechanism mechanism : this.mechanisms) {
+            if (mechanism.getClass().getName().equals(mechanismName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /* (non-Javadoc)
      * @see org.picketbox.core.authentication.spi.AuthenticationProvider#getMechanism(java.lang.String)
      */
     public AuthenticationMechanism getMechanism(String mechanismName) {
-        if (!supports(mechanismName)) {
-            throw new SecurityException("No mechanism found for '" + mechanismName + "'. Possible mechanisms are: " + getSupportedMechanisms());
+        for (AuthenticationMechanism currentMechanism : this.mechanisms) {
+            if (currentMechanism.getClass().getName().equals(mechanismName)) {
+                return currentMechanism;
+            }
         }
 
-        return this.mechanisms.get(mechanismName);
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationProvider#addMechanism(org.picketbox.core.authentication.api.AuthenticationMechanism)
+     */
+    @Override
+    public void addMechanism(AuthenticationMechanism mechanism) {
+        this.mechanisms.add(mechanism);
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationProvider#addAuthManager(org.picketbox.core.authentication.AuthenticationManager)
+     */
+    @Override
+    public void addAuthManager(AuthenticationManager manager) {
+        this.authenticationManagers.add(manager);
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationProvider#getAuthenticationManagers()
+     */
+    @Override
+    public List<AuthenticationManager> getAuthenticationManagers() {
+        return this.authenticationManagers;
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationProvider#getEventManager()
+     */
+    @Override
+    public AuthenticationEventManager getEventManager() {
+        return this.authenticationEventManager;
+    }
+
+    @Override
+    public void setEventManager(AuthenticationEventManager eventManager) {
+        this.authenticationEventManager = eventManager;
     }
 
 }

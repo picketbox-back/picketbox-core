@@ -26,16 +26,12 @@ import java.util.List;
 
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
-import org.picketbox.core.authentication.api.AuthenticationEvent;
-import org.picketbox.core.authentication.api.AuthenticationEventHandler;
-import org.picketbox.core.authentication.api.AuthenticationEventManager;
 import org.picketbox.core.authentication.api.AuthenticationInfo;
-import org.picketbox.core.authentication.api.AuthenticationProviderFactory;
+import org.picketbox.core.authentication.api.AuthenticationMechanism;
 import org.picketbox.core.authentication.api.AuthenticationResult;
 import org.picketbox.core.authentication.api.AuthenticationService;
 import org.picketbox.core.authentication.api.AuthenticationStatus;
 import org.picketbox.core.authentication.api.AuthenticationUser;
-import org.picketbox.core.authentication.api.SecurityRealm;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
@@ -46,7 +42,11 @@ import org.picketbox.core.exceptions.AuthenticationException;
  */
 public abstract class AbstractAuthenticationService implements AuthenticationService {
 
-    private AuthenticationEventManager eventManager = new DefaultAuthenticationEventManager();
+    private AuthenticationMechanism authenticationMechanism;
+
+    public AbstractAuthenticationService(AuthenticationMechanism mechanism) {
+        this.authenticationMechanism = mechanism;
+    }
 
     /* (non-Javadoc)
      * @see org.picketbox.core.authentication.api.AuthenticationService#supportsHandler(java.lang.Class)
@@ -62,6 +62,12 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         }
 
         return false;
+    }
+
+    @Override
+    public AuthenticationResult authenticate(AuthenticationCallbackHandler callbackHandler) throws AuthenticationException {
+        AuthenticationResult result = new AuthenticationResult();
+        return performAuthentication(result, callbackHandler);
     }
 
     /* (non-Javadoc)
@@ -82,26 +88,24 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
     protected AuthenticationResult performSuccessfulAuthentication(AuthenticationResult result) {
         result.getUser().setAuthenticated(true);
         result.setStatus(AuthenticationStatus.SUCCESS);
-        this.eventManager.raiseEvent(new UserAuthenticatedEvent(result));
+        this.authenticationMechanism.getAuthenticationProvider().getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
         return result;
     }
 
-    protected AuthenticationResult performAuthentication(AuthenticationResult result, String userName, String password) throws AuthenticationException {
-        SecurityRealm defaultRealm = AuthenticationProviderFactory.instance().getDefaultRealm();
-
-        List<AuthenticationManager> authenticationManagers = defaultRealm.getAuthenticationManagers();
-
+    protected AuthenticationResult performAuthentication(AuthenticationResult result, AuthenticationCallbackHandler callbackHandler) throws AuthenticationException {
         Principal principal = null;
 
-        for (AuthenticationManager authenticationManager : authenticationManagers) {
-            try {
-                principal = authenticationManager.authenticate(userName, password);
-            } catch (AuthenticationException e) {
-                throw new AuthenticationException(e);
-            }
+        for (AuthenticationManager authenticationManager : this.authenticationMechanism.getAuthenticationProvider().getAuthenticationManagers()) {
+            if (supportsHandler(callbackHandler.getClass())) {
+                try {
+                    principal = doAuthenticate(authenticationManager, callbackHandler, result);
+                } catch (AuthenticationException e) {
+                    throw new AuthenticationException(e);
+                }
 
-            if (principal != null) {
-                break;
+                if (principal != null) {
+                    break;
+                }
             }
         }
 
@@ -113,12 +117,12 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
             result.setAuthenticatedUser(authenticatedUser);
 
             performSuccessfulAuthentication(result);
-        } else {
-            invalidCredentials(result);
         }
 
         return result;
     }
+
+    protected abstract Principal doAuthenticate(AuthenticationManager authenticationManager, AuthenticationCallbackHandler callbackHandler, AuthenticationResult result) throws AuthenticationException;
 
     /**
      * <p>Populates the result with the informations required to continue with the authentication process.</p>
@@ -156,8 +160,4 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         return result;
     }
 
-    @Override
-    public void addObserver(Class<? extends AuthenticationEvent> eventType, AuthenticationEventHandler handler) {
-        this.eventManager.addHandler(eventType, handler);
-    }
 }

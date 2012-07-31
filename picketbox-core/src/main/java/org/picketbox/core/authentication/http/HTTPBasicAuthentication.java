@@ -22,15 +22,13 @@
 package org.picketbox.core.authentication.http;
 
 import java.io.IOException;
-import java.security.Principal;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.authentication.PicketBoxConstants;
+import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
+import org.picketbox.core.authentication.spi.UsernamePasswordAuthHandler;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.util.Base64;
 
@@ -42,62 +40,62 @@ import org.picketbox.core.util.Base64;
  */
 public class HTTPBasicAuthentication extends AbstractHTTPAuthentication {
 
-    /**
-     * Authenticate an user
-     *
-     * @param servletReq
-     * @param servletResp
-     * @return
-     * @throws AuthenticationException
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.http.AbstractHTTPAuthentication#isAuthenticationRequest(javax.servlet.http.HttpServletRequest)
      */
-    public Principal authenticate(ServletRequest servletReq, ServletResponse servletResp) throws AuthenticationException {
-        String username, password;
+    @Override
+    protected boolean isAuthenticationRequest(HttpServletRequest request) {
+        String authorizationHeader = getAuthorizationHeader(request);
 
-        HttpServletRequest request = (HttpServletRequest) servletReq;
-        HttpServletResponse response = (HttpServletResponse) servletResp;
-        // Get the Authorization Header
-        String authorizationHeader = request.getHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER);
+        return authorizationHeader != null && authorizationHeader.isEmpty() == false;
+    }
 
-        if (authorizationHeader != null && authorizationHeader.isEmpty() == false) {
+    private String getAuthorizationHeader(HttpServletRequest request) {
+        return request.getHeader(PicketBoxConstants.HTTP_AUTHORIZATION_HEADER);
+    }
 
-            int whitespaceIndex = authorizationHeader.indexOf(' ');
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.http.AbstractHTTPAuthentication#getUserNamePasswordHandler(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    protected AuthenticationCallbackHandler getAuthenticationCallbackHandler(HttpServletRequest request, HttpServletResponse response) {
+        String authorizationHeader = getAuthorizationHeader(request);
 
-            if (whitespaceIndex > 0) {
-                String method = authorizationHeader.substring(0, whitespaceIndex);
+        int whitespaceIndex = authorizationHeader.indexOf(' ');
 
-                if (PicketBoxConstants.HTTP_BASIC.equalsIgnoreCase(method)) {
-                    authorizationHeader = authorizationHeader.substring(whitespaceIndex + 1);
-                    authorizationHeader = new String(Base64.decode(authorizationHeader));
-                    int indexOfColon = authorizationHeader.indexOf(':');
-                    if (indexOfColon > 0) {
-                        username = authorizationHeader.substring(0, indexOfColon);
-                        password = authorizationHeader.substring(indexOfColon + 1);
+        if (whitespaceIndex > 0) {
+            String method = authorizationHeader.substring(0, whitespaceIndex);
 
-                        if (authManager == null) {
-                            throw PicketBoxMessages.MESSAGES.invalidNullAuthenticationManager();
-                        }
+            if (PicketBoxConstants.HTTP_BASIC.equalsIgnoreCase(method)) {
+                authorizationHeader = authorizationHeader.substring(whitespaceIndex + 1);
+                authorizationHeader = new String(Base64.decode(authorizationHeader));
+                int indexOfColon = authorizationHeader.indexOf(':');
 
-                        Principal principal = authManager.authenticate(username, password);
+                if (indexOfColon > 0) {
+                    String username = authorizationHeader.substring(0, indexOfColon);
+                    String password = authorizationHeader.substring(indexOfColon + 1);
 
-                        if (principal != null) {
-                            return principal;
-                        }
-                    }
+                    return new UsernamePasswordAuthHandler(username, password);
                 }
             }
         }
 
-        challengeClient(request, response);
-
         return null;
     }
 
-    private void challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    @Override
+    protected void challengeClient(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         response.setHeader(PicketBoxConstants.HTTP_WWW_AUTHENTICATE, "basic realm=\"" + realmName + '"');
+
         try {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         } catch (IOException e) {
             throw new AuthenticationException(e);
         }
+    }
+
+    @Override
+    protected void sendErrorPage(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        challengeClient(request, response);
     }
 }

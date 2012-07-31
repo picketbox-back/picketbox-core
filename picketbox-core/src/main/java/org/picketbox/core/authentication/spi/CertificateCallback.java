@@ -22,42 +22,30 @@
 
 package org.picketbox.core.authentication.spi;
 
-import org.picketbox.core.authentication.api.AuthenticationMechanism;
+import java.security.cert.X509Certificate;
+
+import javax.security.auth.callback.Callback;
 
 /**
- * <p>This interface defines the contract for a Authentication Provider.</p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationProvider {
+public class CertificateCallback implements Callback {
+
+    private X509Certificate[] certificates;
 
     /**
-     * <p>Initialize</p>
+     * @return the certificates
      */
-    void initialize();
+    public X509Certificate[] getCertificates() {
+        return certificates;
+    }
 
     /**
-     * <p>Returns the names for each supported mechanism.</p>
-     *
-     * @return
+     * @param certificates2 the certificates to set
      */
-    String[] getSupportedMechanisms();
-
-    /**
-     * <p>Checks if a specific mechanism is supported.</p>
-     *
-     * @param mechanismName
-     * @return
-     */
-    boolean supports(String mechanismName);
-
-    /**
-     * <p>Returns a specific {@link AuthenticationMechanism} instance.</p>
-     *
-     * @param string
-     * @return
-     */
-    AuthenticationMechanism getMechanism(String string);
+    public void setCertificates(X509Certificate[] certificates) {
+        this.certificates = certificates;
+    }
 
 }

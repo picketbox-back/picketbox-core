@@ -22,6 +22,7 @@
 
 package org.picketbox.core.authentication.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.picketbox.core.authentication.AuthenticationManager;
@@ -34,7 +35,7 @@ public class SecurityRealm {
 
     private String name;
 
-    private List<AuthenticationManager> authenticationManagers;
+    private List<AuthenticationManager> authenticationManagers = new ArrayList<AuthenticationManager>();
 
     /**
      * @return the name
@@ -64,4 +65,7 @@ public class SecurityRealm {
         this.authenticationManagers = authenticationManagers;
     }
 
+    public void addAuthenticationManager(AuthenticationManager authenticationManager) {
+        getAuthenticationManagers().add(authenticationManager);
+    }
 }
