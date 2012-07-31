@@ -19,28 +19,38 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.authentication;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+package org.picketbox.core.authentication;
 
-import org.junit.Test;
-import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+
 
 /**
- * Unit test the {@link PropertiesFileBasedAuthenticationManager}
+ * <p>This interface provides the contract for a specific authentication mechanisms.</p>
+ * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
+ * to be used to perform user authentication.</p>
  *
- * @author anil saldhana
- * @since Jul 10, 2012
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public class PropertiesFileBasedAuthenticationManagerTestCase {
+public interface AuthenticationMechanism {
 
-    @Test
-    public void testAuth() throws Exception {
-        PropertiesFileBasedAuthenticationManager am = new PropertiesFileBasedAuthenticationManager();
-        assertNotNull(am);
-        assertTrue(am.authenticate("Aladdin", "Open Sesame") != null);
-        assertNull(am.authenticate("Aladdin", "Open"));
-    }
+    /**
+     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
+     *
+     * @return
+     */
+    AuthenticationClient getClient();
+
+    /**
+     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
+     *
+     * @return
+     */
+    AuthenticationService getService();
+
+    AuthenticationProvider getAuthenticationProvider();
+
+    void setAuthenticationProvider(AuthenticationProvider provider);
+
+    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
 }

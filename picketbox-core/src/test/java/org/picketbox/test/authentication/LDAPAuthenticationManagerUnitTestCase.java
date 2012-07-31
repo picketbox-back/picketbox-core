@@ -30,7 +30,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.core.authentication.impl.LDAPAuthenticationManager;
+import org.picketbox.core.authentication.manager.LDAPAuthenticationManager;
 import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
 
