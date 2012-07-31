@@ -41,7 +41,7 @@ import org.picketbox.core.exceptions.ProcessingException;
  * @author Stefan Guilhen
  * @since Jul 10, 2012
  */
-@MessageBundle(projectCode = "PBOX")
+@MessageBundle(projectCode = "PBOXCORE")
 public interface PicketBoxMessages {
 
     PicketBoxMessages MESSAGES = Messages.getBundle(PicketBoxMessages.class);
@@ -154,18 +154,9 @@ public interface PicketBoxMessages {
     @Message(id = 37, value = "Basic LDAP Config Missing.")
     RuntimeException basicLdapConfigMissing();
 
-    @Message(id = 38, value = "JSON Web Keys Missing.")
-    RuntimeException jsonWebKeysMissing();
-
-    @Message(id = 39, value = "Wrong Type of JSON Key.")
-    RuntimeException wrongJsonKey();
-
     @Message(id = 40, value = "Processing Exception.")
     ProcessingException processingException(@Cause Throwable throwable);
 
-    @Message(id = 41, value = "No such algorithm.")
-    ProcessingException noSuchAlgorithm(@Cause Throwable throwable);
-
-    @Message(id = 42, value = "JSON Web Signature Validation Failed.")
-    ProcessingException jsonWebSignatureValidationFailed();
+    @Message(id = 45, value = "Unsupported Feature.")
+    IllegalStateException unsupportedFeature();
 }
