@@ -28,16 +28,16 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import org.junit.Before;
-import org.picketbox.core.PicketBoxConfiguration;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPFormAuthentication;
-import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
-import org.picketbox.core.authentication.spi.CertificateMechanism;
-import org.picketbox.core.authentication.spi.DigestMechanism;
-import org.picketbox.core.authentication.spi.UserNamePasswordMechanism;
+import org.picketbox.core.authentication.impl.CertificateMechanism;
+import org.picketbox.core.authentication.impl.DigestMechanism;
+import org.picketbox.core.authentication.impl.UserNamePasswordMechanism;
+import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.Resource;
+import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.exceptions.AuthorizationException;
 import org.picketbox.test.http.TestServletContext;
 import org.picketbox.test.http.TestServletRequest;
@@ -94,9 +94,6 @@ public abstract class AbstractPicketBoxManagerTestCase {
 
     protected HTTPFormAuthentication createAuthenticationScheme() {
         HTTPFormAuthentication authenticator = new HTTPFormAuthentication();
-
-        authenticator.setAuthManager(new PropertiesFileBasedAuthenticationManager());
-        authenticator.setServletContext(this.servletContext);
 
         return authenticator;
     }

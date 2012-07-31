@@ -19,28 +19,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.authentication;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+package org.picketbox.core.authentication;
 
-import org.junit.Test;
-import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+import java.util.List;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
 
 /**
- * Unit test the {@link PropertiesFileBasedAuthenticationManager}
+ * <p>
+ * Base interface for {@link CallbackHandler} classes used to start the authentication process.
+ * </p>
+ * <p>
+ * {@link AuthenticationCallbackHandler} classes are used to provide informations used during the authentication process. They
+ * define what informations are required by a specific {@link AuthenticationClient} or {@link AuthenticationService} given a {@link AuthenticationMechanism}.</p>
+ * </p>
  *
- * @author anil saldhana
- * @since Jul 10, 2012
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public class PropertiesFileBasedAuthenticationManagerTestCase {
+public interface AuthenticationCallbackHandler extends CallbackHandler {
 
-    @Test
-    public void testAuth() throws Exception {
-        PropertiesFileBasedAuthenticationManager am = new PropertiesFileBasedAuthenticationManager();
-        assertNotNull(am);
-        assertTrue(am.authenticate("Aladdin", "Open Sesame") != null);
-        assertNull(am.authenticate("Aladdin", "Open"));
-    }
+    /**
+     * <p>Returns a list of the expected {@link Callback} classes used by this handler.</p>
+     *
+     * @return
+     */
+    List<Class<? extends Callback>> getSupportedCallbacks();
 }

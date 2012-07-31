@@ -33,10 +33,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 
+import org.picketbox.core.authentication.AuthenticationCallbackHandler;
 import org.picketbox.core.authentication.DigestHolder;
 import org.picketbox.core.authentication.PicketBoxConstants;
-import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
-import org.picketbox.core.authentication.spi.DigestAuthHandler;
+import org.picketbox.core.authentication.handlers.DigestAuthHandler;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.nonce.NonceGenerator;
 import org.picketbox.core.nonce.UUIDNonceGenerator;

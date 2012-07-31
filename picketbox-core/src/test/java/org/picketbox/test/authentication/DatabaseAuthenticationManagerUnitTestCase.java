@@ -37,7 +37,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.PicketBoxPrincipal;
-import org.picketbox.core.authentication.impl.DatabaseAuthenticationManager;
+import org.picketbox.core.authentication.manager.DatabaseAuthenticationManager;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**

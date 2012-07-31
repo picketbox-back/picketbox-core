@@ -25,13 +25,13 @@ package org.picketbox.core;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.picketbox.core.authentication.AuthenticationCallbackHandler;
+import org.picketbox.core.authentication.AuthenticationMechanism;
+import org.picketbox.core.authentication.AuthenticationProvider;
+import org.picketbox.core.authentication.AuthenticationResult;
+import org.picketbox.core.authentication.AuthenticationService;
+import org.picketbox.core.authentication.AuthenticationStatus;
 import org.picketbox.core.authentication.PicketBoxConstants;
-import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
-import org.picketbox.core.authentication.api.AuthenticationMechanism;
-import org.picketbox.core.authentication.api.AuthenticationProvider;
-import org.picketbox.core.authentication.api.AuthenticationResult;
-import org.picketbox.core.authentication.api.AuthenticationService;
-import org.picketbox.core.authentication.api.AuthenticationStatus;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.EntitlementsManager;
 import org.picketbox.core.authorization.resource.WebResource;
@@ -58,7 +58,7 @@ public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
     private EntitlementsManager entitlementsManager;
     private IdentityManager identityManager;
 
-    PicketBoxManager(AuthenticationProvider authenticationProvider, LogoutManager logoutManager,
+    public PicketBoxManager(AuthenticationProvider authenticationProvider, LogoutManager logoutManager,
             ProtectedResourceManager protectedResourceManager) {
         if (authenticationProvider == null) {
             throw PicketBoxMessages.MESSAGES.invalidNullArgument("Authentication Scheme");
@@ -100,6 +100,41 @@ public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
     }
 
     /**
+     * @param authenticationCallbackHandler
+     * @throws AuthenticationException
+     */
+    public PicketBoxSubject authenticate(AuthenticationCallbackHandler authenticationCallbackHandler) throws AuthenticationException {
+        AuthenticationResult result = null;
+
+        String[] mechanisms = this.authenticationProvider.getSupportedMechanisms();
+
+        for (String mechanismName : mechanisms) {
+            AuthenticationMechanism mechanism = this.authenticationProvider.getMechanism(mechanismName);
+            AuthenticationService authenticationService = mechanism.getService();
+
+            if (authenticationService.supportsHandler(authenticationCallbackHandler.getClass())) {
+                try {
+                    result = authenticationService.authenticate(authenticationCallbackHandler);
+                } catch (AuthenticationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (result == null) {
+            throw new AuthenticationException("Authentication not supported. Using handler: " + authenticationCallbackHandler);
+        }
+
+        PicketBoxSubject subject = null;
+
+        if (result.getStatus().equals(AuthenticationStatus.SUCCESS)) {
+            subject = this.identityManager.getIdentity(result.getSubject().getUser());
+        }
+
+        return subject;
+    }
+
+    /**
      * <pAuthorizes a user.</p>
      *
      * @param servletReq
@@ -113,7 +148,7 @@ public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
         try {
             checkIfStarted();
 
-            ProtectedResource protectedResource = getProtectedResource(httpRequest);
+            ProtectedResource protectedResource = this.protectedResourceManager.getProtectedResource(httpRequest);
 
             if (!isPerformAuthorization(httpRequest, protectedResource)) {
                 return true;
@@ -220,10 +255,6 @@ public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
         this.protectedResourceManager = protectedResourceManager;
     }
 
-    private ProtectedResource getProtectedResource(HttpServletRequest servletReq) {
-        return this.protectedResourceManager.getProtectedResource(servletReq);
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -260,41 +291,6 @@ public final class PicketBoxManager extends AbstractPicketBoxLifeCycle {
     @Override
     protected void doStop() {
 
-    }
-
-    /**
-     * @param authenticationCallbackHandler
-     * @throws AuthenticationException
-     */
-    public PicketBoxSubject authenticate(AuthenticationCallbackHandler authenticationCallbackHandler) throws AuthenticationException {
-        AuthenticationResult result = null;
-
-        String[] mechanisms = this.authenticationProvider.getSupportedMechanisms();
-
-        for (String mechanismName : mechanisms) {
-            AuthenticationMechanism mechanism = this.authenticationProvider.getMechanism(mechanismName);
-            AuthenticationService service = mechanism.getService();
-
-            if (service.supportsHandler(authenticationCallbackHandler.getClass())) {
-                try {
-                    result = service.authenticate(authenticationCallbackHandler);
-                } catch (AuthenticationException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if (result == null) {
-            throw new AuthenticationException("Authentication not supported. Using handler: " + authenticationCallbackHandler);
-        }
-
-        PicketBoxSubject subject = null;
-
-        if (result.getStatus().equals(AuthenticationStatus.SUCCESS)) {
-            subject = this.identityManager.getIdentity(result.getUser().getPrincipal());
-        }
-
-        return subject;
     }
 
     public AuthenticationProvider getAuthenticationProvider() {

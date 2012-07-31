@@ -34,11 +34,11 @@ import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.core.PicketBoxConfiguration;
 import org.picketbox.core.authentication.AbstractAuthenticationManager;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPClientCertAuthentication;
-import org.picketbox.core.authentication.spi.CertificateMechanism;
+import org.picketbox.core.authentication.impl.CertificateMechanism;
+import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.test.http.TestServletContext;
 import org.picketbox.test.http.TestServletRequest;
@@ -92,8 +92,6 @@ public class HTTPClientCertAuthenticationTestCase {
     @Before
     public void setup() throws Exception {
         httpClientCert = new HTTPClientCertAuthentication();
-
-        httpClientCert.setServletContext(sc);
 
         PicketBoxConfiguration configuration = new PicketBoxConfiguration();
 

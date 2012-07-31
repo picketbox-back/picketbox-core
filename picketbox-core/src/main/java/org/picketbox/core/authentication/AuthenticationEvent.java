@@ -19,28 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.authentication;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+package org.picketbox.core.authentication;
 
 /**
- * Unit test the {@link PropertiesFileBasedAuthenticationManager}
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
- * @author anil saldhana
- * @since Jul 10, 2012
  */
-public class PropertiesFileBasedAuthenticationManagerTestCase {
+public interface AuthenticationEvent<HANDLER extends AuthenticationEventHandler> {
 
-    @Test
-    public void testAuth() throws Exception {
-        PropertiesFileBasedAuthenticationManager am = new PropertiesFileBasedAuthenticationManager();
-        assertNotNull(am);
-        assertTrue(am.authenticate("Aladdin", "Open Sesame") != null);
-        assertNull(am.authenticate("Aladdin", "Open"));
-    }
+    void dispatch(HANDLER handler);
+
 }

@@ -26,9 +26,9 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.picketbox.core.authentication.AuthenticationCallbackHandler;
 import org.picketbox.core.authentication.PicketBoxConstants;
-import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
-import org.picketbox.core.authentication.spi.UsernamePasswordAuthHandler;
+import org.picketbox.core.authentication.handlers.UsernamePasswordAuthHandler;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.util.Base64;
 

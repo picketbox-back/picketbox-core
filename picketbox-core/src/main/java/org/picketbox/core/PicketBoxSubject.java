@@ -47,6 +47,8 @@ public class PicketBoxSubject implements Serializable {
     protected Map<String, Object> attributes = new HashMap<String, Object>();
     protected Map<String, Object> contextData = new HashMap<String, Object>();
 
+    private boolean authenticated;
+
     // TODO: how to deal with groups/nested groups etc
 
     /**
@@ -138,5 +140,16 @@ public class PicketBoxSubject implements Serializable {
      */
     public void setContextData(Map<String, Object> contextData) {
         this.contextData = contextData;
+    }
+
+    public void setAuthenticated(boolean isAuthenticated) {
+        this.authenticated = isAuthenticated;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isAuthenticated() {
+        return authenticated;
     }
 }

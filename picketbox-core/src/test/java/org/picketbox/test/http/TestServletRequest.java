@@ -76,6 +76,14 @@ public class TestServletRequest implements HttpServletRequest {
 
     private HttpSession session = new TestHttpSession();
 
+    private ServletContext servletContext;
+
+    public TestServletRequest(ServletContext servletContext, InputStream is) {
+        super();
+        this.is = new BufferedInputStream(is);
+        this.servletContext = servletContext;
+    }
+
     public TestServletRequest(InputStream is) {
         super();
         this.is = new BufferedInputStream(is);
@@ -314,7 +322,7 @@ public class TestServletRequest implements HttpServletRequest {
 
     @Override
     public ServletContext getServletContext() {
-        return null;
+        return this.servletContext;
     }
 
     @Override

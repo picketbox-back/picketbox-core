@@ -32,14 +32,12 @@ import java.security.Principal;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.core.PicketBoxConfiguration;
 import org.picketbox.core.authentication.DigestHolder;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPDigestAuthentication;
-import org.picketbox.core.authentication.impl.PropertiesFileBasedAuthenticationManager;
-import org.picketbox.core.authentication.spi.CertificateMechanism;
-import org.picketbox.core.authentication.spi.DigestMechanism;
-import org.picketbox.core.authentication.spi.UserNamePasswordMechanism;
+import org.picketbox.core.authentication.impl.DigestMechanism;
+import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.exceptions.FormatException;
 import org.picketbox.core.util.Base64;
 import org.picketbox.core.util.HTTPDigestUtil;
@@ -59,8 +57,6 @@ public class HTTPDigestAuthenticationTestCase {
     @Before
     public void setup() throws Exception {
         httpDigest = new HTTPDigestAuthentication();
-
-        httpDigest.setAuthManager(new PropertiesFileBasedAuthenticationManager());
 
         httpDigest.setRealmName("testrealm@host.com");
         httpDigest.setOpaque("5ccc069c403ebaf9f0171e9517f40e41");

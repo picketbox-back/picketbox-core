@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.security.Principal;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -36,9 +35,8 @@ import javax.servlet.http.HttpSessionEvent;
 
 import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
-import org.picketbox.core.authentication.AuthenticationManager;
+import org.picketbox.core.authentication.AuthenticationCallbackHandler;
 import org.picketbox.core.authentication.PicketBoxConstants;
-import org.picketbox.core.authentication.api.AuthenticationCallbackHandler;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
@@ -58,11 +56,6 @@ public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationSc
      */
     protected String realmName = HTTPAuthenticationScheme.REALM;
 
-    /**
-     * An instance of {@link ServletContext}
-     */
-    protected ServletContext servletContext = null;
-
     private static final String DEFAULT_PAGE_URL = "/";
 
     /**
@@ -79,8 +72,6 @@ public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationSc
      * The FORM error page. It should always start with a '/'
      */
     protected String formErrorPage = "/error.jsp";
-
-    private AuthenticationManager authManager;
 
     public void setPicketBoxManager(PicketBoxManager picketBoxManager) {
         this.picketBoxManager = picketBoxManager;
@@ -114,18 +105,6 @@ public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationSc
 
     public void setRealmName(String realmName) {
         this.realmName = realmName;
-    }
-
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
-    }
-
-    public AuthenticationManager getAuthManager() {
-        return authManager;
-    }
-
-    public void setAuthManager(AuthenticationManager authManager) {
-        this.authManager = authManager;
     }
 
     @Override
@@ -185,9 +164,9 @@ public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationSc
 
             if (savedRequest != null) {
                 requestedURI = savedRequest.getRequestURI();
-
-                request.getSession(true).setAttribute(PicketBoxConstants.SUBJECT, subject);
             }
+
+            request.getSession(true).setAttribute(PicketBoxConstants.SUBJECT, subject);
 
             // if the user has explicit defined a default page url, use it to redirect the user after a successful
             // authentication.
@@ -220,7 +199,7 @@ public abstract class AbstractHTTPAuthentication implements HTTPAuthenticationSc
     }
 
     protected void forwardLoginPage(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        RequestDispatcher rd = servletContext.getRequestDispatcher(this.formAuthPage);
+        RequestDispatcher rd = request.getServletContext().getRequestDispatcher(this.formAuthPage);
         if (rd == null)
             throw MESSAGES.unableToFindRequestDispatcher();
 

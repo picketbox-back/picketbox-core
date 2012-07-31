@@ -39,8 +39,7 @@ import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.picketbox.core.authentication.PicketBoxConstants;
 import org.picketbox.core.authentication.http.HTTPBasicAuthentication;
-import org.picketbox.core.authentication.http.impl.HTTPBasicAuthenticationSchemeLoader;
-import org.picketbox.core.authentication.impl.SimpleCredentialAuthenticationManager;
+import org.picketbox.core.authentication.manager.SimpleCredentialAuthenticationManager;
 import org.picketbox.core.http.filters.DelegatingSecurityFilter;
 import org.picketbox.test.http.jetty.EmbeddedWebServerBase;
 
@@ -80,7 +79,7 @@ public class DelegatingSecurityFilterHTTPBasicUnitTestCase extends EmbeddedWebSe
         FilterHolder filterHolder = new FilterHolder(DelegatingSecurityFilter.class);
         filterHolder.setInitParameter(PicketBoxConstants.AUTH_MGR, SimpleCredentialAuthenticationManager.class.getName());
         filterHolder.setInitParameter(PicketBoxConstants.AUTH_SCHEME_LOADER,
-                HTTPBasicAuthenticationSchemeLoader.class.getName());
+                HTTPBasicAuthentication.class.getName());
         context.addFilter(filterHolder, "/", 1);
     }
 

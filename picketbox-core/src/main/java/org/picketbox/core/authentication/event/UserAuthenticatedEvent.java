@@ -19,28 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.authentication;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+package org.picketbox.core.authentication.event;
 
-import org.junit.Test;
-import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authentication.AuthenticationEvent;
+import org.picketbox.core.authentication.AuthenticationResult;
 
 /**
- * Unit test the {@link PropertiesFileBasedAuthenticationManager}
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
- * @author anil saldhana
- * @since Jul 10, 2012
  */
-public class PropertiesFileBasedAuthenticationManagerTestCase {
+public class UserAuthenticatedEvent implements AuthenticationEvent<UserAuthenticationEventHandler> {
 
-    @Test
-    public void testAuth() throws Exception {
-        PropertiesFileBasedAuthenticationManager am = new PropertiesFileBasedAuthenticationManager();
-        assertNotNull(am);
-        assertTrue(am.authenticate("Aladdin", "Open Sesame") != null);
-        assertNull(am.authenticate("Aladdin", "Open"));
+    private AuthenticationResult result;
+
+    public UserAuthenticatedEvent(AuthenticationResult result) {
+        this.result = result;
     }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.api.AuthenticationEvent#dispatch(org.picketbox.core.authentication.api.AuthenticationEventHandler)
+     */
+    @Override
+    public void dispatch(UserAuthenticationEventHandler handler) {
+        handler.onSucessfullAuthentication(this);
+    }
+
+    public AuthenticationResult getResult() {
+        return result;
+    }
+
 }

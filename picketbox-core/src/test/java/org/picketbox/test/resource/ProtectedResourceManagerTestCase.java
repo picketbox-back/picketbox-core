@@ -26,11 +26,11 @@ import static org.junit.Assert.assertEquals;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.picketbox.core.PicketBoxConfiguration;
 import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.authorization.resource.WebResource;
+import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.resource.ProtectedResource;
 import org.picketbox.core.resource.ProtectedResourceConstraint;
 import org.picketbox.core.resource.ProtectedResourceManager;
