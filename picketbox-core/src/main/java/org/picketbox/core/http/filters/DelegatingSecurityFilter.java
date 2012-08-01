@@ -80,7 +80,7 @@ public class DelegatingSecurityFilter implements Filter {
         AuthorizationManager authorizationManager = null;
         AuthenticationManager am = null;
 
-        if (authValue != null && authValue.isEmpty() == false) {
+        if (authValue != null && authValue.isEmpty()) {
             // Look for auth mgr also
             String authMgrStr = sc.getInitParameter(PicketBoxConstants.AUTH_MGR);
             // Look for auth mgr also
@@ -103,12 +103,12 @@ public class DelegatingSecurityFilter implements Filter {
                 throw PicketBoxMessages.MESSAGES.missingRequiredInitParameter(PicketBoxConstants.AUTH_SCHEME_LOADER);
             }
             String authManagerStr = filterConfig.getInitParameter(PicketBoxConstants.AUTH_MGR);
-            if (authManagerStr != null && authManagerStr.isEmpty() == false) {
+            if (authManagerStr != null && authManagerStr.isEmpty()) {
                 am = getAuthMgr(authManagerStr);
                 contextData.put(PicketBoxConstants.AUTH_MGR, am);
             }
             String authzManagerStr = filterConfig.getInitParameter(PicketBoxConstants.AUTHZ_MGR);
-            if (authzManagerStr != null && authzManagerStr.isEmpty() == false) {
+            if (authzManagerStr != null && authzManagerStr.isEmpty()) {
                 authorizationManager = getAuthzMgr(authzManagerStr);
                 authorizationManager.start();
                 contextData.put(PicketBoxConstants.AUTHZ_MGR, authorizationManager);
