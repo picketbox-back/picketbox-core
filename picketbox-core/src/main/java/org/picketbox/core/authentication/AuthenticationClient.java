@@ -25,8 +25,13 @@ package org.picketbox.core.authentication;
 import java.util.List;
 
 /**
- * <p>This interface defines a client view of a specific {@link AuthenticationMechanism}.</p>
- * <p>{@link AuthenticationClient} implementations provide an abstraction for users hiding from them the complexity and specific logic for a specific {@link AuthenticationMechanism}.</p>
+ * <p>
+ * This interface defines a client view of a specific {@link AuthenticationMechanism}.
+ * </p>
+ * <p>
+ * {@link AuthenticationClient} implementations provide an abstraction for users hiding from them the complexity and specific
+ * logic for a specific {@link AuthenticationMechanism}.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -34,7 +39,9 @@ import java.util.List;
 public interface AuthenticationClient {
 
     /**
-     * <p>Checks if the specified {@link AuthenticationCallbackHandler} class is supported by this client.</p>
+     * <p>
+     * Checks if the specified {@link AuthenticationCallbackHandler} class is supported by this client.
+     * </p>
      *
      * @param handlerClass
      * @return
@@ -42,14 +49,19 @@ public interface AuthenticationClient {
     boolean supportsHandler(Class<? extends AuthenticationCallbackHandler> handlerClass);
 
     /**
-     * <p>Returns a list of {@link AuthenticationInfo} with informations about what is needed before to procedding with the authentication.</p>
+     * <p>
+     * Returns a list of {@link AuthenticationInfo} with informations about what is needed before to procedding with the
+     * authentication.
+     * </p>
      *
      * @return
      */
     List<AuthenticationInfo> getAuthenticationInfo();
 
     /**
-     * <p>Performs authentication given the informations provided by the {@link AuthenticationCallbackHandler} instance.</p>
+     * <p>
+     * Performs authentication given the informations provided by the {@link AuthenticationCallbackHandler} instance.
+     * </p>
      *
      * @param handler
      *

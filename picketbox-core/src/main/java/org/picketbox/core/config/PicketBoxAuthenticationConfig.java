@@ -59,7 +59,7 @@ public class PicketBoxAuthenticationConfig {
         return this;
     }
 
-    AuthenticationProvider build() {
+    public AuthenticationProvider build() {
         if (provider == null) {
             provider = new PicketBoxAuthenticationProvider();
         }

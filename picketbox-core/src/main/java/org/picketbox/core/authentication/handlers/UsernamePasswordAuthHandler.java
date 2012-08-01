@@ -34,7 +34,9 @@ import org.picketbox.core.authentication.AuthenticationCallbackHandler;
 import org.picketbox.core.authentication.impl.AbstractAuthenticationCallbackHandler;
 
 /**
- * <p>A {@link AuthenticationCallbackHandler} implementation for username/password authentication.</p>
+ * <p>
+ * A {@link AuthenticationCallbackHandler} implementation for username/password authentication.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -49,7 +51,9 @@ public class UsernamePasswordAuthHandler extends AbstractAuthenticationCallbackH
         this.password = password;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.api.AuthenticationCallbackHandler#getSupportedCallbacks()
      */
     public List<Class<? extends Callback>> getSupportedCallbacks() {
@@ -61,8 +65,12 @@ public class UsernamePasswordAuthHandler extends AbstractAuthenticationCallbackH
         return supportedCallbacks;
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.spi.AbstractAuthenticationCallbackHandler#doHandle(javax.security.auth.callback.Callback)
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.picketbox.core.authentication.spi.AbstractAuthenticationCallbackHandler#doHandle(javax.security.auth.callback.Callback
+     * )
      */
     @Override
     protected void doHandle(Callback callback) throws UnsupportedCallbackException {

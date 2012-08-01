@@ -22,15 +22,6 @@
 
 package org.picketbox.core.logout;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.picketbox.core.PicketBoxMessages;
-import org.picketbox.core.authentication.PicketBoxConstants;
-
 /**
  * <p>
  * This class provides the basic functionalities for the logout process.
@@ -39,21 +30,7 @@ import org.picketbox.core.authentication.PicketBoxConstants;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class LogoutManager {
-
-    /**
-     * <p>
-     * URL used to start the logout process.
-     * </p>
-     */
-    private String logoutUrl;
-
-    /**
-     * <p>
-     * Page URL to redirect the user after a successful logout.
-     * </p>
-     */
-    private String logoutPage;
+public interface LogoutManager<P, Q> {
 
     /**
      * <p>
@@ -63,74 +40,25 @@ public class LogoutManager {
      * @param request
      * @param response
      */
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        if (isLogoutRequest(request)) {
-            HttpSession session = request.getSession(false);
-
-            if (session == null) {
-                throw PicketBoxMessages.MESSAGES.invalidUserSession();
-            }
-
-            session.invalidate();
-
-            try {
-                String logoutPage = getLogoutPage();
-
-                if (getLogoutPage() == null) {
-                    logoutPage = request.getContextPath();
-                }
-
-                response.sendRedirect(logoutPage);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * <p>
-     * Checks if the request is asking for a logout.
-     * </p>
-     *
-     * @param request
-     * @return
-     */
-    private boolean isLogoutRequest(HttpServletRequest request) {
-        String logoutUrl = getLogoutUrl();
-
-        if (logoutUrl == null) {
-            logoutUrl = PicketBoxConstants.LOGOUT_URI;
-        }
-
-        return request.getRequestURI().contains(logoutUrl);
-    }
+    void logout(P request, Q response);
 
     /**
      * @return the logoutUrl
      */
-    public String getLogoutUrl() {
-        return this.logoutUrl;
-    }
+    String getLogoutUrl();
 
     /**
      * @param logoutUrl the logoutUrl to set
      */
-    public void setLogoutUrl(String logoutUrl) {
-        this.logoutUrl = logoutUrl;
-    }
+    void setLogoutUrl(String logoutUrl);
 
     /**
      * @return the logoutPage
      */
-    public String getLogoutPage() {
-        return this.logoutPage;
-    }
+    String getLogoutPage();
 
     /**
      * @param logoutPage the logoutPage to set
      */
-    public void setLogoutPage(String logoutPage) {
-        this.logoutPage = logoutPage;
-    }
-
+    void setLogoutPage(String logoutPage);
 }

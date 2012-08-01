@@ -23,8 +23,6 @@ package org.picketbox.core;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-
 import org.jboss.logging.Cause;
 import org.jboss.logging.Message;
 import org.jboss.logging.MessageBundle;
@@ -60,9 +58,6 @@ public interface PicketBoxMessages {
 
     @Message(id = 5, value = "RequestDispatcher could not be found")
     AuthenticationException unableToFindRequestDispatcher();
-
-    @Message(id = 6, value = "Required init parameter %s is missing")
-    ServletException missingRequiredInitParameter(String paramName);
 
     @Message(id = 7, value = "The argument %s cannot be null")
     IllegalArgumentException invalidNullArgument(String argName);

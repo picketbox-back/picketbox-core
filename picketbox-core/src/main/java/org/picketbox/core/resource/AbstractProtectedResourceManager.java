@@ -19,27 +19,60 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.picketbox.core.resource;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.picketbox.core.PicketBoxLifecycle;
+import org.picketbox.core.AbstractPicketBoxLifeCycle;
+import org.picketbox.core.PicketBoxLogger;
+import org.picketbox.core.PicketBoxMessages;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- * @author Anil Saldhana
+ *
  */
-public interface ProtectedResourceManager<T> extends PicketBoxLifecycle {
+public class AbstractProtectedResourceManager extends AbstractPicketBoxLifeCycle {
+
+    private List<ProtectedResource> resources = new ArrayList<ProtectedResource>();
 
     /**
      * @return the resources
      */
-    List<ProtectedResource> getResources();
+    public List<ProtectedResource> getResources() {
+        return Collections.unmodifiableList(this.resources);
+    }
 
     /**
      * @param resources the resources to set
      */
-    void setResources(List<ProtectedResource> resources);
+    public void setResources(List<ProtectedResource> resources) {
+        this.resources = resources;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.AbstractPicketBoxLifeCycle#doStart()
+     */
+    @Override
+    protected void doStart() {
+        if (this.resources.isEmpty()) {
+            PicketBoxLogger.LOGGER.allResourcesWillBeProteced();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.AbstractPicketBoxLifeCycle#doStop()
+     */
+    @Override
+    protected void doStop() {
+
+    }
 
     /**
      * <p>
@@ -49,16 +82,12 @@ public interface ProtectedResourceManager<T> extends PicketBoxLifecycle {
      * @param pattern
      * @param constraint
      */
-    void addProtectedResource(String pattern, ProtectedResourceConstraint constraint);
+    public void addProtectedResource(String pattern, ProtectedResourceConstraint constraint) {
+        if (started()) {
+            throw PicketBoxMessages.MESSAGES.instanceAlreadyStarted();
+        }
 
-    /**
-     * <p>
-     * Returns a {@link ProtectedResource} instance that matches the specified T instance. If no match is found, it will be
-     * returned a default resource. See <code>ProtectedResource.DEFAULT_RESOURCE</code>.
-     * </p>
-     *
-     * @param servletReq
-     * @return
-     */
-    ProtectedResource getProtectedResource(T request);
+        this.resources.add(new ProtectedResource(pattern, constraint));
+    }
+
 }

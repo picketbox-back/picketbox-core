@@ -33,7 +33,9 @@ import javax.security.auth.callback.CallbackHandler;
  * </p>
  * <p>
  * {@link AuthenticationCallbackHandler} classes are used to provide informations used during the authentication process. They
- * define what informations are required by a specific {@link AuthenticationClient} or {@link AuthenticationService} given a {@link AuthenticationMechanism}.</p>
+ * define what informations are required by a specific {@link AuthenticationClient} or {@link AuthenticationService} given a
+ * {@link AuthenticationMechanism}.
+ * </p>
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -42,7 +44,9 @@ import javax.security.auth.callback.CallbackHandler;
 public interface AuthenticationCallbackHandler extends CallbackHandler {
 
     /**
-     * <p>Returns a list of the expected {@link Callback} classes used by this handler.</p>
+     * <p>
+     * Returns a list of the expected {@link Callback} classes used by this handler.
+     * </p>
      *
      * @return
      */

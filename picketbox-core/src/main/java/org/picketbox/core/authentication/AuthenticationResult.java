@@ -28,8 +28,12 @@ import java.util.List;
 import org.picketbox.core.PicketBoxSubject;
 
 /**
- * <p>This class provides informations collected during the authentication process.</p>
- * <p>It can be used to check the authentication status as well to get a {@link AuthenticationUser} instance.</p>
+ * <p>
+ * This class provides informations collected during the authentication process.
+ * </p>
+ * <p>
+ * It can be used to check the authentication status as well to get a {@link AuthenticationUser} instance.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
