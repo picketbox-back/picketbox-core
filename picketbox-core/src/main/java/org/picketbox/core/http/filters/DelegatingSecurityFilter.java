@@ -103,7 +103,7 @@ public class DelegatingSecurityFilter implements Filter {
                 throw PicketBoxMessages.MESSAGES.missingRequiredInitParameter(PicketBoxConstants.AUTH_SCHEME_LOADER);
             }
             String authManagerStr = filterConfig.getInitParameter(PicketBoxConstants.AUTH_MGR);
-            if (authManagerStr != null && authManagerStr.isEmpty()) {
+            if (authManagerStr != null && !authManagerStr.isEmpty()) {
                 am = getAuthMgr(authManagerStr);
                 contextData.put(PicketBoxConstants.AUTH_MGR, am);
             }
