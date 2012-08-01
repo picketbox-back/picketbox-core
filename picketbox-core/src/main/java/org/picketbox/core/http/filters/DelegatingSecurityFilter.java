@@ -47,9 +47,12 @@ import org.picketbox.core.authentication.http.HTTPFormAuthentication;
 import org.picketbox.core.authentication.impl.CertificateMechanism;
 import org.picketbox.core.authentication.impl.DigestMechanism;
 import org.picketbox.core.authentication.impl.UserNamePasswordMechanism;
+import org.picketbox.core.authentication.manager.DatabaseAuthenticationManager;
+import org.picketbox.core.authentication.manager.LDAPAuthenticationManager;
 import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.core.authentication.manager.SimpleCredentialAuthenticationManager;
 import org.picketbox.core.authorization.AuthorizationManager;
+import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
 import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.exceptions.AuthenticationException;
 
@@ -113,8 +116,7 @@ public class DelegatingSecurityFilter implements Filter {
                 authorizationManager.start();
                 contextData.put(PicketBoxConstants.AUTHZ_MGR, authorizationManager);
             }
-            authenticationScheme = (HTTPAuthenticationScheme) SecurityActions.instance(getClass(),
-                    loader);
+            authenticationScheme = (HTTPAuthenticationScheme) SecurityActions.instance(getClass(), loader);
         }
 
         PicketBoxConfiguration configuration = new PicketBoxConfiguration();
@@ -165,7 +167,7 @@ public class DelegatingSecurityFilter implements Filter {
         }
 
         try {
-//            this.securityManager.authenticate(httpRequest, httpResponse);
+            // this.securityManager.authenticate(httpRequest, httpResponse);
             this.authenticationScheme.authenticate(httpRequest, httpResponse);
         } catch (AuthenticationException e) {
             throw new ServletException(e);
@@ -200,11 +202,13 @@ public class DelegatingSecurityFilter implements Filter {
     private AuthenticationManager getAuthMgr(String value) {
         if (value.equalsIgnoreCase("Credential")) {
             return new SimpleCredentialAuthenticationManager();
-        }
-        if (value.equalsIgnoreCase("Properties")) {
+        } else if (value.equalsIgnoreCase("Properties")) {
             return new PropertiesFileBasedAuthenticationManager();
+        } else if (value.equalsIgnoreCase("Database")) {
+            return new DatabaseAuthenticationManager();
+        } else if (value.equalsIgnoreCase("Ldap")) {
+            return new LDAPAuthenticationManager();
         }
-
         if (value == null || value.isEmpty()) {
             return new PropertiesFileBasedAuthenticationManager();
         }
@@ -216,6 +220,8 @@ public class DelegatingSecurityFilter implements Filter {
         if (value.equalsIgnoreCase("Drools")) {
             return (AuthorizationManager) SecurityActions.instance(getClass(),
                     "org.picketbox.drools.authorization.PicketBoxDroolsAuthorizationManager");
+        } else if (value.equalsIgnoreCase("Simple")) {
+            return new SimpleAuthorizationManager();
         }
 
         return (AuthorizationManager) SecurityActions.instance(getClass(),
