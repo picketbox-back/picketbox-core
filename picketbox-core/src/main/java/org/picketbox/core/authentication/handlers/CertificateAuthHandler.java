@@ -43,7 +43,9 @@ public class CertificateAuthHandler extends AbstractAuthenticationCallbackHandle
         this.certificates = certificates;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.AuthenticationCallbackHandler#getSupportedCallbacks()
      */
     @Override
@@ -55,8 +57,12 @@ public class CertificateAuthHandler extends AbstractAuthenticationCallbackHandle
         return supportedCallbacks;
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.impl.AbstractAuthenticationCallbackHandler#doHandle(javax.security.auth.callback.Callback)
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.picketbox.core.authentication.impl.AbstractAuthenticationCallbackHandler#doHandle(javax.security.auth.callback.Callback
+     * )
      */
     @Override
     protected void doHandle(Callback callback) throws UnsupportedCallbackException {

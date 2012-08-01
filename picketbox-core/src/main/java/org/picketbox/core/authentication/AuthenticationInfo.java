@@ -25,7 +25,9 @@ package org.picketbox.core.authentication;
 import javax.security.auth.callback.CallbackHandler;
 
 /**
- * <p>This class provides ways to describe a specific authentication use case.</p>
+ * <p>
+ * This class provides ways to describe a specific authentication use case.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -42,48 +44,56 @@ public class AuthenticationInfo {
         this.description = description;
         this.implementation = implementation;
     }
+
     /**
      * @return the name
      */
     public String getName() {
         return name;
     }
+
     /**
      * @param name the name to set
      */
     public void setName(String name) {
         this.name = name;
     }
+
     /**
      * @return the description
      */
     public String getDescription() {
         return description;
     }
+
     /**
      * @param description the description to set
      */
     public void setDescription(String description) {
         this.description = description;
     }
+
     /**
      * @return the implementation
      */
     public Class<? extends CallbackHandler> getImplementation() {
         return implementation;
     }
+
     /**
      * @param implementation the implementation to set
      */
     public void setImplementation(Class<? extends CallbackHandler> implementation) {
         this.implementation = implementation;
     }
+
     /**
      * @return the required
      */
     public boolean isRequired() {
         return required;
     }
+
     /**
      * @param required the required to set
      */

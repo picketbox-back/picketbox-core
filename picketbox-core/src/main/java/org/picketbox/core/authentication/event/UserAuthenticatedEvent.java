@@ -37,8 +37,11 @@ public class UserAuthenticatedEvent implements AuthenticationEvent<UserAuthentic
         this.result = result;
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.api.AuthenticationEvent#dispatch(org.picketbox.core.authentication.api.AuthenticationEventHandler)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.api.AuthenticationEvent#dispatch(org.picketbox.core.authentication.api.
+     * AuthenticationEventHandler)
      */
     @Override
     public void dispatch(UserAuthenticationEventHandler handler) {

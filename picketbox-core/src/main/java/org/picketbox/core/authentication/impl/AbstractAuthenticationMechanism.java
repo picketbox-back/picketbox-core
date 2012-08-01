@@ -5,18 +5,23 @@ import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationService;
 
-public abstract class AbstractAuthenticationMechanism implements AuthenticationMechanism  {
+public abstract class AbstractAuthenticationMechanism implements AuthenticationMechanism {
 
     private AuthenticationProvider authenticationProvider;
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getService(org.picketbox.core.authentication.AuthenticationManager[])
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getService(org.picketbox.core.authentication.
+     * AuthenticationManager[])
      */
     public AuthenticationService getService(AuthenticationManager... authenticationManagers) {
         throw new IllegalStateException("Method not implemented.");
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getAuthenticationProvider()
      */
     @Override

@@ -23,7 +23,9 @@
 package org.picketbox.core.authentication;
 
 /**
- * <p>Possible status values for the authentication process.</p>
+ * <p>
+ * Possible status values for the authentication process.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -31,27 +33,37 @@ package org.picketbox.core.authentication;
 public enum AuthenticationStatus {
 
     /**
-     * <p>Successful authentication.</p>
+     * <p>
+     * Successful authentication.
+     * </p>
      */
     SUCCESS,
 
     /**
-     * <p>Authentication failed.</p>
+     * <p>
+     * Authentication failed.
+     * </p>
      */
     FAILED,
 
     /**
-     * <p>Provided credentials are invalid.</p>
+     * <p>
+     * Provided credentials are invalid.
+     * </p>
      */
     INVALID_CREDENTIALS,
 
     /**
-     * <p>The authentication process is not finished. More steps are needed.</p>
+     * <p>
+     * The authentication process is not finished. More steps are needed.
+     * </p>
      */
     CONTINUE,
 
     /**
-     * <p>This status means that no status was provided.</p>
+     * <p>
+     * This status means that no status was provided.
+     * </p>
      */
     NONE
 

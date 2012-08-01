@@ -22,7 +22,6 @@
 
 package org.picketbox.core.authentication;
 
-
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *

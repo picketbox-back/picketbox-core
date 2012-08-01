@@ -35,7 +35,6 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.manager.LDAPAuthenticationManager;
 import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
-import org.picketbox.core.authorization.resource.WebResource;
 import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
 import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.core.ldap.config.LDAPSearchConfig;
@@ -98,7 +97,20 @@ public class LDAPBasedSecurityWorkflowTestCase extends AbstractLDAPTest {
         sam.setRoleNames(Arrays.asList(new String[] { "Echo" }));
         sam.start();
 
-        Resource resource = new WebResource();
+        Resource resource = new Resource() {
+            private static final long serialVersionUID = 1L;
+            private boolean a = false;
+
+            @Override
+            public boolean isAuthorized() {
+                return a;
+            }
+
+            @Override
+            public void setAuthorized(boolean authorize) {
+                a = authorize;
+            }
+        };
         boolean authz = sam.authorize(resource, subject);
         assertTrue(authz);
     }

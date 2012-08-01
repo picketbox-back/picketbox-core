@@ -31,14 +31,18 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import org.picketbox.core.authentication.AuthenticationCallbackHandler;
 
 /**
- * <p>Base class for {@link AuthenticationCallbackHandler} implementations.</p>
+ * <p>
+ * Base class for {@link AuthenticationCallbackHandler} implementations.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public abstract class AbstractAuthenticationCallbackHandler implements AuthenticationCallbackHandler {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see javax.security.auth.callback.CallbackHandler#handle(javax.security.auth.callback.Callback[])
      */
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
