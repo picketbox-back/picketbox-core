@@ -31,7 +31,9 @@ import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.event.DefaultAuthenticationEventManager;
 
 /**
- * <p>Base class for {@link AuthenticationProvider} implementations.</p>
+ * <p>
+ * Base class for {@link AuthenticationProvider} implementations.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -46,7 +48,9 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         super();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.spi.AuthenticationProvider#initialize()
      */
     public void initialize() {
@@ -54,13 +58,17 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
     }
 
     /**
-     * <p>Subclasses should override this method to provide the supported {@link AuthenticationMechanism}.</p>
+     * <p>
+     * Subclasses should override this method to provide the supported {@link AuthenticationMechanism}.
+     * </p>
      *
      * @param mechanisms
      */
     protected abstract void doAddMechanisms(List<AuthenticationMechanism> mechanisms);
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.spi.AuthenticationProvider#getSupportedMechanisms()
      */
     public String[] getSupportedMechanisms() {
@@ -75,7 +83,9 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         return mechanisms;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.spi.AuthenticationProvider#supports(java.lang.String)
      */
     public boolean supports(String mechanismName) {
@@ -87,7 +97,9 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.spi.AuthenticationProvider#getMechanism(java.lang.String)
      */
     public AuthenticationMechanism getMechanism(String mechanismName) {
@@ -103,23 +115,31 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.api.AuthenticationProvider#addMechanism(org.picketbox.core.authentication.api.AuthenticationMechanism)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.api.AuthenticationProvider#addMechanism(org.picketbox.core.authentication.api.
+     * AuthenticationMechanism)
      */
     @Override
     public void addMechanism(AuthenticationMechanism mechanism) {
         this.mechanisms.add(mechanism);
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.api.AuthenticationProvider#addAuthManager(org.picketbox.core.authentication.AuthenticationManager)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.api.AuthenticationProvider#addAuthManager(org.picketbox.core.authentication.
+     * AuthenticationManager)
      */
     @Override
     public void addAuthManager(AuthenticationManager manager) {
         this.authenticationManagers.add(manager);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.api.AuthenticationProvider#getAuthenticationManagers()
      */
     @Override
@@ -127,7 +147,9 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         return this.authenticationManagers;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.api.AuthenticationProvider#getEventManager()
      */
     @Override

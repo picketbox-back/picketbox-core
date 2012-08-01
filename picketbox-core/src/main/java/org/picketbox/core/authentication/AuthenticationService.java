@@ -73,8 +73,7 @@ public interface AuthenticationService {
      * @return
      * @throws AuthenticationException
      */
-    AuthenticationResult authenticate(AuthenticationCallbackHandler callbackHandler)
-            throws AuthenticationException;
+    AuthenticationResult authenticate(AuthenticationCallbackHandler callbackHandler) throws AuthenticationException;
 
     AuthenticationResult authenticate(String realm, AuthenticationCallbackHandler callbackHandler)
             throws AuthenticationException;

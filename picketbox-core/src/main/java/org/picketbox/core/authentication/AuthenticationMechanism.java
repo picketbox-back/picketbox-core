@@ -22,12 +22,14 @@
 
 package org.picketbox.core.authentication;
 
-
-
 /**
- * <p>This interface provides the contract for a specific authentication mechanisms.</p>
- * <p>{@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService} instances
- * to be used to perform user authentication.</p>
+ * <p>
+ * This interface provides the contract for a specific authentication mechanisms.
+ * </p>
+ * <p>
+ * {@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService}
+ * instances to be used to perform user authentication.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -35,14 +37,18 @@ package org.picketbox.core.authentication;
 public interface AuthenticationMechanism {
 
     /**
-     * <p>Returns a {@link AuthenticationClient} for this mechanism.</p>
+     * <p>
+     * Returns a {@link AuthenticationClient} for this mechanism.
+     * </p>
      *
      * @return
      */
     AuthenticationClient getClient();
 
     /**
-     * <p>Returns a {@link AuthenticationService} for this mechanism.</p>
+     * <p>
+     * Returns a {@link AuthenticationService} for this mechanism.
+     * </p>
      *
      * @return
      */
@@ -52,5 +58,5 @@ public interface AuthenticationMechanism {
 
     void setAuthenticationProvider(AuthenticationProvider provider);
 
-    //TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
+    // TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
 }

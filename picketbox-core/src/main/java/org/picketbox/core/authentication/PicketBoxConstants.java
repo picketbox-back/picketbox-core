@@ -21,10 +21,6 @@
  */
 package org.picketbox.core.authentication;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
-import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 
 /**

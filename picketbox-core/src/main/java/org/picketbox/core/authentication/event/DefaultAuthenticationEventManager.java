@@ -40,8 +40,11 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
     @SuppressWarnings("rawtypes")
     private Map<Class<? extends AuthenticationEvent>, List<AuthenticationEventHandler>> observers = new HashMap<Class<? extends AuthenticationEvent>, List<AuthenticationEventHandler>>();
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.api.AuthenticationEventManager#raiseEvent(org.picketbox.core.authentication.api.AuthenticationEvent)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.api.AuthenticationEventManager#raiseEvent(org.picketbox.core.authentication.api.
+     * AuthenticationEvent)
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
@@ -55,8 +58,11 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.api.AuthenticationEventManager#addHandler(java.lang.Class, org.picketbox.core.authentication.api.AuthenticationEventHandler)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.api.AuthenticationEventManager#addHandler(java.lang.Class,
+     * org.picketbox.core.authentication.api.AuthenticationEventHandler)
      */
     @SuppressWarnings("rawtypes")
     @Override

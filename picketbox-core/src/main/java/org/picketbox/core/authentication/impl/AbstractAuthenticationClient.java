@@ -30,14 +30,18 @@ import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.AuthenticationStatus;
 
 /**
- * <p>Base class for {@link AuthenticationClient} implementations.</p>
+ * <p>
+ * Base class for {@link AuthenticationClient} implementations.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public abstract class AbstractAuthenticationClient implements AuthenticationClient {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.api.AuthenticationClient#supportsHandler(java.lang.Class)
      */
     @Override
@@ -54,8 +58,12 @@ public abstract class AbstractAuthenticationClient implements AuthenticationClie
     }
 
     /**
-     * <p>Populates the result with the informations after a successful authentication.</p>
-     * <p>This method should provide hooks or raise events for additional processing.</p>
+     * <p>
+     * Populates the result with the informations after a successful authentication.
+     * </p>
+     * <p>
+     * This method should provide hooks or raise events for additional processing.
+     * </p>
      *
      * @param result
      * @return
@@ -66,8 +74,12 @@ public abstract class AbstractAuthenticationClient implements AuthenticationClie
     }
 
     /**
-     * <p>Populates the result with the informations required to continue with the authentication process.</p>
-     * <p>This method should provide hooks or raise events for additional processing.</p>
+     * <p>
+     * Populates the result with the informations required to continue with the authentication process.
+     * </p>
+     * <p>
+     * This method should provide hooks or raise events for additional processing.
+     * </p>
      *
      * @param result
      * @return
@@ -78,8 +90,12 @@ public abstract class AbstractAuthenticationClient implements AuthenticationClie
     }
 
     /**
-     * <p>Populates the result with the informations after a failed authentication.</p>
-     * <p>This method should provide hooks or raise events for additional processing.</p>
+     * <p>
+     * Populates the result with the informations after a failed authentication.
+     * </p>
+     * <p>
+     * This method should provide hooks or raise events for additional processing.
+     * </p>
      *
      * @param result
      * @return

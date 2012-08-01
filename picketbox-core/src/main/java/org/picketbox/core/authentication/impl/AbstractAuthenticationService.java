@@ -36,7 +36,9 @@ import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
- * <p>Base class for {@link AuthenticationService} implementations.</p>
+ * <p>
+ * Base class for {@link AuthenticationService} implementations.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -49,7 +51,9 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         this.authenticationMechanism = mechanism;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.api.AuthenticationService#supportsHandler(java.lang.Class)
      */
     @Override
@@ -71,8 +75,11 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         return performAuthentication(result, callbackHandler);
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.api.AuthenticationService#authenticate(java.lang.String, org.picketbox.core.authentication.api.AuthenticationCallbackHandler)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.api.AuthenticationService#authenticate(java.lang.String,
+     * org.picketbox.core.authentication.api.AuthenticationCallbackHandler)
      */
     public AuthenticationResult authenticate(String realm, AuthenticationCallbackHandler callbackHandler)
             throws AuthenticationException {
@@ -80,8 +87,12 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
     }
 
     /**
-     * <p>Populates the result with the informations after a successful authentication.</p>
-     * <p>This method should provide hooks or raise events for additional processing.</p>
+     * <p>
+     * Populates the result with the informations after a successful authentication.
+     * </p>
+     * <p>
+     * This method should provide hooks or raise events for additional processing.
+     * </p>
      *
      * @param result
      * @return
@@ -89,14 +100,17 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
     protected AuthenticationResult performSuccessfulAuthentication(AuthenticationResult result) {
         result.getSubject().setAuthenticated(true);
         result.setStatus(AuthenticationStatus.SUCCESS);
-        this.authenticationMechanism.getAuthenticationProvider().getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
+        this.authenticationMechanism.getAuthenticationProvider().getEventManager()
+                .raiseEvent(new UserAuthenticatedEvent(result));
         return result;
     }
 
-    protected AuthenticationResult performAuthentication(AuthenticationResult result, AuthenticationCallbackHandler callbackHandler) throws AuthenticationException {
+    protected AuthenticationResult performAuthentication(AuthenticationResult result,
+            AuthenticationCallbackHandler callbackHandler) throws AuthenticationException {
         Principal principal = null;
 
-        for (AuthenticationManager authenticationManager : this.authenticationMechanism.getAuthenticationProvider().getAuthenticationManagers()) {
+        for (AuthenticationManager authenticationManager : this.authenticationMechanism.getAuthenticationProvider()
+                .getAuthenticationManagers()) {
             if (supportsHandler(callbackHandler.getClass())) {
                 try {
                     principal = doAuthenticate(authenticationManager, callbackHandler, result);
@@ -123,11 +137,16 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         return result;
     }
 
-    protected abstract Principal doAuthenticate(AuthenticationManager authenticationManager, AuthenticationCallbackHandler callbackHandler, AuthenticationResult result) throws AuthenticationException;
+    protected abstract Principal doAuthenticate(AuthenticationManager authenticationManager,
+            AuthenticationCallbackHandler callbackHandler, AuthenticationResult result) throws AuthenticationException;
 
     /**
-     * <p>Populates the result with the informations required to continue with the authentication process.</p>
-     * <p>This method should provide hooks or raise events for additional processing.</p>
+     * <p>
+     * Populates the result with the informations required to continue with the authentication process.
+     * </p>
+     * <p>
+     * This method should provide hooks or raise events for additional processing.
+     * </p>
      *
      * @param result
      * @return
@@ -138,8 +157,12 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
     }
 
     /**
-     * <p>Populates the result with the informations after a failed authentication.</p>
-     * <p>This method should provide hooks or raise events for additional processing.</p>
+     * <p>
+     * Populates the result with the informations after a failed authentication.
+     * </p>
+     * <p>
+     * This method should provide hooks or raise events for additional processing.
+     * </p>
      *
      * @param result
      * @return
@@ -150,8 +173,12 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
     }
 
     /**
-     * <p>Populates the result with the informations about the invalid credentials.</p>
-     * <p>This method should provide hooks or raise events for additional processing.</p>
+     * <p>
+     * Populates the result with the informations about the invalid credentials.
+     * </p>
+     * <p>
+     * This method should provide hooks or raise events for additional processing.
+     * </p>
      *
      * @param result
      * @return

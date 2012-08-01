@@ -28,7 +28,9 @@ import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 
 /**
- * <p>A implementation of {@link AuthenticationProvider} that provides some basic authentication mechanisms.</p>
+ * <p>
+ * A implementation of {@link AuthenticationProvider} that provides some basic authentication mechanisms.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *

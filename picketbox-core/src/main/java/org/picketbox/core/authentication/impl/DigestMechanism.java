@@ -23,7 +23,6 @@
 package org.picketbox.core.authentication.impl;
 
 import org.picketbox.core.authentication.AuthenticationClient;
-import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationService;
 
 /**
@@ -32,14 +31,18 @@ import org.picketbox.core.authentication.AuthenticationService;
  */
 public class DigestMechanism extends AbstractAuthenticationMechanism {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getClient()
      */
     public AuthenticationClient getClient() {
         throw new IllegalStateException("This mechanisms does not provide a client implementation.");
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getService()
      */
     public AuthenticationService getService() {

@@ -50,22 +50,31 @@ public class CertificateAuthenticationService extends AbstractAuthenticationServ
         super(mechanism);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.authentication.api.AuthenticationService#getAuthenticationInfo()
      */
     @Override
     public List<AuthenticationInfo> getAuthenticationInfo() {
         List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();
 
-        arrayList.add(new AuthenticationInfo("Certificate authentication service.", "A authentication service using certificates.", CertificateAuthHandler.class));
-        arrayList.add(new AuthenticationInfo("User name and password.", "Where the password is the certificate's signature.", UsernamePasswordAuthHandler.class));
+        arrayList.add(new AuthenticationInfo("Certificate authentication service.",
+                "A authentication service using certificates.", CertificateAuthHandler.class));
+        arrayList.add(new AuthenticationInfo("User name and password.", "Where the password is the certificate's signature.",
+                UsernamePasswordAuthHandler.class));
 
         return arrayList;
 
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.spi.AbstractAuthenticationService#doAuthenticate(org.picketbox.core.authentication.AuthenticationManager, org.picketbox.core.authentication.api.AuthenticationCallbackHandler, org.picketbox.core.authentication.api.AuthenticationResult)
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.picketbox.core.authentication.spi.AbstractAuthenticationService#doAuthenticate(org.picketbox.core.authentication.
+     * AuthenticationManager, org.picketbox.core.authentication.api.AuthenticationCallbackHandler,
+     * org.picketbox.core.authentication.api.AuthenticationResult)
      */
     @Override
     protected Principal doAuthenticate(AuthenticationManager authenticationManager,
@@ -79,7 +88,7 @@ public class CertificateAuthenticationService extends AbstractAuthenticationServ
             PasswordCallback passwordCallback = new PasswordCallback("Password:", false);
 
             try {
-                callbackHandler.handle(new Callback[]{nameCallback, passwordCallback});
+                callbackHandler.handle(new Callback[] { nameCallback, passwordCallback });
             } catch (Exception e1) {
                 throw new AuthenticationException(e);
             }

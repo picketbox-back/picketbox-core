@@ -24,10 +24,10 @@ package org.picketbox.core.authentication;
 
 import java.util.List;
 
-
-
 /**
- * <p>This interface defines the contract for a Authentication Provider.</p>
+ * <p>
+ * This interface defines the contract for a Authentication Provider.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -35,19 +35,25 @@ import java.util.List;
 public interface AuthenticationProvider {
 
     /**
-     * <p>Initialize</p>
+     * <p>
+     * Initialize
+     * </p>
      */
     void initialize();
 
     /**
-     * <p>Returns the names for each supported mechanism.</p>
+     * <p>
+     * Returns the names for each supported mechanism.
+     * </p>
      *
      * @return
      */
     String[] getSupportedMechanisms();
 
     /**
-     * <p>Checks if a specific mechanism is supported.</p>
+     * <p>
+     * Checks if a specific mechanism is supported.
+     * </p>
      *
      * @param mechanismName
      * @return
@@ -55,7 +61,9 @@ public interface AuthenticationProvider {
     boolean supports(String mechanismName);
 
     /**
-     * <p>Returns a specific {@link AuthenticationMechanism} instance.</p>
+     * <p>
+     * Returns a specific {@link AuthenticationMechanism} instance.
+     * </p>
      *
      * @param string
      * @return
