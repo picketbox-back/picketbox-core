@@ -47,6 +47,9 @@ public class PicketBoxSession {
 
     protected List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
 
+    /**
+     * Usable by {@link PicketBoxSessionManager#create()}
+     */
     PicketBoxSession() {
     }
 

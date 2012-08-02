@@ -154,4 +154,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 45, value = "Unsupported Feature.")
     IllegalStateException unsupportedFeature();
+
+    @Message(id = 46, value = "Unable to instantiate: %s")
+    IllegalStateException unableToInstantiate(String fqn);
 }
