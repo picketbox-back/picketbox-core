@@ -24,6 +24,8 @@ package org.picketbox.core.session;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.picketbox.core.PicketBoxMessages;
+
 /**
  * A manager capable of creating PicketBox sessions
  *
@@ -36,11 +38,12 @@ public class PicketBoxSessionManager {
 
     private static long expiryValue = 5 * 60 * 1000; // 5 minutes
 
+    /**
+     * Defines the units of expiry
+     */
     public static enum Expiry {
         seconds, minutes, hours
-    }
-
-    ;
+    };
 
     /**
      * Set the expiry
@@ -77,6 +80,43 @@ public class PicketBoxSessionManager {
     public static PicketBoxSession create(PicketBoxSessionListener listener) {
         PicketBoxSession session = new PicketBoxSession();
         setTimer(session);
+        session.addListener(listener);
+        listener.onCreate(session);
+        return session;
+    }
+
+    /**
+     * Create a {@link PicketBoxSession}
+     *
+     * @param fqn Fully Qualified Class Name of a {@link PicketBoxSessionCreator}
+     * @return
+     * @throws {@link IllegalStateException} when instantiation of {@link PicketBoxSessionCreator} fails
+     */
+    public static PicketBoxSession create(String fqn) {
+        if (fqn == null) {
+            return create();
+        }
+        PicketBoxSessionCreator sessionCreator = null;
+        try {
+            sessionCreator = (PicketBoxSessionCreator) SecurityActions.loadClass(PicketBoxSessionManager.class, fqn)
+                    .newInstance();
+        } catch (Exception e) {
+            throw PicketBoxMessages.MESSAGES.unableToInstantiate(fqn);
+        }
+        return sessionCreator.create();
+    }
+
+    /**
+     * Create a {@link PicketBoxSession}
+     *
+     * @param fqn Fully Qualified Class Name of a {@link PicketBoxSessionCreator}
+     * @param listener {@link PicketBoxSessionListener}
+     * @return
+     * @throws {@link IllegalStateException} when instantiation of {@link PicketBoxSessionCreator} fails
+     */
+    public static PicketBoxSession create(String fqn, PicketBoxSessionListener listener) {
+        PicketBoxSession session = create(fqn);
+
         session.addListener(listener);
         listener.onCreate(session);
         return session;
