@@ -50,7 +50,7 @@ public class PicketBoxSession {
     /**
      * Usable by {@link PicketBoxSessionManager#create()}
      */
-    PicketBoxSession() {
+    protected PicketBoxSession() {
     }
 
     /**
@@ -58,7 +58,7 @@ public class PicketBoxSession {
      *
      * @param listener
      */
-    void addListener(PicketBoxSessionListener listener) {
+    protected void addListener(PicketBoxSessionListener listener) {
         listeners.add(listener);
     }
 
