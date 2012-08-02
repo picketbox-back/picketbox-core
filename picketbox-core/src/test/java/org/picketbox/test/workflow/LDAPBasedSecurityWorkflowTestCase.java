@@ -79,7 +79,7 @@ public class LDAPBasedSecurityWorkflowTestCase extends AbstractLDAPTest {
         searchConfig.setSearchBase("ou=Roles,dc=jboss,dc=org");
         searchConfig.setSearchAttributes(new String[] { "cn" });
         searchConfig.setSearchFilterExpression("member={0}");
-        searchConfig.setFilterArgs(new Object[] { "uid=CHANGE_USER,ou=People,dc=jboss,dc=org" });
+        searchConfig.setFilterArgs(new String[] { "uid=CHANGE_USER,ou=People,dc=jboss,dc=org" });
 
         LDAPBasedIdentityManager im = new LDAPBasedIdentityManager();
         im.setBasicLdapConfig(basicLdapStoreConfig);
