@@ -70,7 +70,7 @@ public class LDAPSearchHandlerType3UseCaseTestCase extends AbstractLDAPTest {
         searchConfig.setSearchAttributes(new String[] { "cn" });
 
         searchConfig.setSearchFilterExpression("member={0}");
-        searchConfig.setFilterArgs(new Object[] { "uid=jduke,ou=People,o=example3,dc=jboss,dc=org" });
+        searchConfig.setFilterArgs(new String[] { "uid=jduke,ou=People,o=example3,dc=jboss,dc=org" });
 
         LDAPSearchHandler handler = new LDAPSearchHandler();
         handler.setLdapSearchConfig(searchConfig);

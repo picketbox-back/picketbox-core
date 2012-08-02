@@ -38,7 +38,7 @@ public class LDAPSearchConfig {
 
     private String searchFilterExpression;
 
-    private Object[] filterArgs;
+    private String[] filterArgs;
 
     private String[] searchAttributes;
 
@@ -163,7 +163,7 @@ public class LDAPSearchConfig {
      *
      * @return
      */
-    public Object[] getFilterArgs() {
+    public String[] getFilterArgs() {
         return filterArgs;
     }
 
@@ -176,7 +176,7 @@ public class LDAPSearchConfig {
      *
      * @param filterArgs
      */
-    public void setFilterArgs(Object[] filterArgs) {
+    public void setFilterArgs(String[] filterArgs) {
         this.filterArgs = filterArgs;
     }
 
