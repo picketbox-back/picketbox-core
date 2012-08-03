@@ -108,9 +108,9 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
 
             this.identityManager.getIdentity(resultingSubject);
 
-            createSession(securityContext, resultingSubject);
-
             resultingSubject.setAuthenticated(true);
+
+            createSession(securityContext, resultingSubject);
         }
 
         return resultingSubject;

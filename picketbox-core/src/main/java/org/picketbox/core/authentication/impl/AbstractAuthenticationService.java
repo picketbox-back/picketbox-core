@@ -124,6 +124,7 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
 
         if (principal != null) {
             result.setPrincipal(principal);
+            performSuccessfulAuthentication(result);
         }
 
         return result;
