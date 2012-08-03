@@ -59,9 +59,11 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      * @see org.picketbox.core.PicketBoxManager#logout(org.picketbox.core.PicketBoxSubject)
      */
     @Override
-    public void logout(PicketBoxSubject authenticatedUser) {
+    public void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException{
         if (authenticatedUser.isAuthenticated()) {
             authenticatedUser.getSession().expire();
+        } else {
+            throw PicketBoxMessages.MESSAGES.invalidUserSession();
         }
     }
 
@@ -92,7 +94,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                 try {
                     result = authenticationService.authenticate(authenticationCallbackHandler);
                 } catch (AuthenticationException e) {
-                    e.printStackTrace();
+                    throw PicketBoxMessages.MESSAGES.authenticationFailed(e);
                 }
             }
         }
