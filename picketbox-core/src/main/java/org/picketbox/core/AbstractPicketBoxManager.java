@@ -36,6 +36,8 @@ import org.picketbox.core.identity.IdentityManager;
 import org.picketbox.core.logout.LogoutManager;
 import org.picketbox.core.resource.ProtectedResource;
 import org.picketbox.core.resource.ProtectedResourceManager;
+import org.picketbox.core.session.PicketBoxSession;
+import org.picketbox.core.session.PicketBoxSessionManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -49,6 +51,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     private ProtectedResourceManager protectedResourceManager;
     private EntitlementsManager entitlementsManager;
     private IdentityManager identityManager;
+    private PicketBoxSessionManager sessionManager;
 
     /**
      * @param authenticationCallbackHandler
@@ -84,6 +87,76 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         }
 
         return subject;
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.PicketBoxManager#logout(org.picketbox.core.PicketBoxSubject)
+     */
+    @Override
+    public void logout(PicketBoxSubject authenticatedUser) {
+        if (authenticatedUser.isAuthenticated()) {
+            authenticatedUser.getSession().expire();
+        }
+    }
+
+    /**
+     * @param authenticationCallbackHandler
+     * @throws AuthenticationException
+     */
+    public PicketBoxSubject authenticate(PicketBoxSecurityContext securityContext, AuthenticationCallbackHandler authenticationCallbackHandler)
+            throws AuthenticationException {
+        AuthenticationResult result = null;
+
+        String[] mechanisms = this.authenticationProvider.getSupportedMechanisms();
+
+        for (String mechanismName : mechanisms) {
+            AuthenticationMechanism mechanism = this.authenticationProvider.getMechanism(mechanismName);
+            AuthenticationService authenticationService = mechanism.getService();
+
+            if (authenticationService.supportsHandler(authenticationCallbackHandler.getClass())) {
+                try {
+                    result = authenticationService.authenticate(authenticationCallbackHandler);
+                } catch (AuthenticationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (result == null) {
+            throw new AuthenticationException("Authentication not supported. Using handler: " + authenticationCallbackHandler);
+        }
+
+        PicketBoxSubject subject = null;
+
+        if (result.getStatus().equals(AuthenticationStatus.SUCCESS)) {
+            subject = this.identityManager.getIdentity(result.getSubject().getUser());
+        }
+
+        PicketBoxSubject resultingSubject = this.createSubject(securityContext);
+
+        resultingSubject.setAttributes(subject.getAttributes());
+        resultingSubject.setContextData(subject.getContextData());
+        resultingSubject.setRoleNames(subject.getRoleNames());
+        resultingSubject.setSubject(subject.getSubject());
+        resultingSubject.setUser(subject.getUser());
+
+        createSession(securityContext, resultingSubject);
+
+        resultingSubject.setAuthenticated(true);
+
+        return resultingSubject;
+    }
+
+    private void createSession(PicketBoxSecurityContext securityContext, PicketBoxSubject resultingSubject) {
+        PicketBoxSession session = doCreateSession(resultingSubject, securityContext);
+
+        if (session != null) {
+            resultingSubject.setSession(session);
+        }
+    }
+
+    protected PicketBoxSession doCreateSession(PicketBoxSubject resultingSubject, PicketBoxSecurityContext securityContext) {
+        return null;
     }
 
     /* (non-Javadoc)

@@ -25,7 +25,6 @@ package org.picketbox.core;
 import org.picketbox.core.authentication.AuthenticationCallbackHandler;
 import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.exceptions.AuthenticationException;
-import org.picketbox.core.logout.LogoutManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -35,6 +34,7 @@ public interface PicketBoxManager extends PicketBoxLifecycle {
 
     PicketBoxSubject authenticate(AuthenticationCallbackHandler authHandler) throws AuthenticationException;
     boolean authorize(PicketBoxSubject subject, Resource resource);
+    PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext);
 
-    LogoutManager getLogoutManager();
+    void logout(PicketBoxSubject authenticatedUser);
 }

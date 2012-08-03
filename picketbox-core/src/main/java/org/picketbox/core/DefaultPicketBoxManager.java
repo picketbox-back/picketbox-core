@@ -33,4 +33,12 @@ package org.picketbox.core;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.PicketBoxManager#createSubject(org.picketbox.core.PicketBoxSecurityContext)
+     */
+    @Override
+    public PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext) {
+        return new PicketBoxSubject();
+    }
+
 }
