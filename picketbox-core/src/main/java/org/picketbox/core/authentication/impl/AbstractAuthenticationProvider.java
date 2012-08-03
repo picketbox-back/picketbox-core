@@ -123,6 +123,12 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
      */
     @Override
     public void addMechanism(AuthenticationMechanism mechanism) {
+        for (AuthenticationMechanism currentMech : this.mechanisms) {
+            if (currentMech.getClass().equals(mechanism.getClass())) {
+                throw new IllegalStateException("Mechanism " + mechanism + " already registered.");
+            }
+        }
+
         this.mechanisms.add(mechanism);
     }
 

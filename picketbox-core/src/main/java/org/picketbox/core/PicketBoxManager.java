@@ -20,27 +20,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.identity;
+package org.picketbox.core;
 
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.authentication.AuthenticationCallbackHandler;
+import org.picketbox.core.authorization.Resource;
+import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
- * <p>
- * This interface defines the contract for Identity Manager implementations used to populate {@link PicketBoxSubject} instances
- * with the informations retrieved from an specific identity store or IDM solution.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public interface IdentityManager {
+public interface PicketBoxManager extends PicketBoxLifecycle {
 
-    /**
-     * <p>
-     * Used to populate a {@link PicketBoxSubject} with additional information from some specific identity store.
-     * </p>
-     *
-     * @param resultingSubject
-     * @return
-     */
-    PicketBoxSubject getIdentity(PicketBoxSubject resultingSubject);
+    PicketBoxSubject authenticate(AuthenticationCallbackHandler authenticationCallbackHandler) throws AuthenticationException;
+    PicketBoxSubject authenticate(PicketBoxSecurityContext securityContext, AuthenticationCallbackHandler authHandler) throws AuthenticationException;
+    boolean authorize(PicketBoxSubject subject, Resource resource);
+    PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext);
+
+    void logout(PicketBoxSubject authenticatedUser);
 }

@@ -88,7 +88,7 @@ public interface PicketBoxConstants {
 
     /**
      * <p>
-     * Defines the {@link ServletContext} attribute name used to store a {@link PicketBoxManager} instance.
+     * Defines the {@link ServletContext} attribute name used to store a {@link DefaultPicketBoxManager} instance.
      * </p>
      */
     String PICKETBOX_MANAGER = "PICKETBOX_MANAGER";

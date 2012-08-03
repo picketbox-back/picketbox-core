@@ -22,8 +22,6 @@
 
 package org.picketbox.core.identity;
 
-import java.security.Principal;
-
 import org.picketbox.core.PicketBoxSubject;
 
 /**
@@ -41,11 +39,7 @@ public class DefaultIdentityManager implements IdentityManager {
      * @see org.picketbox.core.IdentityManager#getIdentity()
      */
     @Override
-    public PicketBoxSubject getIdentity(Principal principal) {
-        PicketBoxSubject subject = new PicketBoxSubject();
-
-        subject.setUser(principal);
-
+    public PicketBoxSubject getIdentity(PicketBoxSubject subject) {
         return subject;
     }
 

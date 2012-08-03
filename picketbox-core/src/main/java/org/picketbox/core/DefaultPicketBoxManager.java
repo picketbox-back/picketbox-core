@@ -20,27 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.identity;
+package org.picketbox.core;
 
-import org.picketbox.core.PicketBoxSubject;
+
 
 /**
  * <p>
- * This interface defines the contract for Identity Manager implementations used to populate {@link PicketBoxSubject} instances
- * with the informations retrieved from an specific identity store or IDM solution.
+ * Default implementation for the {@link PicketBoxManager} interface.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public interface IdentityManager {
+public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
 
-    /**
-     * <p>
-     * Used to populate a {@link PicketBoxSubject} with additional information from some specific identity store.
-     * </p>
-     *
-     * @param resultingSubject
-     * @return
+    /* (non-Javadoc)
+     * @see org.picketbox.core.PicketBoxManager#createSubject(org.picketbox.core.PicketBoxSecurityContext)
      */
-    PicketBoxSubject getIdentity(PicketBoxSubject resultingSubject);
+    @Override
+    public PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext) {
+        return new PicketBoxSubject();
+    }
+
 }

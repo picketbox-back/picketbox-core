@@ -80,10 +80,16 @@ public class LDAPBasedIdentityManager implements IdentityManager {
         this.ldapSearchConfig = ldapSearchConfig;
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.identity.IdentityManager#getIdentity(org.picketbox.core.PicketBoxSubject)
+     */
     @Override
-    public PicketBoxSubject getIdentity(Principal principal) {
-        if (principal == null) {
-            throw PicketBoxMessages.MESSAGES.invalidNullArgument("principal");
+    public PicketBoxSubject getIdentity(PicketBoxSubject subject) {
+        if (subject == null) {
+            throw PicketBoxMessages.MESSAGES.invalidNullArgument("subject");
+        }
+        if (subject.getUser() == null) {
+            throw PicketBoxMessages.MESSAGES.invalidNullArgument("authenticated principal");
         }
         if (basicLdapConfig == null) {
             throw PicketBoxMessages.MESSAGES.basicLdapConfigMissing();
@@ -91,10 +97,10 @@ public class LDAPBasedIdentityManager implements IdentityManager {
         if (ldapSearchConfig == null) {
             throw PicketBoxMessages.MESSAGES.ldapSearchConfigMissing();
         }
-        ldapSearchConfig.substituteUser(principal.getName());
 
-        PicketBoxSubject subject = new PicketBoxSubject();
-        subject.setUser(principal);
+        Principal principal = subject.getUser();
+
+        ldapSearchConfig.substituteUser(principal.getName());
 
         LDAPContextHandler ldapContextHandler = new LDAPContextHandler();
         ldapContextHandler.setLdapStoreConfig(basicLdapConfig);
@@ -114,4 +120,5 @@ public class LDAPBasedIdentityManager implements IdentityManager {
 
         return subject;
     }
+
 }
