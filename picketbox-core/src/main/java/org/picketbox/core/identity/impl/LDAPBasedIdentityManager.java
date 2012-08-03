@@ -94,6 +94,7 @@ public class LDAPBasedIdentityManager implements IdentityManager {
         ldapSearchConfig.substituteUser(principal.getName());
 
         PicketBoxSubject subject = new PicketBoxSubject();
+
         subject.setUser(principal);
 
         LDAPContextHandler ldapContextHandler = new LDAPContextHandler();
