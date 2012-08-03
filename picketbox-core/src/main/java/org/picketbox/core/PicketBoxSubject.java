@@ -31,6 +31,8 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
+import org.picketbox.core.session.PicketBoxSession;
+
 /**
  * An Application View of the authenticated/authorized Subject
  *
@@ -48,6 +50,8 @@ public class PicketBoxSubject implements Serializable {
     protected Map<String, Object> contextData = new HashMap<String, Object>();
 
     private boolean authenticated;
+
+    private PicketBoxSession session;
 
     // TODO: how to deal with groups/nested groups etc
 
@@ -151,5 +155,13 @@ public class PicketBoxSubject implements Serializable {
      */
     public boolean isAuthenticated() {
         return authenticated;
+    }
+
+    void setSession(PicketBoxSession session) {
+        this.session = session;
+    }
+
+    public PicketBoxSession getSession() {
+        return session;
     }
 }

@@ -22,10 +22,9 @@
 
 package org.picketbox.core.authentication;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.picketbox.core.PicketBoxSubject;
 
 /**
  * <p>
@@ -42,7 +41,7 @@ public class AuthenticationResult {
 
     private List<String> messages = new ArrayList<String>();
     private AuthenticationStatus status = AuthenticationStatus.NONE;
-    private PicketBoxSubject subject;
+    private Principal principal;
 
     /**
      * @return the messages
@@ -69,18 +68,12 @@ public class AuthenticationResult {
         this.status = status;
     }
 
-    /**
-     * @return the subject
-     */
-    public PicketBoxSubject getSubject() {
-        return subject;
+    public void setPrincipal(Principal principal) {
+        this.principal = principal;
     }
 
-    /**
-     * @param subject the subject to set
-     */
-    public void setSubject(PicketBoxSubject subject) {
-        this.subject = subject;
+    public Principal getPrincipal() {
+        return principal;
     }
 
 }
