@@ -32,7 +32,8 @@ import org.picketbox.core.exceptions.AuthenticationException;
  */
 public interface PicketBoxManager extends PicketBoxLifecycle {
 
-    PicketBoxSubject authenticate(AuthenticationCallbackHandler authHandler) throws AuthenticationException;
+    PicketBoxSubject authenticate(AuthenticationCallbackHandler authenticationCallbackHandler) throws AuthenticationException;
+    PicketBoxSubject authenticate(PicketBoxSecurityContext securityContext, AuthenticationCallbackHandler authHandler) throws AuthenticationException;
     boolean authorize(PicketBoxSubject subject, Resource resource);
     PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext);
 

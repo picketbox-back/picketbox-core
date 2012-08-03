@@ -24,7 +24,6 @@ package org.picketbox.core.authentication.impl;
 import java.security.Principal;
 import java.util.List;
 
-import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.AuthenticationCallbackHandler;
 import org.picketbox.core.authentication.AuthenticationInfo;
 import org.picketbox.core.authentication.AuthenticationManager;
@@ -98,7 +97,6 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
      * @return
      */
     protected AuthenticationResult performSuccessfulAuthentication(AuthenticationResult result) {
-        result.getSubject().setAuthenticated(true);
         result.setStatus(AuthenticationStatus.SUCCESS);
         this.authenticationMechanism.getAuthenticationProvider().getEventManager()
                 .raiseEvent(new UserAuthenticatedEvent(result));
@@ -125,13 +123,7 @@ public abstract class AbstractAuthenticationService implements AuthenticationSer
         }
 
         if (principal != null) {
-            PicketBoxSubject authenticatedUser = new PicketBoxSubject();
-
-            authenticatedUser.setUser(principal);
-
-            result.setSubject(authenticatedUser);
-
-            performSuccessfulAuthentication(result);
+            result.setPrincipal(principal);
         }
 
         return result;

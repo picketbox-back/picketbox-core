@@ -23,14 +23,14 @@
 package org.picketbox.core;
 
 
+
 /**
  * <p>
- * This class acts as a <i>Facade</i> for the PicketBox Security capabilites.
+ * Default implementation for the {@link PicketBoxManager} interface.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
 
     /* (non-Javadoc)

@@ -50,7 +50,7 @@ public class PicketBoxSession {
     /**
      * Usable by {@link PicketBoxSessionManager#create()}
      */
-    protected PicketBoxSession() {
+    public PicketBoxSession() {
     }
 
     /**

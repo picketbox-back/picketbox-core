@@ -22,13 +22,11 @@
 
 package org.picketbox.core.identity;
 
-import java.security.Principal;
-
 import org.picketbox.core.PicketBoxSubject;
 
 /**
  * <p>
- * This interface defines the contract for Identity Manager implementations used to create {@link PicketBoxSubject} instances
+ * This interface defines the contract for Identity Manager implementations used to populate {@link PicketBoxSubject} instances
  * with the informations retrieved from an specific identity store or IDM solution.
  * </p>
  *
@@ -38,11 +36,11 @@ public interface IdentityManager {
 
     /**
      * <p>
-     * Used to create a {@link PicketBoxSubject} instance using an authenticated {@link Principal}.
+     * Used to populate a {@link PicketBoxSubject} with additional information from some specific identity store.
      * </p>
      *
-     * @param principal
+     * @param resultingSubject
      * @return
      */
-    PicketBoxSubject getIdentity(Principal principal);
+    PicketBoxSubject getIdentity(PicketBoxSubject resultingSubject);
 }

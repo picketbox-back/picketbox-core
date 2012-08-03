@@ -21,8 +21,6 @@
  */
 package org.picketbox.core;
 
-import java.security.Principal;
-
 /**
  * Class representing security context for applications
  *
@@ -30,23 +28,4 @@ import java.security.Principal;
  * @since Jul 12, 2012
  */
 public class PicketBoxSecurityContext {
-    protected Principal principal;
-
-    /**
-     * Set the authenticated {@link Principal}
-     *
-     * @param principal
-     */
-    public void setPrincipal(Principal principal) {
-        this.principal = principal;
-    }
-
-    /**
-     * Return the authenticated {@link Principal}
-     *
-     * @return
-     */
-    Principal getPrincipal() {
-        return principal;
-    }
 }
