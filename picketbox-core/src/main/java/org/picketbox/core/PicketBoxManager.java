@@ -41,6 +41,10 @@ public interface PicketBoxManager extends PicketBoxLifecycle {
      * Authenticates an user using the specified {@link AuthenticationCallbackHandler}. If the the user is valid a
      * {@link PicketBoxSubject} is returned back.
      * </p>
+     * <p>
+     * The specified {@link AuthenticationCallbackHandler} will define which mechanism should be used to authenticate an user
+     * and to retrieve the credentials that will be used during the authentication process..
+     * </p>
      *
      * @param authenticationCallbackHandler
      * @return
@@ -52,9 +56,13 @@ public interface PicketBoxManager extends PicketBoxLifecycle {
      * <p>
      * Authenticates an user using the specified {@link AuthenticationCallbackHandler}. If the the user is valid a
      * {@link PicketBoxSubject} is returned back. This method should be used when the authentication relies on informations
-     * provided by the underlying environment like web-based applications. You would prefer using this method when there is a
+     * provided by the underlying environment like web-based applications. You would prefer this method when there is a
      * specific {@link PicketBoxManager} implementation which customizes how the security capabilities are provided for a
      * specific environment.
+     * </p>
+     * <p>
+     * The specified {@link AuthenticationCallbackHandler} will define which mechanism should be used to authenticate an user
+     * and to retrieve the credentials that will be used during the authentication process.
      * </p>
      *
      * @param securityContext
@@ -89,7 +97,9 @@ public interface PicketBoxManager extends PicketBoxLifecycle {
     PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext);
 
     /**
-     * <p>Logout the specified {@link PicketBoxSubject}.</p>
+     * <p>
+     * Logout the specified {@link PicketBoxSubject}.
+     * </p>
      *
      * @param authenticatedUser
      * @throws IllegalStateException
