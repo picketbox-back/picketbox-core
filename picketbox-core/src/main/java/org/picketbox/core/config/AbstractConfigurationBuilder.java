@@ -20,57 +20,51 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
-
-import java.util.List;
+package org.picketbox.core.config;
 
 /**
- * <p>
- * This interface defines the contract for a Authentication Provider.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationProvider {
+public abstract class AbstractConfigurationBuilder<T> {
+
+    protected AbstractConfigurationBuilder builder;
+
+    public AbstractConfigurationBuilder() {
+    }
+
+    public AbstractConfigurationBuilder(AbstractConfigurationBuilder builder2) {
+        this.builder = builder2;
+    }
 
     /**
-     * <p>
-     * Returns the names for each supported mechanism.
-     * </p>
-     *
      * @return
+     * @see org.picketbox.core.config.ConfigurationBuilder#authentication()
      */
-    String[] getSupportedMechanisms();
+    public AuthenticationConfigurationBuilder authentication() {
+        return builder.authentication();
+    }
 
     /**
-     * <p>
-     * Checks if a specific mechanism is supported.
-     * </p>
-     *
-     * @param mechanismName
      * @return
+     * @see org.picketbox.core.config.ConfigurationBuilder#authorization()
      */
-    boolean supports(String mechanismName);
+    public AuthorizationConfigurationBuilder authorization() {
+        return builder.authorization();
+    }
 
     /**
-     * <p>
-     * Returns a specific {@link AuthenticationMechanism} instance.
-     * </p>
-     *
-     * @param string
      * @return
+     * @see org.picketbox.core.config.ConfigurationBuilder#identityManager()
      */
-    AuthenticationMechanism getMechanism(String string);
+    public IdentityManagerConfigurationBuilder identityManager() {
+        return builder.identityManager();
+    }
 
-    void addMechanism(AuthenticationMechanism mechanism);
+    /**
+     * <p>Subclasses should override to provide default values for missing configurations.</p>
+     */
+    protected abstract void setDefaults();
 
-    void addAuthManager(AuthenticationManager manager);
-
-    List<AuthenticationManager> getAuthenticationManagers();
-
-    AuthenticationEventManager getEventManager();
-
-    void setEventManager(AuthenticationEventManager eventManager);
-
+    protected abstract T build();
 }

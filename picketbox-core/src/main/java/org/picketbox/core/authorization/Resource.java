@@ -43,4 +43,5 @@ public interface Resource extends Serializable {
      * @param authorize
      */
     void setAuthorized(boolean authorize);
+
 }

@@ -32,6 +32,7 @@ import org.picketbox.core.exceptions.AuthorizationException;
  * @since Jul 10, 2012
  */
 public interface AuthorizationManager extends PicketBoxLifecycle {
+
     /**
      * Enforcement API
      *
@@ -41,4 +42,5 @@ public interface AuthorizationManager extends PicketBoxLifecycle {
      * @throws AuthorizationException if some problem occurs during the authorization process.
      */
     boolean authorize(Resource resource, PicketBoxSubject subject) throws AuthorizationException;
+
 }

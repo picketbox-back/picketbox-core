@@ -46,14 +46,6 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
 
     public AbstractAuthenticationProvider() {
         super();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.spi.AuthenticationProvider#initialize()
-     */
-    public void initialize() {
         doAddMechanisms(this.mechanisms);
     }
 

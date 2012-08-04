@@ -20,35 +20,34 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core;
+package org.picketbox.core.config;
 
-import org.picketbox.core.config.PicketBoxConfiguration;
+import java.util.List;
 
-
+import org.picketbox.core.authentication.AuthenticationManager;
+import org.picketbox.core.authentication.AuthenticationProvider;
 
 /**
- * <p>
- * Default implementation for the {@link PicketBoxManager} interface.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
+public class AuthenticationConfiguration {
 
-    public DefaultPicketBoxManager() {
+    private EventManagerConfiguration eventManager;
+    private AuthenticationProvider provider;
+    private List<AuthenticationManager> authManagers;
 
+    public AuthenticationConfiguration(AuthenticationProvider provider, List<AuthenticationManager> authManagers, EventManagerConfiguration eventManager) {
+        this.provider = provider;
+        this.eventManager = eventManager;
+        this.authManagers = authManagers;
     }
 
-    public DefaultPicketBoxManager(PicketBoxConfiguration configuration) {
-        super(configuration);
+    public AuthenticationProvider getProvider() {
+        return provider;
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.PicketBoxManager#createSubject(org.picketbox.core.PicketBoxSecurityContext)
-     */
-    @Override
-    public PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext) {
-        return new PicketBoxSubject();
+    public List<AuthenticationManager> getAuthManagers() {
+        return authManagers;
     }
-
 }

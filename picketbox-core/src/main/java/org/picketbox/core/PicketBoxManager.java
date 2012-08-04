@@ -23,6 +23,7 @@
 package org.picketbox.core;
 
 import org.picketbox.core.authentication.AuthenticationCallbackHandler;
+import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.exceptions.AuthenticationException;
 
@@ -105,4 +106,11 @@ public interface PicketBoxManager extends PicketBoxLifecycle {
      * @throws IllegalStateException
      */
     void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException;
+
+    /**
+     * <p>Returns the {@link AuthenticationProvider}.
+     *
+     * @return
+     */
+    AuthenticationProvider getAuthenticationProvider();
 }

@@ -20,35 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core;
+package org.picketbox.core.config;
 
-import org.picketbox.core.config.PicketBoxConfiguration;
+import java.util.List;
 
-
+import org.picketbox.core.authorization.AuthorizationManager;
 
 /**
- * <p>
- * Default implementation for the {@link PicketBoxManager} interface.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
+public class AuthorizationConfig {
 
-    public DefaultPicketBoxManager() {
+    private List<AuthorizationManager> managers;
 
+    public AuthorizationConfig(List<AuthorizationManager> managers) {
+        this.managers = managers;
     }
 
-    public DefaultPicketBoxManager(PicketBoxConfiguration configuration) {
-        super(configuration);
-    }
-
-    /* (non-Javadoc)
-     * @see org.picketbox.core.PicketBoxManager#createSubject(org.picketbox.core.PicketBoxSecurityContext)
-     */
-    @Override
-    public PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext) {
-        return new PicketBoxSubject();
+    public List<AuthorizationManager> getManagers() {
+        return this.managers;
     }
 
 }
