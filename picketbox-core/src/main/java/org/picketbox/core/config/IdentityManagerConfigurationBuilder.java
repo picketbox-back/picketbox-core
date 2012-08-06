@@ -49,13 +49,15 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
     }
 
     public IdentityManagerConfigurationBuilder manager(IdentityManager identityManager) {
-        this.managers.add(identityManager);
+        if (identityManager != null) {
+            this.managers.add(identityManager);
+        }
+
         return this;
     }
 
     @Override
-    public IdentityManagerConfig build() {
-        setDefaults();
+    public IdentityManagerConfig doBuild() {
         return new IdentityManagerConfig(this.managers);
     }
 

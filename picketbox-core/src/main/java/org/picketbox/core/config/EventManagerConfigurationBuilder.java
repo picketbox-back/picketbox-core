@@ -40,6 +40,9 @@ public class EventManagerConfigurationBuilder extends AbstractConfigurationBuild
         this.handlers = new ArrayList<AuthenticationEventHandler>();
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#setDefaults()
+     */
     @Override
     protected void setDefaults() {
     }
@@ -49,8 +52,11 @@ public class EventManagerConfigurationBuilder extends AbstractConfigurationBuild
         return this;
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#doBuild()
+     */
     @Override
-    protected EventManagerConfiguration build() {
+    protected EventManagerConfiguration doBuild() {
         return new EventManagerConfiguration();
     }
 

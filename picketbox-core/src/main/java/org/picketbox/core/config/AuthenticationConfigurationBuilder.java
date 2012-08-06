@@ -79,7 +79,7 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
     }
 
     @Override
-    public AuthenticationConfiguration build() {
+    public AuthenticationConfiguration doBuild() {
         setDefaults();
         return new AuthenticationConfiguration(this.provider, this.authManagers, this.eventManager.build());
     }

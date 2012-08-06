@@ -33,8 +33,8 @@ public abstract class AbstractConfigurationBuilder<T> {
     public AbstractConfigurationBuilder() {
     }
 
-    public AbstractConfigurationBuilder(AbstractConfigurationBuilder builder2) {
-        this.builder = builder2;
+    protected AbstractConfigurationBuilder(AbstractConfigurationBuilder builder) {
+        this.builder = builder;
     }
 
     /**
@@ -66,5 +66,20 @@ public abstract class AbstractConfigurationBuilder<T> {
      */
     protected abstract void setDefaults();
 
-    protected abstract T build();
+    /**
+     * <p>Creates a T instance with all defined configurations.</p>
+     *
+     * @return
+     */
+    public T build() {
+        setDefaults();
+        return doBuild();
+    }
+
+    /**
+     * <p>Subclasses should override this method to create a specific T instance.</p>
+     *
+     * @return
+     */
+    protected abstract T doBuild();
 }

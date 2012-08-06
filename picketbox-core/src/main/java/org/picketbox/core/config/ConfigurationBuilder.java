@@ -52,13 +52,15 @@ public class ConfigurationBuilder extends AbstractConfigurationBuilder<PicketBox
         return this.identityManager;
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#setDefaults()
+     */
     @Override
     protected void setDefaults() {
-        // TODO Auto-generated method stub
     }
 
     @Override
-    public PicketBoxConfiguration build() {
+    public PicketBoxConfiguration doBuild() {
         return new PicketBoxConfiguration(this.authentication.build(), this.authorization.build(), this.identityManager.build());
     }
 
