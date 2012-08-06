@@ -20,35 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core;
+package org.picketbox.core.config;
 
-import org.picketbox.core.config.PicketBoxConfiguration;
+import java.util.ArrayList;
+import java.util.List;
 
-
+import org.picketbox.core.identity.DefaultIdentityManager;
+import org.picketbox.core.identity.IdentityManager;
 
 /**
- * <p>
- * Default implementation for the {@link PicketBoxManager} interface.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
+public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBuilder<IdentityManagerConfig> {
 
-    public DefaultPicketBoxManager() {
+    private List<IdentityManager> managers;
 
+    public IdentityManagerConfigurationBuilder(ConfigurationBuilder builder) {
+        super(builder);
+        this.managers = new ArrayList<IdentityManager>();
     }
 
-    public DefaultPicketBoxManager(PicketBoxConfiguration configuration) {
-        super(configuration);
-    }
-
-    /* (non-Javadoc)
-     * @see org.picketbox.core.PicketBoxManager#createSubject(org.picketbox.core.PicketBoxSecurityContext)
-     */
     @Override
-    public PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext) {
-        return new PicketBoxSubject();
+    protected void setDefaults() {
+        if (this.managers.isEmpty()) {
+            this.managers.add(new DefaultIdentityManager());
+        }
+    }
+
+    public IdentityManagerConfigurationBuilder manager(IdentityManager identityManager) {
+        if (identityManager != null) {
+            this.managers.add(identityManager);
+        }
+
+        return this;
+    }
+
+    @Override
+    public IdentityManagerConfig doBuild() {
+        return new IdentityManagerConfig(this.managers);
     }
 
 }

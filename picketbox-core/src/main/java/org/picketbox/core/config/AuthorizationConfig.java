@@ -20,45 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.resource;
+package org.picketbox.core.config;
+
+import java.util.List;
+
+import org.picketbox.core.authorization.AuthorizationManager;
 
 /**
- * <p>
- * This {@link Enum} class defines the possible values for the security constraints that can be applied in
- * {@link ProtectedResource}.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public enum ProtectedResourceConstraint {
+public class AuthorizationConfig {
 
-    /**
-     * <p>
-     * Applies ALL constraints.
-     * </p>
-     */
-    ALL,
+    private List<AuthorizationManager> managers;
 
-    /**
-     * <p>
-     * Performs only authentication.
-     * </p>
-     */
-    AUTHENTICATION,
+    public AuthorizationConfig(List<AuthorizationManager> managers) {
+        this.managers = managers;
+    }
 
-    /**
-     * <p>
-     * Performs authentication and authorization.
-     * </p>
-     */
-    AUTHORIZATION,
-
-    /**
-     * <p>
-     * Mark the resources as a no protected resource.
-     * </p>
-     */
-    NOT_PROTECTED
+    public List<AuthorizationManager> getManagers() {
+        return this.managers;
+    }
 
 }

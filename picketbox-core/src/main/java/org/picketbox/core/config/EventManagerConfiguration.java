@@ -20,35 +20,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core;
-
-import org.picketbox.core.config.PicketBoxConfiguration;
-
-
+package org.picketbox.core.config;
 
 /**
- * <p>
- * Default implementation for the {@link PicketBoxManager} interface.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
-
-    public DefaultPicketBoxManager() {
-
-    }
-
-    public DefaultPicketBoxManager(PicketBoxConfiguration configuration) {
-        super(configuration);
-    }
-
-    /* (non-Javadoc)
-     * @see org.picketbox.core.PicketBoxManager#createSubject(org.picketbox.core.PicketBoxSecurityContext)
-     */
-    @Override
-    public PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext) {
-        return new PicketBoxSubject();
-    }
+public class EventManagerConfiguration {
 
 }

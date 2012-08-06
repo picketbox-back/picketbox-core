@@ -20,35 +20,44 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core;
+package org.picketbox.core.config;
 
-import org.picketbox.core.config.PicketBoxConfiguration;
+import java.util.ArrayList;
+import java.util.List;
 
-
+import org.picketbox.core.authentication.AuthenticationEventHandler;
 
 /**
- * <p>
- * Default implementation for the {@link PicketBoxManager} interface.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
+public class EventManagerConfigurationBuilder extends AbstractConfigurationBuilder<EventManagerConfiguration> {
 
-    public DefaultPicketBoxManager() {
+    private List<AuthenticationEventHandler> handlers;
 
-    }
-
-    public DefaultPicketBoxManager(PicketBoxConfiguration configuration) {
-        super(configuration);
+    public EventManagerConfigurationBuilder(AbstractConfigurationBuilder builder) {
+        super(builder);
+        this.handlers = new ArrayList<AuthenticationEventHandler>();
     }
 
     /* (non-Javadoc)
-     * @see org.picketbox.core.PicketBoxManager#createSubject(org.picketbox.core.PicketBoxSecurityContext)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#setDefaults()
      */
     @Override
-    public PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext) {
-        return new PicketBoxSubject();
+    protected void setDefaults() {
+    }
+
+    public EventManagerConfigurationBuilder handler(AuthenticationEventHandler authenticationEventHandler) {
+        this.handlers.add(authenticationEventHandler);
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#doBuild()
+     */
+    @Override
+    protected EventManagerConfiguration doBuild() {
+        return new EventManagerConfiguration();
     }
 
 }

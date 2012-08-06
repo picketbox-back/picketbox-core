@@ -64,8 +64,6 @@ public class PicketBoxAuthenticationConfig {
             provider = new PicketBoxAuthenticationProvider();
         }
 
-        this.provider.initialize();
-
         for (AuthenticationMechanism mechanism : this.mechanisms) {
             mechanism.setAuthenticationProvider(this.provider);
             provider.addMechanism(mechanism);
