@@ -26,22 +26,16 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
-import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.AuthenticationEvent;
 import org.picketbox.core.authentication.AuthenticationEventHandler;
-import org.picketbox.core.authentication.event.DefaultAuthenticationEventManager;
-import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
-import org.picketbox.core.authentication.event.UserAuthenticationEventHandler;
 import org.picketbox.core.authentication.handlers.UsernamePasswordAuthHandler;
 import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
 import org.picketbox.core.authentication.impl.UserNamePasswordMechanism;
 import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
 import org.picketbox.core.config.ConfigurationBuilder;
-import org.picketbox.core.config.PicketBoxAuthenticationConfig;
 import org.picketbox.core.config.PicketBoxConfiguration;
-import org.picketbox.core.config.PicketBoxManagerConfiguration;
 import org.picketbox.core.identity.DefaultIdentityManager;
 
 /**
@@ -49,34 +43,6 @@ import org.picketbox.core.identity.DefaultIdentityManager;
  * 
  */
 public class PicketBoxConfigurationTestCase {
-
-    @Test
-    public void testConfiguration() throws Exception {
-        PicketBoxManagerConfiguration configuration = new PicketBoxManagerConfiguration();
-
-        PicketBoxAuthenticationConfig authentication = configuration.authentication();
-
-        authentication.addAuthManager(new PropertiesFileBasedAuthenticationManager());
-        authentication.addEventManager(new DefaultAuthenticationEventManager());
-        authentication.addObserver(new UserAuthenticationEventHandler() {
-
-            @Override
-            public Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType() {
-                return UserAuthenticatedEvent.class;
-            }
-
-            @Override
-            public void onSucessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
-                System.out.println("Authenticated.");
-            }
-        });
-
-        PicketBoxManager picketBoxManager = configuration.buildAndStart();
-
-        PicketBoxSubject subject = picketBoxManager.authenticate(new UsernamePasswordAuthHandler("admin", "admin"));
-
-        Assert.assertNotNull(subject);
-    }
 
     @Test
     public void testFluentConfiguration() throws Exception {
