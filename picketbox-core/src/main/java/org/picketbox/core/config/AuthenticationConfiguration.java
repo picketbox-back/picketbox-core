@@ -19,46 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.core.resource;
+
+package org.picketbox.core.config;
 
 import java.util.List;
 
-import org.picketbox.core.PicketBoxLifecycle;
+import org.picketbox.core.authentication.AuthenticationManager;
+import org.picketbox.core.authentication.AuthenticationProvider;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- * @author Anil Saldhana
+ *
  */
-public interface ProtectedResourceManager<T> extends PicketBoxLifecycle {
+public class AuthenticationConfiguration {
 
-    /**
-     * @return the resources
-     */
-    List<ProtectedResource> getResources();
+    private EventManagerConfiguration eventManager;
+    private AuthenticationProvider provider;
+    private List<AuthenticationManager> authManagers;
 
-    /**
-     * @param resources the resources to set
-     */
-    void setResources(List<ProtectedResource> resources);
+    public AuthenticationConfiguration(AuthenticationProvider provider, List<AuthenticationManager> authManagers, EventManagerConfiguration eventManager) {
+        this.provider = provider;
+        this.eventManager = eventManager;
+        this.authManagers = authManagers;
+    }
 
-    /**
-     * <p>
-     * Add a new {@link ProtectedResource} to the list of protected resources.
-     * </p>
-     *
-     * @param pattern
-     * @param constraint
-     */
-    void addProtectedResource(String pattern, ProtectedResourceConstraint constraint);
+    public AuthenticationProvider getProvider() {
+        return provider;
+    }
 
-    /**
-     * <p>
-     * Returns a {@link ProtectedResource} instance that matches the specified T instance. If no match is found, it will be
-     * returned a default resource. See <code>ProtectedResource.DEFAULT_RESOURCE</code>.
-     * </p>
-     *
-     * @param servletReq
-     * @return
-     */
-    ProtectedResource getProtectedResource(T request);
+    public List<AuthenticationManager> getAuthManagers() {
+        return authManagers;
+    }
 }

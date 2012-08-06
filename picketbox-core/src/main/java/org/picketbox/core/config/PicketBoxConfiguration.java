@@ -22,135 +22,63 @@
 
 package org.picketbox.core.config;
 
-import org.picketbox.core.AbstractPicketBoxManager;
-import org.picketbox.core.DefaultPicketBoxManager;
-import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxMessages;
-import org.picketbox.core.authorization.AuthorizationManager;
-import org.picketbox.core.exceptions.ConfigurationException;
-import org.picketbox.core.identity.DefaultIdentityManager;
-import org.picketbox.core.identity.IdentityManager;
-import org.picketbox.core.logout.LogoutManager;
-import org.picketbox.core.resource.ProtectedResourceConstraint;
-import org.picketbox.core.resource.ProtectedResourceManager;
-
 /**
- * <p>
- * This class should be used to build the configuration and start the {@link PicketBoxHTTPManager}.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-@SuppressWarnings({ "rawtypes" })
-public final class PicketBoxConfiguration {
+public class PicketBoxConfiguration {
 
-    private AbstractPicketBoxManager picketBoxManager;
+    private AuthenticationConfiguration authentication;
+    private AuthorizationConfig authorization;
+    private IdentityManagerConfig identityManager;
 
-    private AuthorizationManager authorizationManager;
-    private IdentityManager identityManager;
-    private LogoutManager logoutManager;
-    private ProtectedResourceManager protectedResourceManager;
-
-    private PicketBoxAuthenticationConfig authConfig;
-
-    public PicketBoxConfiguration() {
-    }
-
-    public PicketBoxAuthenticationConfig authentication() {
-        if (this.authConfig == null) {
-            this.authConfig = new PicketBoxAuthenticationConfig();
-        }
-
-        return this.authConfig;
-    }
-
-    public void setProtectedResourceManager(ProtectedResourceManager protectedResourceManager) {
-        this.protectedResourceManager = protectedResourceManager;
-    }
-
-    /**
-     * <pConfiguration method to register an @{link AuthorizationManager} instance.</p>
-     *
-     * @param authorizationManager
-     * @return the configuration with the {@link AuthorizationManager} instance configured.
-     */
-    public PicketBoxConfiguration authorization(AuthorizationManager authorizationManager) {
-        this.authorizationManager = authorizationManager;
-        return this;
-    }
-
-    /**
-     * <pConfiguration method to register an {@link IdentityManager} instance.</p>
-     *
-     * @param identityManager
-     * @return the configuration with the {@link IdentityManager} instance configured.
-     */
-    public PicketBoxConfiguration identityManager(IdentityManager identityManager) {
+    public PicketBoxConfiguration(AuthenticationConfiguration authentication, AuthorizationConfig authorization,
+            IdentityManagerConfig identityManager) {
+        this.authentication = authentication;
+        this.authorization = authorization;
         this.identityManager = identityManager;
-        return this;
     }
 
     /**
-     * <pConfiguration method to register an {@link LogoutManager} instance.</p>
-     *
-     * @param identityManager
-     * @return the configuration with the {@link LogoutManager} instance configured.
+     * @return the authentication
      */
-    public PicketBoxConfiguration logoutManager(LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
-        return this;
+    public AuthenticationConfiguration getAuthentication() {
+        return authentication;
     }
 
     /**
-     * <p>
-     * Create and starts a {@link PicketBoxHTTPManager} instance. Call this method when all configuration was done.
-     * </p>
-     *
-     * @return a started {@link PicketBoxHTTPManager} instance.
-     * @throws ConfigurationException if some error occur during the creation or startup of the {@link PicketBoxHTTPManager}
-     *         instance. Or if the {@link PicketBoxHTTPManager} was already builded or started.
+     * @param authentication the authentication to set
      */
-    public PicketBoxManager buildAndStart() throws ConfigurationException {
-        try {
-            if (this.picketBoxManager == null) {
-                this.picketBoxManager = new DefaultPicketBoxManager();
-            }
-
-            this.picketBoxManager.setAuthenticationProvider(this.authConfig.build());
-
-            this.picketBoxManager.setAuthorizationManager(this.authorizationManager);
-
-            if (this.identityManager == null) {
-                this.identityManager = new DefaultIdentityManager();
-            }
-
-            this.picketBoxManager.setIdentityManager(this.identityManager);
-            this.picketBoxManager.setLogoutManager(this.logoutManager);
-            this.picketBoxManager.setProtectedResourceManager(this.protectedResourceManager);
-
-            this.picketBoxManager.start();
-        } catch (Exception e) {
-            this.picketBoxManager = null;
-            throw PicketBoxMessages.MESSAGES.failedToConfigurePicketBoxManager(e);
-        }
-
-        if (!picketBoxManager.started()) {
-            throw PicketBoxMessages.MESSAGES.picketBoxManagerNotProperlyStarted();
-        }
-
-        return this.picketBoxManager;
+    public void setAuthentication(AuthenticationConfiguration authentication) {
+        this.authentication = authentication;
     }
 
-    public void addProtectedResource(String pattern, ProtectedResourceConstraint constraint) {
-        this.protectedResourceManager.addProtectedResource(pattern, constraint);
+    /**
+     * @return the authorization
+     */
+    public AuthorizationConfig getAuthorization() {
+        return authorization;
     }
 
-    public PicketBoxConfiguration resourceManager(ProtectedResourceManager resourceManager) {
-        this.protectedResourceManager = resourceManager;
-        return this;
+    /**
+     * @param authorization the authorization to set
+     */
+    public void setAuthorization(AuthorizationConfig authorization) {
+        this.authorization = authorization;
     }
 
-    public void manager(PicketBoxManager picketBoxManager) {
-        this.picketBoxManager = (AbstractPicketBoxManager) picketBoxManager;
+    /**
+     * @return the identityManager
+     */
+    public IdentityManagerConfig getIdentityManager() {
+        return identityManager;
     }
+
+    /**
+     * @param identityManager the identityManager to set
+     */
+    public void setIdentityManager(IdentityManagerConfig identityManager) {
+        this.identityManager = identityManager;
+    }
+
 }

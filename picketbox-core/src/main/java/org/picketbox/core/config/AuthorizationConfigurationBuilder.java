@@ -20,35 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core;
+package org.picketbox.core.config;
 
-import org.picketbox.core.config.PicketBoxConfiguration;
+import java.util.ArrayList;
+import java.util.List;
 
-
+import org.picketbox.core.authorization.AuthorizationManager;
 
 /**
- * <p>
- * Default implementation for the {@link PicketBoxManager} interface.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
+public class AuthorizationConfigurationBuilder extends AbstractConfigurationBuilder<AuthorizationConfig> {
 
-    public DefaultPicketBoxManager() {
+    private final List<AuthorizationManager> managers;
 
-    }
-
-    public DefaultPicketBoxManager(PicketBoxConfiguration configuration) {
-        super(configuration);
+    public AuthorizationConfigurationBuilder(ConfigurationBuilder builder) {
+        super(builder);
+        this.managers = new ArrayList<AuthorizationManager>();
     }
 
     /* (non-Javadoc)
-     * @see org.picketbox.core.PicketBoxManager#createSubject(org.picketbox.core.PicketBoxSecurityContext)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#setDefaults()
      */
     @Override
-    public PicketBoxSubject createSubject(PicketBoxSecurityContext securityContext) {
-        return new PicketBoxSubject();
+    protected void setDefaults() {
+
+    }
+
+    public AuthorizationConfigurationBuilder manager(AuthorizationManager authorizationManager) {
+        this.managers.add(authorizationManager);
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#doBuild()
+     */
+    @Override
+    public AuthorizationConfig doBuild() {
+        return new AuthorizationConfig(this.managers);
     }
 
 }

@@ -25,6 +25,7 @@ package org.picketbox.test.config;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.AuthenticationEvent;
@@ -33,19 +34,25 @@ import org.picketbox.core.authentication.event.DefaultAuthenticationEventManager
 import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.authentication.event.UserAuthenticationEventHandler;
 import org.picketbox.core.authentication.handlers.UsernamePasswordAuthHandler;
+import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
+import org.picketbox.core.authentication.impl.UserNamePasswordMechanism;
 import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
+import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.config.PicketBoxAuthenticationConfig;
 import org.picketbox.core.config.PicketBoxConfiguration;
+import org.picketbox.core.config.PicketBoxManagerConfiguration;
+import org.picketbox.core.identity.DefaultIdentityManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
+ * 
  */
 public class PicketBoxConfigurationTestCase {
 
     @Test
     public void testConfiguration() throws Exception {
-        PicketBoxConfiguration configuration = new PicketBoxConfiguration();
+        PicketBoxManagerConfiguration configuration = new PicketBoxManagerConfiguration();
 
         PicketBoxAuthenticationConfig authentication = configuration.authentication();
 
@@ -64,11 +71,44 @@ public class PicketBoxConfigurationTestCase {
             }
         });
 
-        PicketBoxManager buildAndStart = configuration.buildAndStart();
+        PicketBoxManager picketBoxManager = configuration.buildAndStart();
 
-        PicketBoxSubject authenticate = buildAndStart.authenticate(new UsernamePasswordAuthHandler("admin", "admin"));
+        PicketBoxSubject subject = picketBoxManager.authenticate(new UsernamePasswordAuthHandler("admin", "admin"));
 
-        Assert.assertNotNull(authenticate);
+        Assert.assertNotNull(subject);
+    }
+
+    @Test
+    public void testFluentConfiguration() throws Exception {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder
+            .authentication()
+                .provider(new PicketBoxAuthenticationProvider())
+                    .mechanism(new UserNamePasswordMechanism())
+                    .authManager(new PropertiesFileBasedAuthenticationManager())
+                    .eventManager().handler(new AuthenticationEventHandler() {
+                        
+                        @Override
+                        public Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType() {
+                            return null;
+                        }
+                    })
+            .authorization()
+                .manager(new SimpleAuthorizationManager())
+            .identityManager()
+                .manager(new DefaultIdentityManager());
+        
+        PicketBoxConfiguration build = builder.build();
+        
+        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
+        
+        picketBoxManager.start();
+        
+        PicketBoxSubject subject = picketBoxManager.authenticate(new UsernamePasswordAuthHandler("admin", "admin"));
+
+        Assert.assertNotNull(subject);
+
     }
 
 }

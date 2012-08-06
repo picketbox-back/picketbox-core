@@ -36,13 +36,6 @@ public interface AuthenticationProvider {
 
     /**
      * <p>
-     * Initialize
-     * </p>
-     */
-    void initialize();
-
-    /**
-     * <p>
      * Returns the names for each supported mechanism.
      * </p>
      *
