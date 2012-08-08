@@ -20,29 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.handlers;
+package org.picketbox.core.authentication.credential;
 
 import org.picketbox.core.AbstractCredential;
-import org.picketbox.core.authentication.DigestHolder;
 
 /**
+ * <p>
+ * A {@link AuthenticationCallbackHandler} implementation for username/password authentication.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class DigestCredential extends AbstractCredential {
+public class UsernamePasswordCredential extends AbstractCredential {
 
-    private DigestHolder digest;
+    private String password;
 
-    public DigestCredential(DigestHolder digest) {
-        this.digest = digest;
+    public UsernamePasswordCredential(String userName, String password) {
+        super.setUserName(userName);
+        this.password = password;
     }
 
-    @Override
-    public String getUserName() {
-        return digest.getUsername();
+    public String getPassword() {
+        return password;
     }
 
-    public DigestHolder getDigest() {
-        return this.digest;
-    }
 }

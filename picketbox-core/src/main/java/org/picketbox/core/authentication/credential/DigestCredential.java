@@ -20,26 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.handlers;
-
-import java.security.cert.X509Certificate;
+package org.picketbox.core.authentication.credential;
 
 import org.picketbox.core.AbstractCredential;
+import org.picketbox.core.authentication.DigestHolder;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class CertificateCredential extends AbstractCredential {
+public class DigestCredential extends AbstractCredential {
 
-    private X509Certificate[] certificates;
+    private DigestHolder digest;
 
-    public CertificateCredential(X509Certificate[] certificates) {
-        this.certificates = certificates;
+    public DigestCredential(DigestHolder digest) {
+        this.digest = digest;
     }
 
-    public X509Certificate[] getCertificates() {
-        return certificates;
+    @Override
+    public String getUserName() {
+        return digest.getUsername();
     }
 
+    public DigestHolder getDigest() {
+        return this.digest;
+    }
 }

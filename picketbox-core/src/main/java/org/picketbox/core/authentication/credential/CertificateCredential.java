@@ -20,29 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.handlers;
+package org.picketbox.core.authentication.credential;
+
+import java.security.cert.X509Certificate;
 
 import org.picketbox.core.AbstractCredential;
 
 /**
- * <p>
- * A {@link AuthenticationCallbackHandler} implementation for username/password authentication.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class UsernamePasswordCredential extends AbstractCredential {
+public class CertificateCredential extends AbstractCredential {
 
-    private String password;
+    private X509Certificate[] certificates;
 
-    public UsernamePasswordCredential(String userName, String password) {
-        super.setUserName(userName);
-        this.password = password;
+    public CertificateCredential(X509Certificate[] certificates) {
+        this.certificates = certificates;
     }
 
-    public String getPassword() {
-        return password;
+    public X509Certificate[] getCertificates() {
+        return certificates;
     }
 
 }
