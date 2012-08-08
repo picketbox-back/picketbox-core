@@ -23,7 +23,6 @@
 package org.picketbox.core.authentication;
 
 import org.picketbox.core.authentication.event.AuthenticationEvent;
-import org.picketbox.core.authentication.event.AuthenticationEventHandler;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -32,7 +31,4 @@ import org.picketbox.core.authentication.event.AuthenticationEventHandler;
 public interface AuthenticationEventManager {
     @SuppressWarnings("rawtypes")
     void raiseEvent(AuthenticationEvent event);
-
-    @SuppressWarnings("rawtypes")
-    void addHandler(Class<? extends AuthenticationEvent> eventType, AuthenticationEventHandler handler);
 }

@@ -23,11 +23,24 @@
 package org.picketbox.core;
 
 /**
+ * <p>
+ * This class represents a specific credential type. Eg.: username/password, digest, certificate, etc.
+ * </p>
+ * <p>
+ * Each credential type is supported by some mechanism that knows how to get the necessary informations to proceed with the user
+ * authentication.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public interface Credential {
 
+    /**
+     * <p>Returns the username.</p>
+     *
+     * @return
+     */
     String getUserName();
 
 }

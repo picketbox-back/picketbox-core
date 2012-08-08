@@ -37,6 +37,10 @@ import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
+import org.picketbox.core.authentication.event.AuthenticationEvent;
+import org.picketbox.core.authentication.event.AuthenticationEventHandler;
+import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
+import org.picketbox.core.authentication.event.UserAuthenticationEventHandler;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.identity.IdentityManager;
@@ -189,6 +193,49 @@ public class PicketBoxConfigurationTestCase {
 
         Assert.assertNotNull(subject);
         Assert.assertTrue(subject.isAuthenticated());
+    }
+    
+    @Test
+    public void testEventHandlersConfiguration() throws Exception {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+        final StringBuffer eventStatus = new StringBuffer();
+        
+        builder.authentication().eventManager().handler(new UserAuthenticationEventHandler() {
+
+            @Override
+            public Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType() {
+                return UserAuthenticatedEvent.class;
+            }
+
+            @Override
+            public void onSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
+                eventStatus.delete(0, eventStatus.length());
+                eventStatus.append("SUCCESS");
+            }
+
+            @Override
+            public void onUnSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
+                eventStatus.delete(0, eventStatus.length());
+                eventStatus.append("FAILED");
+            }
+            
+        });
+        
+        PicketBoxConfiguration build = builder.build();
+
+        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
+
+        picketBoxManager.start();
+
+        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+
+        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+
+        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
+
+        Assert.assertNotNull(subject);
+        Assert.assertTrue(subject.isAuthenticated());
+        Assert.assertEquals("SUCCESS", eventStatus.toString());
     }
 
 }

@@ -43,7 +43,7 @@ public interface AuthenticationMechanism {
 
     /**
      * <p>
-     * Checks if the specified {@link AuthenticationCallbackHandler} class is supported by this service.
+     * Checks if the specified {@link Credential} class is supported by this service.
      * </p>
      *
      * @param handlerClass
@@ -63,19 +63,14 @@ public interface AuthenticationMechanism {
 
     /**
      * <p>
-     * Performs authentication given the informations provided by the {@link AuthenticationCallbackHandler} instance.
+     * Performs authentication given the informations provided by the {@link Credential} instance.
      * </p>
      * <p>
-     * To perform the authentication you should also provide a {@link AuthenticationUser} instance that will be used to populate
-     * with all security info collected during the authentication process.
-     * </p>
      *
      * @param callbackHandler
      * @return
      * @throws AuthenticationException
      */
     AuthenticationResult authenticate(Credential credential) throws AuthenticationException;
-
-    void setAuthenticationProvider(AuthenticationProvider abstractAuthenticationProvider);
 
 }

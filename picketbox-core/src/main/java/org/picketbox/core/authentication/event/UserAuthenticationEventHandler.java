@@ -29,6 +29,8 @@ package org.picketbox.core.authentication.event;
  */
 public interface UserAuthenticationEventHandler extends AuthenticationEventHandler {
 
-    void onSucessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
+    void onSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
+
+    void onUnSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
 
 }

@@ -82,6 +82,12 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
         return result;
     }
 
+    protected AuthenticationResult performFailedAuthentication(AuthenticationResult result) {
+        result.setStatus(AuthenticationStatus.FAILED);
+        this.authenticationProvider.getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
+        return result;
+    }
+
     protected AuthenticationResult performAuthentication(AuthenticationResult result,
             Credential credential) throws AuthenticationException {
         Principal principal = null;
@@ -103,6 +109,8 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
         if (principal != null) {
             result.setPrincipal(principal);
             performSuccessfulAuthentication(result);
+        } else {
+            performFailedAuthentication(result);
         }
 
         return result;
@@ -159,11 +167,7 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.AuthenticationMechanism#setAuthenticationProvider(org.picketbox.core.authentication.AuthenticationProvider)
-     */
-    @Override
-    public void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
+    protected void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
     }
 

@@ -22,10 +22,22 @@
 
 package org.picketbox.core.config;
 
+import org.picketbox.core.authentication.AuthenticationEventManager;
+
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public class EventManagerConfiguration {
+
+    private AuthenticationEventManager authenticationEventManager;
+
+    public EventManagerConfiguration(AuthenticationEventManager manager) {
+        this.authenticationEventManager = manager;
+    }
+
+    public AuthenticationEventManager getAuthenticationEventManager() {
+        return authenticationEventManager;
+    }
 
 }

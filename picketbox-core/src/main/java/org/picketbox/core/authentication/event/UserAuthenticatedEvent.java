@@ -23,6 +23,7 @@
 package org.picketbox.core.authentication.event;
 
 import org.picketbox.core.authentication.AuthenticationResult;
+import org.picketbox.core.authentication.AuthenticationStatus;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -44,7 +45,11 @@ public class UserAuthenticatedEvent implements AuthenticationEvent<UserAuthentic
      */
     @Override
     public void dispatch(UserAuthenticationEventHandler handler) {
-        handler.onSucessfullAuthentication(this);
+        if (result.getStatus().equals(AuthenticationStatus.SUCCESS)) {
+            handler.onSuccessfullAuthentication(this);
+        } else {
+            handler.onUnSuccessfullAuthentication(this);
+        }
     }
 
     public AuthenticationResult getResult() {

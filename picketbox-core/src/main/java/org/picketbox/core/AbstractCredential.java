@@ -23,6 +23,10 @@
 package org.picketbox.core;
 
 /**
+ * <p>
+ * Base class for the {@link Credential} interface.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */

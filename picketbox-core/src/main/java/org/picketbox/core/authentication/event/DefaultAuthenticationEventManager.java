@@ -38,6 +38,12 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
     @SuppressWarnings("rawtypes")
     private Map<Class<? extends AuthenticationEvent>, List<AuthenticationEventHandler>> observers = new HashMap<Class<? extends AuthenticationEvent>, List<AuthenticationEventHandler>>();
 
+    public DefaultAuthenticationEventManager(List<AuthenticationEventHandler> handlers) {
+        for (AuthenticationEventHandler handler : handlers) {
+            addHandler(handler.getEventType(), handler);
+        }
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -56,15 +62,8 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.api.AuthenticationEventManager#addHandler(java.lang.Class,
-     * org.picketbox.core.authentication.api.AuthenticationEventHandler)
-     */
     @SuppressWarnings("rawtypes")
-    @Override
-    public void addHandler(Class<? extends AuthenticationEvent> eventType, AuthenticationEventHandler handler) {
+    private void addHandler(Class<? extends AuthenticationEvent> eventType, AuthenticationEventHandler handler) {
         if (!this.observers.containsKey(eventType)) {
             this.observers.put(eventType, new ArrayList<AuthenticationEventHandler>());
         }
