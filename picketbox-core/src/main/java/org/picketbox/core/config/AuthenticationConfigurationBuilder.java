@@ -54,6 +54,10 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
         return this;
     }
 
+    public AuthenticationConfigurationBuilder provider() {
+        return this;
+    }
+
     @Override
     protected void setDefaults() {
         if (this.provider == null) {
@@ -71,6 +75,15 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
 
     public AuthenticationConfigurationBuilder authManager(AuthenticationManager authManager) {
         this.authManagers.add(authManager);
+        return this;
+    }
+
+    public AuthenticationConfigurationBuilder authManager() {
+        return this;
+    }
+
+    public AuthenticationConfigurationBuilder propertiesFileBased() {
+        this.authManagers.add(new PropertiesFileBasedAuthenticationManager());
         return this;
     }
 

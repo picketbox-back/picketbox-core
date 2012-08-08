@@ -28,14 +28,8 @@ import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
-import org.picketbox.core.authentication.event.AuthenticationEvent;
-import org.picketbox.core.authentication.event.AuthenticationEventHandler;
-import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
-import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
-import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.config.PicketBoxConfiguration;
-import org.picketbox.core.identity.DefaultIdentityManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -47,22 +41,6 @@ public class PicketBoxConfigurationTestCase {
     public void testFluentConfiguration() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder
-            .authentication()
-                .provider(new PicketBoxAuthenticationProvider())
-                    .authManager(new PropertiesFileBasedAuthenticationManager())
-                    .eventManager().handler(new AuthenticationEventHandler() {
-                        
-                        @Override
-                        public Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType() {
-                            return null;
-                        }
-                    })
-            .authorization()
-                .manager(new SimpleAuthorizationManager())
-            .identityManager()
-                .manager(new DefaultIdentityManager());
-        
         PicketBoxConfiguration build = builder.build();
         
         DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);

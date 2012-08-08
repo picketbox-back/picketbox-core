@@ -99,19 +99,17 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                 throw new AuthenticationException("Authentication not supported. Using handler: " + credential);
             }
 
-            PicketBoxSubject resultingSubject = subject;
-
             if (result.getStatus().equals(AuthenticationStatus.SUCCESS)) {
-                resultingSubject.setUser(result.getPrincipal());
+                subject.setUser(result.getPrincipal());
 
-                this.identityManager.getIdentity(resultingSubject);
+                this.identityManager.getIdentity(subject);
 
-                resultingSubject.setAuthenticated(true);
+                subject.setAuthenticated(true);
 
-                createSession(resultingSubject);
+                createSession(subject);
             }
 
-            return resultingSubject;
+            return subject;
         }
 
         return null;

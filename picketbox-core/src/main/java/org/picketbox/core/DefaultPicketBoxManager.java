@@ -35,10 +35,6 @@ import org.picketbox.core.config.PicketBoxConfiguration;
  */
 public final class DefaultPicketBoxManager extends AbstractPicketBoxManager {
 
-    public DefaultPicketBoxManager() {
-
-    }
-
     public DefaultPicketBoxManager(PicketBoxConfiguration configuration) {
         super(configuration);
     }
