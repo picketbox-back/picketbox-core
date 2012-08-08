@@ -148,7 +148,7 @@ public class PicketBoxSubject implements Serializable {
         this.contextData = contextData;
     }
 
-    public void setAuthenticated(boolean isAuthenticated) {
+    protected void setAuthenticated(boolean isAuthenticated) {
         this.authenticated = isAuthenticated;
     }
 
