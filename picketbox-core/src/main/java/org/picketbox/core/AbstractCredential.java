@@ -20,14 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
+package org.picketbox.core;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationEventHandler {
+public class AbstractCredential implements Credential {
 
-    Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType();
+    private String userName;
+
+    @Override
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
 }

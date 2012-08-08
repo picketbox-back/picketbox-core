@@ -53,6 +53,8 @@ public class PicketBoxSubject implements Serializable {
 
     private PicketBoxSession session;
 
+    private Credential credential;
+
     // TODO: how to deal with groups/nested groups etc
 
     /**
@@ -163,5 +165,13 @@ public class PicketBoxSubject implements Serializable {
 
     public PicketBoxSession getSession() {
         return session;
+    }
+
+    public Credential getCredential() {
+        return this.credential;
+    }
+
+    public void setCredential(Credential credential) {
+        this.credential = credential;
     }
 }

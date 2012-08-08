@@ -20,33 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.impl;
-
-import org.picketbox.core.authentication.AuthenticationClient;
-import org.picketbox.core.authentication.AuthenticationService;
+package org.picketbox.core;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class UserNamePasswordMechanism extends AbstractAuthenticationMechanism {
+public interface Credential {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getClient()
-     */
-    public AuthenticationClient getClient() {
-        throw new IllegalStateException("This mechanisms does not provide a client implementation.");
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getService()
-     */
-    public AuthenticationService getService() {
-        return new UserNamePasswordAuthenticationService(this);
-    }
+    String getUserName();
 
 }

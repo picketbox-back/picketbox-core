@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.picketbox.core.authentication.AuthenticationEvent;
-import org.picketbox.core.authentication.AuthenticationEventHandler;
 import org.picketbox.core.authentication.AuthenticationEventManager;
 
 /**

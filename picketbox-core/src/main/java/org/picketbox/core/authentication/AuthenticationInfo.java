@@ -22,7 +22,7 @@
 
 package org.picketbox.core.authentication;
 
-import javax.security.auth.callback.CallbackHandler;
+import org.picketbox.core.Credential;
 
 /**
  * <p>
@@ -37,9 +37,9 @@ public class AuthenticationInfo {
     private String name;
     private String description;
     private boolean required = true;
-    private Class<? extends CallbackHandler> implementation;
+    private Class<? extends Credential> implementation;
 
-    public AuthenticationInfo(String name, String description, Class<? extends CallbackHandler> implementation) {
+    public AuthenticationInfo(String name, String description, Class<? extends Credential> implementation) {
         this.name = name;
         this.description = description;
         this.implementation = implementation;
@@ -76,14 +76,14 @@ public class AuthenticationInfo {
     /**
      * @return the implementation
      */
-    public Class<? extends CallbackHandler> getImplementation() {
+    public Class<? extends Credential> getImplementation() {
         return implementation;
     }
 
     /**
      * @param implementation the implementation to set
      */
-    public void setImplementation(Class<? extends CallbackHandler> implementation) {
+    public void setImplementation(Class<? extends Credential> implementation) {
         this.implementation = implementation;
     }
 

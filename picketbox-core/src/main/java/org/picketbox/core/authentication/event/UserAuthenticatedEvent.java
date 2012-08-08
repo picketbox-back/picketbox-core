@@ -22,7 +22,6 @@
 
 package org.picketbox.core.authentication.event;
 
-import org.picketbox.core.authentication.AuthenticationEvent;
 import org.picketbox.core.authentication.AuthenticationResult;
 
 /**

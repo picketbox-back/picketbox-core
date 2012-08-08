@@ -22,55 +22,27 @@
 
 package org.picketbox.core.authentication.handlers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.UnsupportedCallbackException;
-
+import org.picketbox.core.AbstractCredential;
 import org.picketbox.core.authentication.DigestHolder;
-import org.picketbox.core.authentication.impl.AbstractAuthenticationCallbackHandler;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class DigestAuthHandler extends AbstractAuthenticationCallbackHandler {
+public class DigestCredential extends AbstractCredential {
 
     private DigestHolder digest;
 
-    public DigestAuthHandler(DigestHolder digest) {
+    public DigestCredential(DigestHolder digest) {
         this.digest = digest;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.AuthenticationCallbackHandler#getSupportedCallbacks()
-     */
     @Override
-    public List<Class<? extends Callback>> getSupportedCallbacks() {
-        ArrayList<Class<? extends Callback>> supportedCallbacks = new ArrayList<Class<? extends Callback>>();
-
-        supportedCallbacks.add(TokenCallback.class);
-
-        return supportedCallbacks;
+    public String getUserName() {
+        return digest.getUsername();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.picketbox.core.authentication.impl.AbstractAuthenticationCallbackHandler#doHandle(javax.security.auth.callback.Callback
-     * )
-     */
-    @Override
-    protected void doHandle(Callback callback) throws UnsupportedCallbackException {
-        if (callback instanceof TokenCallback) {
-            TokenCallback tokenCallback = (TokenCallback) callback;
-
-            tokenCallback.setToken(this.digest);
-        }
+    public DigestHolder getDigest() {
+        return this.digest;
     }
-
 }

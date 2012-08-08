@@ -39,9 +39,9 @@ public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvi
 
     @Override
     protected void doAddMechanisms(List<AuthenticationMechanism> mechanisms) {
-        mechanisms.add(new UserNamePasswordMechanism());
-        mechanisms.add(new DigestMechanism());
-        mechanisms.add(new CertificateMechanism());
+        mechanisms.add(new UserNamePasswordAuthenticationMechanism());
+        mechanisms.add(new DigestAuthenticationMechanism());
+        mechanisms.add(new CertificateAuthenticationMechanism());
     }
 
 }

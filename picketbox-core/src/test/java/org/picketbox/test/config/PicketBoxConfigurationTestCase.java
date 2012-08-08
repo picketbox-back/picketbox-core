@@ -27,11 +27,10 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
-import org.picketbox.core.authentication.AuthenticationEvent;
-import org.picketbox.core.authentication.AuthenticationEventHandler;
-import org.picketbox.core.authentication.handlers.UsernamePasswordAuthHandler;
+import org.picketbox.core.authentication.event.AuthenticationEvent;
+import org.picketbox.core.authentication.event.AuthenticationEventHandler;
+import org.picketbox.core.authentication.handlers.UsernamePasswordCredential;
 import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
-import org.picketbox.core.authentication.impl.UserNamePasswordMechanism;
 import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
 import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
 import org.picketbox.core.config.ConfigurationBuilder;
@@ -51,7 +50,6 @@ public class PicketBoxConfigurationTestCase {
         builder
             .authentication()
                 .provider(new PicketBoxAuthenticationProvider())
-                    .mechanism(new UserNamePasswordMechanism())
                     .authManager(new PropertiesFileBasedAuthenticationManager())
                     .eventManager().handler(new AuthenticationEventHandler() {
                         
@@ -71,9 +69,14 @@ public class PicketBoxConfigurationTestCase {
         
         picketBoxManager.start();
         
-        PicketBoxSubject subject = picketBoxManager.authenticate(new UsernamePasswordAuthHandler("admin", "admin"));
+        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+        
+        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+        
+        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
 
         Assert.assertNotNull(subject);
+        Assert.assertTrue(subject.isAuthenticated());
 
     }
 

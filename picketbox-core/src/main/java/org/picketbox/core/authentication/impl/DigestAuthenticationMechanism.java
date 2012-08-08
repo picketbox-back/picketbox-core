@@ -26,29 +26,18 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-
-import org.picketbox.core.authentication.AuthenticationCallbackHandler;
+import org.picketbox.core.Credential;
 import org.picketbox.core.authentication.AuthenticationInfo;
 import org.picketbox.core.authentication.AuthenticationManager;
-import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationResult;
-import org.picketbox.core.authentication.handlers.CertificateAuthHandler;
-import org.picketbox.core.authentication.handlers.CertificateCallback;
-import org.picketbox.core.authentication.handlers.UsernamePasswordAuthHandler;
+import org.picketbox.core.authentication.handlers.DigestCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class CertificateAuthenticationService extends AbstractAuthenticationService {
-
-    public CertificateAuthenticationService(AuthenticationMechanism mechanism) {
-        super(mechanism);
-    }
+public class DigestAuthenticationMechanism extends AbstractAuthenticationMechanism {
 
     /*
      * (non-Javadoc)
@@ -59,10 +48,8 @@ public class CertificateAuthenticationService extends AbstractAuthenticationServ
     public List<AuthenticationInfo> getAuthenticationInfo() {
         List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();
 
-        arrayList.add(new AuthenticationInfo("Certificate authentication service.",
-                "A authentication service using certificates.", CertificateAuthHandler.class));
-        arrayList.add(new AuthenticationInfo("User name and password.", "Where the password is the certificate's signature.",
-                UsernamePasswordAuthHandler.class));
+        arrayList.add(new AuthenticationInfo("Digest authentication service.",
+                "A simple authentication service using a Digest token.", DigestCredential.class));
 
         return arrayList;
 
@@ -78,28 +65,10 @@ public class CertificateAuthenticationService extends AbstractAuthenticationServ
      */
     @Override
     protected Principal doAuthenticate(AuthenticationManager authenticationManager,
-            AuthenticationCallbackHandler callbackHandler, AuthenticationResult result) throws AuthenticationException {
-        CertificateCallback certificateCallback = new CertificateCallback();
+            Credential credential, AuthenticationResult result) throws AuthenticationException {
+        DigestCredential digestCredential = (DigestCredential) credential;
 
-        try {
-            callbackHandler.handle(new Callback[] { certificateCallback });
-        } catch (Exception e) {
-            NameCallback nameCallback = new NameCallback("User name:");
-            PasswordCallback passwordCallback = new PasswordCallback("Password:", false);
-
-            try {
-                callbackHandler.handle(new Callback[] { nameCallback, passwordCallback });
-            } catch (Exception e1) {
-                throw new AuthenticationException(e);
-            }
-
-            String userName = nameCallback.getName();
-            String password = String.valueOf(passwordCallback.getPassword());
-
-            return authenticationManager.authenticate(userName, password);
-        }
-
-        return authenticationManager.authenticate(certificateCallback.getCertificates());
+        return authenticationManager.authenticate(digestCredential.getDigest());
     }
 
 }

@@ -25,7 +25,7 @@ package org.picketbox.core.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.picketbox.core.authentication.AuthenticationEventHandler;
+import org.picketbox.core.authentication.event.AuthenticationEventHandler;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>

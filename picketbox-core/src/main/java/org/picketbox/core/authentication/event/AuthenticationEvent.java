@@ -20,32 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.handlers;
-
-import java.security.cert.X509Certificate;
-
-import javax.security.auth.callback.Callback;
+package org.picketbox.core.authentication.event;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class CertificateCallback implements Callback {
+public interface AuthenticationEvent<HANDLER extends AuthenticationEventHandler> {
 
-    private X509Certificate[] certificates;
-
-    /**
-     * @return the certificates
-     */
-    public X509Certificate[] getCertificates() {
-        return certificates;
-    }
-
-    /**
-     * @param certificates2 the certificates to set
-     */
-    public void setCertificates(X509Certificate[] certificates) {
-        this.certificates = certificates;
-    }
+    void dispatch(HANDLER handler);
 
 }

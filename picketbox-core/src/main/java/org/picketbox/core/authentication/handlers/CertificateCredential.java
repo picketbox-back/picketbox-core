@@ -20,35 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
+package org.picketbox.core.authentication.handlers;
 
-import java.util.List;
+import java.security.cert.X509Certificate;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
+import org.picketbox.core.AbstractCredential;
 
 /**
- * <p>
- * Base interface for {@link CallbackHandler} classes used to start the authentication process.
- * </p>
- * <p>
- * {@link AuthenticationCallbackHandler} classes are used to provide informations used during the authentication process. They
- * define what informations are required by a specific {@link AuthenticationClient} or {@link AuthenticationService} given a
- * {@link AuthenticationMechanism}.
- * </p>
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationCallbackHandler extends CallbackHandler {
+public class CertificateCredential extends AbstractCredential {
 
-    /**
-     * <p>
-     * Returns a list of the expected {@link Callback} classes used by this handler.
-     * </p>
-     *
-     * @return
-     */
-    List<Class<? extends Callback>> getSupportedCallbacks();
+    private X509Certificate[] certificates;
+
+    public CertificateCredential(X509Certificate[] certificates) {
+        this.certificates = certificates;
+    }
+
+    public X509Certificate[] getCertificates() {
+        return certificates;
+    }
+
 }
