@@ -29,7 +29,10 @@ import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
+import org.picketbox.core.authentication.manager.DatabaseAuthenticationManager;
+import org.picketbox.core.authentication.manager.LDAPAuthenticationManager;
 import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -41,6 +44,8 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
     private AuthenticationProvider provider;
     private List<AuthenticationMechanism> mechanisms;
     private List<AuthenticationManager> authManagers;
+    private DataBaseAuthenticationConfigurationBuilder dataBaseAuthenticationManager;
+    private LDAPAuthenticationConfigurationBuilder ldapAuthenticationManager;
 
     public AuthenticationConfigurationBuilder(ConfigurationBuilder builder) {
         super(builder);
@@ -58,16 +63,6 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
         return this;
     }
 
-    @Override
-    protected void setDefaults() {
-        if (this.provider == null) {
-            this.provider = new PicketBoxAuthenticationProvider();
-        }
-        if (this.authManagers.isEmpty()) {
-            this.authManagers.add(new PropertiesFileBasedAuthenticationManager());
-        }
-    }
-
     public AuthenticationConfigurationBuilder mechanism(AuthenticationMechanism mechanism) {
         this.mechanisms.add(mechanism);
         return this;
@@ -78,11 +73,27 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
         return this;
     }
 
-    public AuthenticationConfigurationBuilder authManager() {
-        return this;
+    public DataBaseAuthenticationConfigurationBuilder dataBaseAuthManager() {
+        if (this.dataBaseAuthenticationManager == null) {
+            this.dataBaseAuthenticationManager = new DataBaseAuthenticationConfigurationBuilder();
+        }
+        return this.dataBaseAuthenticationManager;
+    }
+
+    public LDAPAuthenticationConfigurationBuilder ldapAuthManager() {
+        if (this.ldapAuthenticationManager == null) {
+            this.ldapAuthenticationManager = new LDAPAuthenticationConfigurationBuilder();
+        }
+        return this.ldapAuthenticationManager;
     }
 
     public AuthenticationConfigurationBuilder propertiesFileBased() {
+        for (AuthenticationManager authManager : this.authManagers) {
+            if (authManager.getClass().equals(PropertiesFileBasedAuthenticationManager.class)) {
+                return this;
+            }
+        }
+
         this.authManagers.add(new PropertiesFileBasedAuthenticationManager());
         return this;
     }
@@ -92,8 +103,41 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
     }
 
     @Override
+    protected void setDefaults() {
+        if (this.provider == null) {
+            this.provider = new PicketBoxAuthenticationProvider();
+        }
+
+        if (this.dataBaseAuthenticationManager != null) {
+            DataBaseAuthenticationConfiguration dbAuthConfig = this.dataBaseAuthenticationManager.build();
+            DatabaseAuthenticationManager dbAuthManager = new DatabaseAuthenticationManager();
+
+            dbAuthManager.setDataSource(dbAuthConfig.getDataSource());
+            dbAuthManager.setDsJNDIName(dbAuthConfig.getDsJNDIName());
+            dbAuthManager.setJpaConfigName(dbAuthConfig.getJpaConfigName());
+            dbAuthManager.setJpaJNDIName(dbAuthConfig.getJpaJNDIName());
+            dbAuthManager.setPasswordQuery(dbAuthConfig.getPasswordQuery());
+
+            this.authManagers.add(dbAuthManager);
+        }
+
+        if (this.ldapAuthenticationManager != null) {
+            BasicLDAPStoreConfig ldapConfig = this.ldapAuthenticationManager.build();
+
+            LDAPAuthenticationManager ldapAuthManager = new LDAPAuthenticationManager();
+
+            ldapAuthManager.setLdapStoreConfig(ldapConfig);
+
+            this.authManagers.add(ldapAuthManager);
+        }
+
+        if (this.authManagers.isEmpty()) {
+            this.authManagers.add(new PropertiesFileBasedAuthenticationManager());
+        }
+    }
+
+    @Override
     public AuthenticationConfiguration doBuild() {
-        setDefaults();
         return new AuthenticationConfiguration(this.provider, this.authManagers, this.eventManager.build());
     }
 
