@@ -32,6 +32,10 @@ public class DataBaseAuthenticationConfigurationBuilder extends AbstractConfigur
 
     private DataBaseAuthenticationConfiguration configuration = new DataBaseAuthenticationConfiguration();
 
+    public DataBaseAuthenticationConfigurationBuilder(AuthenticationConfigurationBuilder authenticationConfigurationBuilder) {
+        super(authenticationConfigurationBuilder);
+    }
+
     public DataBaseAuthenticationConfigurationBuilder dataSource(DataSource dataSource) {
         this.configuration.setDataSource(dataSource);
         return this;

@@ -24,6 +24,7 @@ package org.picketbox.core.config;
 
 
 
+
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -33,23 +34,40 @@ public class ConfigurationBuilder extends AbstractConfigurationBuilder<PicketBox
     private AuthenticationConfigurationBuilder authentication;
     private IdentityManagerConfigurationBuilder identityManager;
     private AuthorizationConfigurationBuilder authorization;
+    private EventManagerConfigurationBuilder eventManager;
 
     public ConfigurationBuilder() {
+        this.builder = this;
         this.authentication = new AuthenticationConfigurationBuilder(this);
         this.authorization = new AuthorizationConfigurationBuilder(this);
         this.identityManager = new IdentityManagerConfigurationBuilder(this);
+        this.eventManager = new EventManagerConfigurationBuilder(this);
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#authentication()
+     */
     public AuthenticationConfigurationBuilder authentication() {
         return this.authentication;
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#authorization()
+     */
     public AuthorizationConfigurationBuilder authorization() {
         return this.authorization;
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.AbstractConfigurationBuilder#identityManager()
+     */
     public IdentityManagerConfigurationBuilder identityManager() {
         return this.identityManager;
+    }
+
+    @Override
+    public EventManagerConfigurationBuilder eventManager() {
+        return this.eventManager;
     }
 
     /* (non-Javadoc)
