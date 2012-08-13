@@ -22,13 +22,18 @@
 
 package org.picketbox.core.authentication;
 
+import java.util.List;
+
+import org.picketbox.core.Credential;
+import org.picketbox.core.exceptions.AuthenticationException;
+
 /**
  * <p>
- * This interface provides the contract for a specific authentication mechanisms.
+ * This interface defines a server view of a specific {@link AuthenticationMechanism}.
  * </p>
  * <p>
- * {@link AuthenticationMechanism} classes provide ways to create {@link AuthenticationClient} and {@link AuthenticationService}
- * instances to be used to perform user authentication.
+ * {@link AuthenticationMechanism} implementations provide an abstraction for servers hiding from them the complexity and specific
+ * logic for a specific {@link AuthenticationMechanism}.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -38,25 +43,34 @@ public interface AuthenticationMechanism {
 
     /**
      * <p>
-     * Returns a {@link AuthenticationClient} for this mechanism.
+     * Checks if the specified {@link Credential} class is supported by this service.
      * </p>
      *
+     * @param handlerClass
      * @return
      */
-    AuthenticationClient getClient();
+    boolean supports(Credential credential);
 
     /**
      * <p>
-     * Returns a {@link AuthenticationService} for this mechanism.
+     * Returns a list of {@link AuthenticationInfo} with informations about what is needed before to proceeding with the
+     * authentication.
      * </p>
      *
      * @return
      */
-    AuthenticationService getService();
+    List<AuthenticationInfo> getAuthenticationInfo();
 
-    AuthenticationProvider getAuthenticationProvider();
+    /**
+     * <p>
+     * Performs authentication given the informations provided by the {@link Credential} instance.
+     * </p>
+     * <p>
+     *
+     * @param callbackHandler
+     * @return
+     * @throws AuthenticationException
+     */
+    AuthenticationResult authenticate(Credential credential) throws AuthenticationException;
 
-    void setAuthenticationProvider(AuthenticationProvider provider);
-
-    // TODO: Maybe we should have here some methods to describe more about the mechanism such as if supports encryption, etc.
 }

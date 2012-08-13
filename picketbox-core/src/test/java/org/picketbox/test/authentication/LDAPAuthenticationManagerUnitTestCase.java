@@ -30,13 +30,17 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.picketbox.core.DefaultPicketBoxManager;
+import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.authentication.manager.LDAPAuthenticationManager;
+import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
 
 /**
  * Unit test the {@link LDAPAuthenticationManager}
- *
+ * 
  * @author anil saldhana
  * @since Jul 16, 2012
  */
@@ -50,23 +54,41 @@ public class LDAPAuthenticationManagerUnitTestCase extends AbstractLDAPTest {
 
     @Test
     public void testAuth() throws Exception {
-        LDAPAuthenticationManager auth = new LDAPAuthenticationManager();
+        ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        Map<String, Object> options = new HashMap<String, Object>();
+        builder.authentication().ldapAuthManager().userDN("uid=CHANGE_USER,ou=People,dc=jboss,dc=org")
+                .userName("uid=CHANGE_USER,ou=People,dc=jboss,dc=org").userPassword("WILL_BE_REPLACED")
+                .storeURL("ldap://localhost:10389/");
 
-        options.put("userDN", "uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
-
-        auth.setOptions(options);
-
-        BasicLDAPStoreConfig config = new BasicLDAPStoreConfig();
-        config.setUserName("uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
-        config.setUserPassword("WILL_BE_REPLACED");
-        config.setStoreURL("ldap://localhost:10389/");
-
-        auth.setLdapStoreConfig(config);
-        Principal principal = auth.authenticate("jduke", "theduke");
-
-        assertNotNull(principal);
-        assertEquals("jduke", principal.getName());
+        DefaultPicketBoxManager manager = new DefaultPicketBoxManager(builder.build());
+        
+        manager.start();
+        
+        PicketBoxSubject subject = new PicketBoxSubject();
+        
+        subject.setCredential(new UsernamePasswordCredential("jduke", "theduke"));
+        
+        PicketBoxSubject authenticatedSubject = manager.authenticate(subject);
+        
+        System.out.println(authenticatedSubject);
+        
+//        LDAPAuthenticationManager auth = new LDAPAuthenticationManager();
+//
+//        Map<String, Object> options = new HashMap<String, Object>();
+//
+//        options.put("userDN", "uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
+//
+//        auth.setOptions(options);
+//
+//        BasicLDAPStoreConfig config = new BasicLDAPStoreConfig();
+//        config.setUserName("uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
+//        config.setUserPassword("WILL_BE_REPLACED");
+//        config.setStoreURL("ldap://localhost:10389/");
+//
+//        auth.setLdapStoreConfig(config);
+//        Principal principal = auth.authenticate("jduke", "theduke");
+//
+//        assertNotNull(principal);
+//        assertEquals("jduke", principal.getName());
     }
 }

@@ -25,11 +25,16 @@ package org.picketbox.core.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.picketbox.core.authentication.AuthenticationEventManager;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
-import org.picketbox.core.authentication.AuthenticationProvider;
-import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
+import org.picketbox.core.authentication.impl.CertificateAuthenticationMechanism;
+import org.picketbox.core.authentication.impl.DigestAuthenticationMechanism;
+import org.picketbox.core.authentication.impl.UserNamePasswordAuthenticationMechanism;
+import org.picketbox.core.authentication.manager.DatabaseAuthenticationManager;
+import org.picketbox.core.authentication.manager.LDAPAuthenticationManager;
 import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
+import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -38,30 +43,16 @@ import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticati
 public class AuthenticationConfigurationBuilder extends AbstractConfigurationBuilder<AuthenticationConfiguration> {
 
     private EventManagerConfigurationBuilder eventManager;
-    private AuthenticationProvider provider;
     private List<AuthenticationMechanism> mechanisms;
     private List<AuthenticationManager> authManagers;
+    private DataBaseAuthenticationConfigurationBuilder dataBaseAuthenticationManager;
+    private LDAPAuthenticationConfigurationBuilder ldapAuthenticationManager;
 
     public AuthenticationConfigurationBuilder(ConfigurationBuilder builder) {
         super(builder);
         this.eventManager = new EventManagerConfigurationBuilder(this);
         this.mechanisms = new ArrayList<AuthenticationMechanism>();
         this.authManagers = new ArrayList<AuthenticationManager>();
-    }
-
-    public AuthenticationConfigurationBuilder provider(AuthenticationProvider authenticationProvider) {
-        this.provider = authenticationProvider;
-        return this;
-    }
-
-    @Override
-    protected void setDefaults() {
-        if (this.provider == null) {
-            this.provider = new PicketBoxAuthenticationProvider();
-        }
-        if (this.authManagers.isEmpty()) {
-            this.authManagers.add(new PropertiesFileBasedAuthenticationManager());
-        }
     }
 
     public AuthenticationConfigurationBuilder mechanism(AuthenticationMechanism mechanism) {
@@ -74,14 +65,77 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
         return this;
     }
 
+    public DataBaseAuthenticationConfigurationBuilder dataBaseAuthManager() {
+        if (this.dataBaseAuthenticationManager == null) {
+            this.dataBaseAuthenticationManager = new DataBaseAuthenticationConfigurationBuilder();
+        }
+        return this.dataBaseAuthenticationManager;
+    }
+
+    public LDAPAuthenticationConfigurationBuilder ldapAuthManager() {
+        if (this.ldapAuthenticationManager == null) {
+            this.ldapAuthenticationManager = new LDAPAuthenticationConfigurationBuilder();
+        }
+        return this.ldapAuthenticationManager;
+    }
+
+    public AuthenticationConfigurationBuilder propertiesFileBased() {
+        for (AuthenticationManager authManager : this.authManagers) {
+            if (authManager.getClass().equals(PropertiesFileBasedAuthenticationManager.class)) {
+                return this;
+            }
+        }
+
+        this.authManagers.add(new PropertiesFileBasedAuthenticationManager());
+        return this;
+    }
+
     public EventManagerConfigurationBuilder eventManager() {
         return this.eventManager;
     }
 
+    public EventManagerConfigurationBuilder eventManager(AuthenticationEventManager eventManager) {
+        this.eventManager.setEventManager(eventManager);
+        return this.eventManager;
+    }
+
+    @Override
+    protected void setDefaults() {
+        if (this.dataBaseAuthenticationManager != null) {
+            DataBaseAuthenticationConfiguration dbAuthConfig = this.dataBaseAuthenticationManager.build();
+            DatabaseAuthenticationManager dbAuthManager = new DatabaseAuthenticationManager();
+
+            dbAuthManager.setDataSource(dbAuthConfig.getDataSource());
+            dbAuthManager.setDsJNDIName(dbAuthConfig.getDsJNDIName());
+            dbAuthManager.setJpaConfigName(dbAuthConfig.getJpaConfigName());
+            dbAuthManager.setJpaJNDIName(dbAuthConfig.getJpaJNDIName());
+            dbAuthManager.setPasswordQuery(dbAuthConfig.getPasswordQuery());
+
+            this.authManagers.add(dbAuthManager);
+        }
+
+        if (this.ldapAuthenticationManager != null) {
+            BasicLDAPStoreConfig ldapConfig = this.ldapAuthenticationManager.build();
+
+            LDAPAuthenticationManager ldapAuthManager = new LDAPAuthenticationManager();
+
+            ldapAuthManager.setLdapStoreConfig(ldapConfig);
+
+            this.authManagers.add(ldapAuthManager);
+        }
+
+        if (this.authManagers.isEmpty()) {
+            this.authManagers.add(new PropertiesFileBasedAuthenticationManager());
+        }
+
+        this.mechanisms.add(new UserNamePasswordAuthenticationMechanism());
+        this.mechanisms.add(new DigestAuthenticationMechanism());
+        this.mechanisms.add(new CertificateAuthenticationMechanism());
+    }
+
     @Override
     public AuthenticationConfiguration doBuild() {
-        setDefaults();
-        return new AuthenticationConfiguration(this.provider, this.authManagers, this.eventManager.build());
+        return new AuthenticationConfiguration(this.mechanisms, this.authManagers, this.eventManager.build());
     }
 
 }

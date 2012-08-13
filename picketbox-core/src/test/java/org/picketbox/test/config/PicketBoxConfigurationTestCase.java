@@ -22,59 +22,220 @@
 
 package org.picketbox.test.config;
 
+import java.sql.Connection;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import junit.framework.Assert;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
-import org.picketbox.core.authentication.AuthenticationEvent;
-import org.picketbox.core.authentication.AuthenticationEventHandler;
-import org.picketbox.core.authentication.handlers.UsernamePasswordAuthHandler;
-import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
-import org.picketbox.core.authentication.impl.UserNamePasswordMechanism;
-import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticationManager;
-import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
+import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
+import org.picketbox.core.authentication.event.AuthenticationEvent;
+import org.picketbox.core.authentication.event.AuthenticationEventHandler;
+import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
+import org.picketbox.core.authentication.event.UserAuthenticationEventHandler;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.config.PicketBoxConfiguration;
-import org.picketbox.core.identity.DefaultIdentityManager;
+import org.picketbox.core.identity.IdentityManager;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
+ * <p>
+ * Tests the PicketBox configuration API.
+ * </p>
+ * 
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  * 
  */
 public class PicketBoxConfigurationTestCase {
 
+    private static DataSource dataSource;
+
+    @BeforeClass
+    public static void setupDatabase() throws Exception {
+
+        // disable the c3p0 log messages.
+        System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
+        System.setProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF");
+
+        // setup the datasource that will be used in the tests.
+        ComboPooledDataSource ds = new ComboPooledDataSource();
+        ds.setDriverClass("org.h2.Driver");
+        ds.setJdbcUrl("jdbc:h2:mem:test");
+        ds.setUser("sa");
+        ds.setPassword("");
+        dataSource = ds;
+
+        // create the test table and add some test data.
+        Connection connection = dataSource.getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute("CREATE TABLE USERS(username varchar2(20) not null, password varchar2(20) not null)");
+        statement.execute("INSERT INTO USERS(username, password) VALUES ('picketbox', 'goodpass')");
+        statement.close();
+        connection.close();
+    }
+
+    @AfterClass
+    public static void clearDatabase() throws Exception {
+
+        // get a connection from the datasource and drop the test table.
+        Connection connection = dataSource.getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute("DROP TABLE USERS");
+        statement.close();
+        connection.close();
+    }
+
+    /**
+     * <p>
+     * Tests a simple configuration using only the default values.
+     * </p>
+     * 
+     * @throws Exception
+     */
     @Test
-    public void testFluentConfiguration() throws Exception {
+    public void testDefaultConfiguration() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder
-            .authentication()
-                .provider(new PicketBoxAuthenticationProvider())
-                    .mechanism(new UserNamePasswordMechanism())
-                    .authManager(new PropertiesFileBasedAuthenticationManager())
-                    .eventManager().handler(new AuthenticationEventHandler() {
-                        
-                        @Override
-                        public Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType() {
-                            return null;
-                        }
-                    })
-            .authorization()
-                .manager(new SimpleAuthorizationManager())
-            .identityManager()
-                .manager(new DefaultIdentityManager());
-        
         PicketBoxConfiguration build = builder.build();
-        
+
         DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
-        
+
         picketBoxManager.start();
-        
-        PicketBoxSubject subject = picketBoxManager.authenticate(new UsernamePasswordAuthHandler("admin", "admin"));
+
+        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+
+        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+
+        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
 
         Assert.assertNotNull(subject);
+        Assert.assertTrue(subject.isAuthenticated());
+    }
 
+    /**
+     * <p>
+     * Tests a simple configuration using only the default values.
+     * </p>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testCustomIdentityManagerConfiguration() throws Exception {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.identityManager().manager(new IdentityManager() {
+
+            @Override
+            public PicketBoxSubject getIdentity(PicketBoxSubject resultingSubject) {
+                List<String> roles = new ArrayList<String>();
+
+                roles.add("test");
+
+                resultingSubject.setRoleNames(roles);
+
+                return resultingSubject;
+            }
+        });
+
+        PicketBoxConfiguration build = builder.build();
+
+        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
+
+        picketBoxManager.start();
+
+        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+
+        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+
+        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
+
+        Assert.assertNotNull(subject);
+        Assert.assertTrue(subject.isAuthenticated());
+        Assert.assertEquals("test", subject.getRoleNames().get(0));
+    }
+
+    /**
+     * <p>
+     * Tests a simple configuration using only the default values.
+     * </p>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDataBaseAuthenticationManager() throws Exception {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+
+        builder.authentication()
+            .dataBaseAuthManager()
+                .dataSource(dataSource)
+                .passwordQuery("SELECT PASSWORD FROM USERS WHERE USERNAME = ?");
+
+        PicketBoxConfiguration build = builder.build();
+
+        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
+
+        picketBoxManager.start();
+
+        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+
+        authenticatingSubject.setCredential(new UsernamePasswordCredential("picketbox", "goodpass"));
+
+        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
+
+        Assert.assertNotNull(subject);
+        Assert.assertTrue(subject.isAuthenticated());
+    }
+    
+    @Test
+    public void testEventHandlersConfiguration() throws Exception {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+        final StringBuffer eventStatus = new StringBuffer();
+        
+        builder.authentication().eventManager().handler(new UserAuthenticationEventHandler() {
+
+            @Override
+            public Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType() {
+                return UserAuthenticatedEvent.class;
+            }
+
+            @Override
+            public void onSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
+                eventStatus.delete(0, eventStatus.length());
+                eventStatus.append("SUCCESS");
+            }
+
+            @Override
+            public void onUnSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
+                eventStatus.delete(0, eventStatus.length());
+                eventStatus.append("FAILED");
+            }
+            
+        });
+        
+        PicketBoxConfiguration build = builder.build();
+
+        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
+
+        picketBoxManager.start();
+
+        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+
+        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+
+        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
+
+        Assert.assertNotNull(subject);
+        Assert.assertTrue(subject.isAuthenticated());
+        Assert.assertEquals("SUCCESS", eventStatus.toString());
     }
 
 }

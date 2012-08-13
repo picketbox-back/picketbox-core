@@ -26,34 +26,25 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-
-import org.picketbox.core.authentication.AuthenticationCallbackHandler;
+import org.picketbox.core.Credential;
 import org.picketbox.core.authentication.AuthenticationInfo;
 import org.picketbox.core.authentication.AuthenticationManager;
-import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationResult;
-import org.picketbox.core.authentication.handlers.UsernamePasswordAuthHandler;
+import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class UserNamePasswordAuthenticationService extends AbstractAuthenticationService {
-
-    public UserNamePasswordAuthenticationService(AuthenticationMechanism mechanism) {
-        super(mechanism);
-    }
+public class UserNamePasswordAuthenticationMechanism extends AbstractAuthenticationMechanism {
 
     public List<AuthenticationInfo> getAuthenticationInfo() {
         List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();
 
         arrayList.add(new AuthenticationInfo("Username and Password authentication service.",
                 "A simple authentication service using a username and password as credentials.",
-                UsernamePasswordAuthHandler.class));
+                UsernamePasswordCredential.class));
 
         return arrayList;
     }
@@ -68,19 +59,8 @@ public class UserNamePasswordAuthenticationService extends AbstractAuthenticatio
      */
     @Override
     protected Principal doAuthenticate(AuthenticationManager authenticationManager,
-            AuthenticationCallbackHandler callbackHandler, AuthenticationResult result) throws AuthenticationException {
-        NameCallback nameCallback = new NameCallback("User name:");
-        PasswordCallback passwordCallback = new PasswordCallback("Password:", false);
-
-        try {
-            callbackHandler.handle(new Callback[] { nameCallback, passwordCallback });
-        } catch (Exception e) {
-            throw new AuthenticationException(e);
-        }
-
-        String userName = nameCallback.getName();
-        String password = String.valueOf(passwordCallback.getPassword());
-
-        return authenticationManager.authenticate(userName, password);
+            Credential credential, AuthenticationResult result) throws AuthenticationException {
+        UsernamePasswordCredential userCredential = (UsernamePasswordCredential) credential;
+        return authenticationManager.authenticate(userCredential.getUserName(), userCredential.getPassword());
     }
 }

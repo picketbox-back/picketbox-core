@@ -20,26 +20,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.handlers;
-
-import javax.security.auth.callback.Callback;
+package org.picketbox.core;
 
 /**
+ * <p>
+ * Base class for the {@link Credential} interface.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class TokenCallback implements Callback {
+public class AbstractCredential implements Credential {
 
-    private Object token;
+    private String userName;
 
-    /**
-     * @return the token
-     */
-    public Object getToken() {
-        return token;
+    @Override
+    public String getUserName() {
+        return this.userName;
     }
 
-    public void setToken(Object token) {
-        this.token = token;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
+
 }

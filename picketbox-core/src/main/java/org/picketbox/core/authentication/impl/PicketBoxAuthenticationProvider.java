@@ -22,10 +22,8 @@
 
 package org.picketbox.core.authentication.impl;
 
-import java.util.List;
-
-import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
+import org.picketbox.core.config.PicketBoxConfiguration;
 
 /**
  * <p>
@@ -37,11 +35,8 @@ import org.picketbox.core.authentication.AuthenticationProvider;
  */
 public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
 
-    @Override
-    protected void doAddMechanisms(List<AuthenticationMechanism> mechanisms) {
-        mechanisms.add(new UserNamePasswordMechanism());
-        mechanisms.add(new DigestMechanism());
-        mechanisms.add(new CertificateMechanism());
+    public PicketBoxAuthenticationProvider(PicketBoxConfiguration configuration) {
+        super(configuration);
     }
 
 }
