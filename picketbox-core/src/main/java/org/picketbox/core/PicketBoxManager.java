@@ -64,4 +64,5 @@ public interface PicketBoxManager extends PicketBoxLifecycle {
      * @throws IllegalStateException
      */
     void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException;
+
 }

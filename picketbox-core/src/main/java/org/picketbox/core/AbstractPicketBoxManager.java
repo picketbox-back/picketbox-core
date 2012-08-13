@@ -175,7 +175,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         try {
             checkIfStarted();
 
-            if (this.authorizationManager == null || !subject.isAuthenticated()) {
+            if (this.authorizationManager == null || (subject == null || !subject.isAuthenticated())) {
                 return true;
             }
 
