@@ -25,7 +25,6 @@ package org.picketbox.core.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.picketbox.core.authentication.AuthenticationEventManager;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.impl.CertificateAuthenticationMechanism;
@@ -42,7 +41,6 @@ import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
  */
 public class AuthenticationConfigurationBuilder extends AbstractConfigurationBuilder<AuthenticationConfiguration> {
 
-    private EventManagerConfigurationBuilder eventManager;
     private List<AuthenticationMechanism> mechanisms;
     private List<AuthenticationManager> authManagers;
     private DataBaseAuthenticationConfigurationBuilder dataBaseAuthenticationManager;
@@ -50,7 +48,6 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
 
     public AuthenticationConfigurationBuilder(ConfigurationBuilder builder) {
         super(builder);
-        this.eventManager = new EventManagerConfigurationBuilder(this);
         this.mechanisms = new ArrayList<AuthenticationMechanism>();
         this.authManagers = new ArrayList<AuthenticationManager>();
     }
@@ -67,14 +64,14 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
 
     public DataBaseAuthenticationConfigurationBuilder dataBaseAuthManager() {
         if (this.dataBaseAuthenticationManager == null) {
-            this.dataBaseAuthenticationManager = new DataBaseAuthenticationConfigurationBuilder();
+            this.dataBaseAuthenticationManager = new DataBaseAuthenticationConfigurationBuilder(this);
         }
         return this.dataBaseAuthenticationManager;
     }
 
     public LDAPAuthenticationConfigurationBuilder ldapAuthManager() {
         if (this.ldapAuthenticationManager == null) {
-            this.ldapAuthenticationManager = new LDAPAuthenticationConfigurationBuilder();
+            this.ldapAuthenticationManager = new LDAPAuthenticationConfigurationBuilder(this);
         }
         return this.ldapAuthenticationManager;
     }
@@ -88,15 +85,6 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
 
         this.authManagers.add(new PropertiesFileBasedAuthenticationManager());
         return this;
-    }
-
-    public EventManagerConfigurationBuilder eventManager() {
-        return this.eventManager;
-    }
-
-    public EventManagerConfigurationBuilder eventManager(AuthenticationEventManager eventManager) {
-        this.eventManager.setEventManager(eventManager);
-        return this.eventManager;
     }
 
     @Override
@@ -135,7 +123,7 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
 
     @Override
     public AuthenticationConfiguration doBuild() {
-        return new AuthenticationConfiguration(this.mechanisms, this.authManagers, this.eventManager.build());
+        return new AuthenticationConfiguration(this.mechanisms, this.authManagers, this.builder.eventManager().build());
     }
 
 }

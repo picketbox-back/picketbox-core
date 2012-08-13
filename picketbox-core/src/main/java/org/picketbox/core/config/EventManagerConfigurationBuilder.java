@@ -38,7 +38,7 @@ public class EventManagerConfigurationBuilder extends AbstractConfigurationBuild
     private AuthenticationEventManager manager;
     private List<AuthenticationEventHandler> handlers;
 
-    public EventManagerConfigurationBuilder(AbstractConfigurationBuilder builder) {
+    public EventManagerConfigurationBuilder(ConfigurationBuilder builder) {
         super(builder);
         this.handlers = new ArrayList<AuthenticationEventHandler>();
     }
@@ -51,6 +51,11 @@ public class EventManagerConfigurationBuilder extends AbstractConfigurationBuild
         if (manager == null) {
             manager = new DefaultAuthenticationEventManager(this.handlers);
         }
+    }
+
+    public EventManagerConfigurationBuilder manager(AuthenticationEventManager eventManager) {
+        this.manager = eventManager;
+        return this;
     }
 
     public EventManagerConfigurationBuilder handler(AuthenticationEventHandler authenticationEventHandler) {

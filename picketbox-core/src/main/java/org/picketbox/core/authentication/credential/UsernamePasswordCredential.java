@@ -44,5 +44,4 @@ public class UsernamePasswordCredential extends AbstractCredential {
     public String getPassword() {
         return password;
     }
-
 }
