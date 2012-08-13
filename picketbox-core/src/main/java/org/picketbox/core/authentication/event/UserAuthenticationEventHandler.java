@@ -22,7 +22,6 @@
 
 package org.picketbox.core.authentication.event;
 
-import org.picketbox.core.authentication.AuthenticationEventHandler;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -30,6 +29,8 @@ import org.picketbox.core.authentication.AuthenticationEventHandler;
  */
 public interface UserAuthenticationEventHandler extends AuthenticationEventHandler {
 
-    void onSucessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
+    void onSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
+
+    void onUnSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
 
 }

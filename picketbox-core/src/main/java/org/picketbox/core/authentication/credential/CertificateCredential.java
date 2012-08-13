@@ -20,32 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.handlers;
+package org.picketbox.core.authentication.credential;
 
 import java.security.cert.X509Certificate;
 
-import javax.security.auth.callback.Callback;
+import org.picketbox.core.AbstractCredential;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class CertificateCallback implements Callback {
+public class CertificateCredential extends AbstractCredential {
 
     private X509Certificate[] certificates;
 
-    /**
-     * @return the certificates
-     */
-    public X509Certificate[] getCertificates() {
-        return certificates;
+    public CertificateCredential(X509Certificate[] certificates) {
+        this.certificates = certificates;
     }
 
-    /**
-     * @param certificates2 the certificates to set
-     */
-    public void setCertificates(X509Certificate[] certificates) {
-        this.certificates = certificates;
+    public X509Certificate[] getCertificates() {
+        return certificates;
     }
 
 }

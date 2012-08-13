@@ -20,35 +20,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
-
-import java.util.List;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
+package org.picketbox.core;
 
 /**
  * <p>
- * Base interface for {@link CallbackHandler} classes used to start the authentication process.
+ * This class represents a specific credential type. Eg.: username/password, digest, certificate, etc.
  * </p>
  * <p>
- * {@link AuthenticationCallbackHandler} classes are used to provide informations used during the authentication process. They
- * define what informations are required by a specific {@link AuthenticationClient} or {@link AuthenticationService} given a
- * {@link AuthenticationMechanism}.
- * </p>
+ * Each credential type is supported by some mechanism that knows how to get the necessary informations to proceed with the user
+ * authentication.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationCallbackHandler extends CallbackHandler {
+public interface Credential {
 
     /**
-     * <p>
-     * Returns a list of the expected {@link Callback} classes used by this handler.
-     * </p>
+     * <p>Returns the username.</p>
      *
      * @return
      */
-    List<Class<? extends Callback>> getSupportedCallbacks();
+    String getUserName();
+
 }

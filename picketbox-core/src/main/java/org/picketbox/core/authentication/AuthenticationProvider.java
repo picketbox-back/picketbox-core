@@ -63,8 +63,6 @@ public interface AuthenticationProvider {
      */
     AuthenticationMechanism getMechanism(String string);
 
-    void addMechanism(AuthenticationMechanism mechanism);
-
     void addAuthManager(AuthenticationManager manager);
 
     List<AuthenticationManager> getAuthenticationManagers();

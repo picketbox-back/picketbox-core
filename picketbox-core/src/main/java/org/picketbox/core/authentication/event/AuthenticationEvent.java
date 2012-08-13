@@ -20,14 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
+package org.picketbox.core.authentication.event;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationEventHandler {
+public interface AuthenticationEvent<HANDLER extends AuthenticationEventHandler> {
 
-    Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType();
+    void dispatch(HANDLER handler);
 
 }

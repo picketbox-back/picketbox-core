@@ -26,26 +26,19 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.callback.Callback;
-
-import org.picketbox.core.authentication.AuthenticationCallbackHandler;
+import org.picketbox.core.Credential;
 import org.picketbox.core.authentication.AuthenticationInfo;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationResult;
-import org.picketbox.core.authentication.DigestHolder;
-import org.picketbox.core.authentication.handlers.DigestAuthHandler;
-import org.picketbox.core.authentication.handlers.TokenCallback;
+import org.picketbox.core.authentication.credential.CertificateCredential;
+import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class DigestAuthenticationService extends AbstractAuthenticationService {
-
-    public DigestAuthenticationService(DigestMechanism digestMechanism) {
-        super(digestMechanism);
-    }
+public class CertificateAuthenticationMechanism extends AbstractAuthenticationMechanism {
 
     /*
      * (non-Javadoc)
@@ -56,8 +49,10 @@ public class DigestAuthenticationService extends AbstractAuthenticationService {
     public List<AuthenticationInfo> getAuthenticationInfo() {
         List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();
 
-        arrayList.add(new AuthenticationInfo("Digest authentication service.",
-                "A simple authentication service using a Digest token.", DigestAuthHandler.class));
+        arrayList.add(new AuthenticationInfo("Certificate authentication service.",
+                "A authentication service using certificates.", CertificateCredential.class));
+        arrayList.add(new AuthenticationInfo("User name and password.", "Where the password is the certificate's signature.",
+                UsernamePasswordCredential.class));
 
         return arrayList;
 
@@ -73,16 +68,19 @@ public class DigestAuthenticationService extends AbstractAuthenticationService {
      */
     @Override
     protected Principal doAuthenticate(AuthenticationManager authenticationManager,
-            AuthenticationCallbackHandler callbackHandler, AuthenticationResult result) throws AuthenticationException {
-        TokenCallback tokenCallback = new TokenCallback();
+            Credential credential, AuthenticationResult result) throws AuthenticationException {
+        if (credential instanceof UsernamePasswordCredential) {
+            UsernamePasswordCredential userCredential = (UsernamePasswordCredential) credential;
 
-        try {
-            callbackHandler.handle(new Callback[] { tokenCallback });
-        } catch (Exception e) {
-            throw new AuthenticationException(e);
+            return authenticationManager.authenticate(userCredential.getUserName(), userCredential.getPassword());
+        } else if (credential instanceof CertificateCredential) {
+            CertificateCredential userCredential = (CertificateCredential) credential;
+
+            return authenticationManager.authenticate(userCredential.getCertificates());
+        } else {
+            throw new UnsupportedOperationException("Credential " + credential.getClass() + " not supported by this mechanism.");
         }
 
-        return authenticationManager.authenticate((DigestHolder) tokenCallback.getToken());
     }
 
 }

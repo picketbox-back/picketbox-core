@@ -25,7 +25,9 @@ package org.picketbox.core.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.picketbox.core.authentication.AuthenticationEventHandler;
+import org.picketbox.core.authentication.AuthenticationEventManager;
+import org.picketbox.core.authentication.event.AuthenticationEventHandler;
+import org.picketbox.core.authentication.event.DefaultAuthenticationEventManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -33,6 +35,7 @@ import org.picketbox.core.authentication.AuthenticationEventHandler;
  */
 public class EventManagerConfigurationBuilder extends AbstractConfigurationBuilder<EventManagerConfiguration> {
 
+    private AuthenticationEventManager manager;
     private List<AuthenticationEventHandler> handlers;
 
     public EventManagerConfigurationBuilder(AbstractConfigurationBuilder builder) {
@@ -45,6 +48,9 @@ public class EventManagerConfigurationBuilder extends AbstractConfigurationBuild
      */
     @Override
     protected void setDefaults() {
+        if (manager == null) {
+            manager = new DefaultAuthenticationEventManager(this.handlers);
+        }
     }
 
     public EventManagerConfigurationBuilder handler(AuthenticationEventHandler authenticationEventHandler) {
@@ -57,7 +63,11 @@ public class EventManagerConfigurationBuilder extends AbstractConfigurationBuild
      */
     @Override
     protected EventManagerConfiguration doBuild() {
-        return new EventManagerConfiguration();
+        return new EventManagerConfiguration(this.manager);
+    }
+
+    public void setEventManager(AuthenticationEventManager eventManager) {
+        this.manager = eventManager;
     }
 
 }

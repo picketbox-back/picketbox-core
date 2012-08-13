@@ -20,33 +20,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.impl;
+package org.picketbox.core.config;
 
-import org.picketbox.core.authentication.AuthenticationClient;
-import org.picketbox.core.authentication.AuthenticationService;
+import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class CertificateMechanism extends AbstractAuthenticationMechanism {
+public class LDAPAuthenticationConfiguration {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getClient()
+    private BasicLDAPStoreConfig ldapStoreConfig = new BasicLDAPStoreConfig();
+
+    /**
+     * @return the ldapStoreConfig
      */
-    public AuthenticationClient getClient() {
-        throw new IllegalStateException("This mechanisms does not provide a client implementation.");
+    public BasicLDAPStoreConfig getLdapStoreConfig() {
+        return ldapStoreConfig;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.api.AuthenticationMechanism#getService()
+    /**
+     * @param ldapStoreConfig the ldapStoreConfig to set
      */
-    public AuthenticationService getService() {
-        return new CertificateAuthenticationService(this);
+    public void setLdapStoreConfig(BasicLDAPStoreConfig ldapStoreConfig) {
+        this.ldapStoreConfig = ldapStoreConfig;
     }
 
 }

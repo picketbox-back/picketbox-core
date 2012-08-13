@@ -94,6 +94,10 @@ public class LDAPAuthenticationManager extends AbstractAuthenticationManager {
             userDNString = getUserDN();
         }
 
+        if (userDNString == null && this.ldapStoreConfig != null) {
+            userDNString = this.ldapStoreConfig.getUserName();
+        }
+
         if (userDNString == null)
             throw PicketBoxMessages.MESSAGES.userDNStringMissing();
 

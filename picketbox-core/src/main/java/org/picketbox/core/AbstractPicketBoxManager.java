@@ -22,13 +22,12 @@
 
 package org.picketbox.core;
 
-import org.picketbox.core.authentication.AuthenticationCallbackHandler;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationResult;
-import org.picketbox.core.authentication.AuthenticationService;
 import org.picketbox.core.authentication.AuthenticationStatus;
+import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.EntitlementsManager;
 import org.picketbox.core.authorization.Resource;
@@ -38,7 +37,9 @@ import org.picketbox.core.identity.IdentityManager;
 import org.picketbox.core.session.PicketBoxSession;
 
 /**
- * <p>Base class for {@link PicketBoxManager} implementations.</p>
+ * <p>
+ * Base class for {@link PicketBoxManager} implementations.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -51,53 +52,47 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     private IdentityManager identityManager;
     private PicketBoxConfiguration configuration;
 
-    public AbstractPicketBoxManager() {
-
-    }
-
     public AbstractPicketBoxManager(PicketBoxConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.PicketBoxManager#logout(org.picketbox.core.PicketBoxSubject)
      */
     @Override
-    public void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException{
+    public void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException {
         if (authenticatedUser.isAuthenticated()) {
             authenticatedUser.getSession().expire();
+            authenticatedUser.setAuthenticated(false);
         } else {
             throw PicketBoxMessages.MESSAGES.invalidUserSession();
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.picketbox.core.PicketBoxManager#authenticate(org.picketbox.core.authentication.handlers.UsernamePasswordAuthHandler)
-     */
-    @Override
-    public PicketBoxSubject authenticate(AuthenticationCallbackHandler authenticationCallbackHandler)
-            throws AuthenticationException {
-        return authenticate(new PicketBoxSecurityContext(), authenticationCallbackHandler);
     }
 
     /**
      * @param authenticationCallbackHandler
      * @throws AuthenticationException
      */
-    public PicketBoxSubject authenticate(PicketBoxSecurityContext securityContext, AuthenticationCallbackHandler authenticationCallbackHandler)
-            throws AuthenticationException {
-        if (doPreAuthentication(securityContext, authenticationCallbackHandler)) {
+    public PicketBoxSubject authenticate(PicketBoxSubject subject) throws AuthenticationException {
+        Credential credential = subject.getCredential();
+
+        if (credential == null) {
+            throw PicketBoxMessages.MESSAGES.failedToValidateCredentials();
+        }
+
+        if (doPreAuthentication(subject)) {
             AuthenticationResult result = null;
 
             String[] mechanisms = this.authenticationProvider.getSupportedMechanisms();
 
             for (String mechanismName : mechanisms) {
                 AuthenticationMechanism mechanism = this.authenticationProvider.getMechanism(mechanismName);
-                AuthenticationService authenticationService = mechanism.getService();
 
-                if (authenticationService.supportsHandler(authenticationCallbackHandler.getClass())) {
+                if (mechanism.supports(credential)) {
                     try {
-                        result = authenticationService.authenticate(authenticationCallbackHandler);
+                        result = mechanism.authenticate(credential);
                     } catch (AuthenticationException e) {
                         throw PicketBoxMessages.MESSAGES.authenticationFailed(e);
                     }
@@ -105,25 +100,23 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             }
 
             if (result == null) {
-                throw new AuthenticationException("Authentication not supported. Using handler: " + authenticationCallbackHandler);
+                throw PicketBoxMessages.MESSAGES.failedToValidateCredentials();
             }
 
-            PicketBoxSubject resultingSubject = this.createSubject(securityContext);
+            subject.setAuthenticated(result.getStatus().equals(AuthenticationStatus.SUCCESS));
 
-            if (result.getStatus().equals(AuthenticationStatus.SUCCESS)) {
-                resultingSubject.setUser(result.getPrincipal());
+            if (subject.isAuthenticated()) {
+                subject.setUser(result.getPrincipal());
 
-                this.identityManager.getIdentity(resultingSubject);
+                this.identityManager.getIdentity(subject);
 
-                resultingSubject.setAuthenticated(true);
+                subject.setCredential(null);
 
-                createSession(securityContext, resultingSubject);
+                createSession(subject);
             }
-
-            return resultingSubject;
         }
 
-        return null;
+        return subject;
     }
 
     /**
@@ -131,25 +124,27 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      * @param authenticationCallbackHandler
      * @return
      */
-    protected boolean doPreAuthentication(PicketBoxSecurityContext securityContext,
-            AuthenticationCallbackHandler authenticationCallbackHandler) {
+    protected boolean doPreAuthentication(PicketBoxSubject subject) {
         return true;
     }
 
     /**
-     * <p>Creates a session for the authenticated {@link PicketBoxSubject}. The subject must be authenticated, its isAuthenticated() method should return true.</p>
+     * <p>
+     * Creates a session for the authenticated {@link PicketBoxSubject}. The subject must be authenticated, its
+     * isAuthenticated() method should return true.
+     * </p>
      *
      * @param securityContext the security context with environment specific information
      * @param authenticatedSubject the authenticated subject
      *
      * @throws IllegalArgumentException in the case the subject is not authenticated.
      */
-    private void createSession(PicketBoxSecurityContext securityContext, PicketBoxSubject authenticatedSubject) throws IllegalArgumentException {
+    private void createSession(PicketBoxSubject authenticatedSubject) throws IllegalArgumentException {
         if (!authenticatedSubject.isAuthenticated()) {
             throw new IllegalArgumentException("Subject is not authenticated. Session can not be created.");
         }
 
-        PicketBoxSession session = doCreateSession(securityContext, authenticatedSubject);
+        PicketBoxSession session = doCreateSession(authenticatedSubject);
 
         if (session != null) {
             authenticatedSubject.setSession(session);
@@ -157,18 +152,22 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     }
 
     /**
-     * <p>Subclasses should override this method to implement how {@link PicketBoxSession} are created.</p>
+     * <p>
+     * Subclasses should override this method to implement how {@link PicketBoxSession} are created.
+     * </p>
      *
      * @param securityContext the security context with environment specific information
      * @param authenticatedSubject the authenticated subject
      *
      * @return
      */
-    protected PicketBoxSession doCreateSession(PicketBoxSecurityContext securityContext, PicketBoxSubject resultingSubject) {
+    protected PicketBoxSession doCreateSession(PicketBoxSubject resultingSubject) {
         return new PicketBoxSession();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.PicketBoxManager#authorize(org.picketbox.core.PicketBoxSecurityContext)
      */
     @Override
@@ -176,7 +175,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         try {
             checkIfStarted();
 
-            if (this.authorizationManager == null || !subject.isAuthenticated()) {
+            if (this.authorizationManager == null || (subject == null || !subject.isAuthenticated())) {
                 return true;
             }
 
@@ -215,20 +214,6 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     }
 
     /**
-     * @return the authenticationProvider
-     */
-    public AuthenticationProvider getAuthenticationProvider() {
-        return this.authenticationProvider;
-    }
-
-    /**
-     * @param authenticationProvider the authenticationProvider to set
-     */
-    public void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
-        this.authenticationProvider = authenticationProvider;
-    }
-
-    /**
      * Get the {@link EntitlementsManager}
      *
      * @return
@@ -254,7 +239,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     @Override
     protected void doStart() {
         if (this.configuration != null) {
-            this.authenticationProvider = this.configuration.getAuthentication().getProvider();
+            this.authenticationProvider = new PicketBoxAuthenticationProvider(this.configuration);
 
             for (AuthenticationManager authManager : this.configuration.getAuthentication().getAuthManagers()) {
                 this.authenticationProvider.addAuthManager(authManager);

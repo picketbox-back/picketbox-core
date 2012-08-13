@@ -29,6 +29,7 @@ import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.event.DefaultAuthenticationEventManager;
+import org.picketbox.core.config.PicketBoxConfiguration;
 
 /**
  * <p>
@@ -40,23 +41,15 @@ import org.picketbox.core.authentication.event.DefaultAuthenticationEventManager
  */
 public abstract class AbstractAuthenticationProvider implements AuthenticationProvider {
 
-    private AuthenticationEventManager authenticationEventManager = new DefaultAuthenticationEventManager();
+    private AuthenticationEventManager authenticationEventManager;
     private final List<AuthenticationMechanism> mechanisms = new ArrayList<AuthenticationMechanism>();
     private final List<AuthenticationManager> authenticationManagers = new ArrayList<AuthenticationManager>();
 
-    public AbstractAuthenticationProvider() {
-        super();
-        doAddMechanisms(this.mechanisms);
+    public AbstractAuthenticationProvider(PicketBoxConfiguration configuration) {
+        this.authenticationManagers.addAll(configuration.getAuthentication().getAuthManagers());
+        this.mechanisms.addAll(configuration.getAuthentication().getMechanisms());
+        this.authenticationEventManager = configuration.getAuthentication().getEventManager().getAuthenticationEventManager();
     }
-
-    /**
-     * <p>
-     * Subclasses should override this method to provide the supported {@link AuthenticationMechanism}.
-     * </p>
-     *
-     * @param mechanisms
-     */
-    protected abstract void doAddMechanisms(List<AuthenticationMechanism> mechanisms);
 
     /*
      * (non-Javadoc)
@@ -97,7 +90,9 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
     public AuthenticationMechanism getMechanism(String mechanismName) {
         for (AuthenticationMechanism currentMechanism : this.mechanisms) {
 
-            currentMechanism.setAuthenticationProvider(this);
+            if (currentMechanism instanceof AbstractAuthenticationMechanism) {
+                ((AbstractAuthenticationMechanism) currentMechanism).setAuthenticationProvider(this);
+            }
 
             if (currentMechanism.getClass().getName().equals(mechanismName)) {
                 return currentMechanism;
@@ -105,23 +100,6 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         }
 
         return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.api.AuthenticationProvider#addMechanism(org.picketbox.core.authentication.api.
-     * AuthenticationMechanism)
-     */
-    @Override
-    public void addMechanism(AuthenticationMechanism mechanism) {
-        for (AuthenticationMechanism currentMech : this.mechanisms) {
-            if (currentMech.getClass().equals(mechanism.getClass())) {
-                throw new IllegalStateException("Mechanism " + mechanism + " already registered.");
-            }
-        }
-
-        this.mechanisms.add(mechanism);
     }
 
     /*

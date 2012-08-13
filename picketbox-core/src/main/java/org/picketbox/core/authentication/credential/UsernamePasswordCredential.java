@@ -20,14 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
+package org.picketbox.core.authentication.credential;
+
+import org.picketbox.core.AbstractCredential;
 
 /**
+ * <p>
+ * A {@link AuthenticationCallbackHandler} implementation for username/password authentication.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationEvent<HANDLER extends AuthenticationEventHandler> {
+public class UsernamePasswordCredential extends AbstractCredential {
 
-    void dispatch(HANDLER handler);
+    private String password;
+
+    public UsernamePasswordCredential(String userName, String password) {
+        super.setUserName(userName);
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
 }
