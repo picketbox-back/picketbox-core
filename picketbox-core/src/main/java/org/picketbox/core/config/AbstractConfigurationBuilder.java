@@ -22,6 +22,7 @@
 
 package org.picketbox.core.config;
 
+
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -59,6 +60,10 @@ public abstract class AbstractConfigurationBuilder<T> {
      */
     public IdentityManagerConfigurationBuilder identityManager() {
         return builder.identityManager();
+    }
+
+    public EventManagerConfigurationBuilder eventManager() {
+        return this.builder.eventManager();
     }
 
     /**

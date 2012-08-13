@@ -32,6 +32,10 @@ public class LDAPAuthenticationConfigurationBuilder extends AbstractConfiguratio
 
     private BasicLDAPStoreConfig configuration = new BasicLDAPStoreConfig();
 
+    public LDAPAuthenticationConfigurationBuilder(AuthenticationConfigurationBuilder authenticationConfigurationBuilder) {
+        super(authenticationConfigurationBuilder);
+    }
+
     public LDAPAuthenticationConfigurationBuilder storeURL(String storeUrl) {
         this.configuration.setStoreURL(storeUrl);
         return this;
