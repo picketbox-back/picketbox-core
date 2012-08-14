@@ -20,16 +20,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
+package org.picketbox.core.config;
 
-import org.picketbox.core.authentication.event.AuthenticationEvent;
-import org.picketbox.core.authentication.event.AuthenticationEventHandler;
+import org.picketbox.core.session.SessionManager;
+import org.picketbox.core.session.SessionStore;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationEventManager {
+public class SessionManagerConfig {
 
-    void raiseEvent(AuthenticationEvent<? extends AuthenticationEventHandler> event);
+    private SessionManager manager;
+    private SessionStore store;
+
+    public SessionManagerConfig(SessionManager manager, SessionStore store) {
+        this.manager = manager;
+        this.store = store;
+    }
+
+    public SessionManager getManager() {
+        return manager;
+    }
+
+    public SessionStore getStore() {
+        return this.store;
+    }
+
 }

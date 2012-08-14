@@ -21,11 +21,11 @@
  */
 package org.picketbox.core.session;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -40,8 +40,8 @@ import org.picketbox.core.exceptions.PicketBoxSessionException;
  */
 public class PicketBoxSession {
     protected ConcurrentMap<String, Object> attributes = new ConcurrentHashMap<String, Object>();
-    // Level 4 UUID based id
-    protected String id = UUID.randomUUID().toString();
+
+    protected SessionId<? extends Serializable> id;
 
     protected boolean invalid = false;
 
@@ -50,7 +50,8 @@ public class PicketBoxSession {
     /**
      * Usable by {@link PicketBoxSessionManager#create()}
      */
-    public PicketBoxSession() {
+    public PicketBoxSession(SessionId<? extends Serializable> id) {
+        this.id = id;
     }
 
     /**
@@ -67,7 +68,7 @@ public class PicketBoxSession {
      *
      * @return
      */
-    public String getId() {
+    public SessionId<? extends Serializable> getId() {
         return id;
     }
 

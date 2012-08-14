@@ -21,13 +21,6 @@
  */
 package org.picketbox.test.authentication;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
@@ -35,12 +28,11 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.authentication.manager.LDAPAuthenticationManager;
 import org.picketbox.core.config.ConfigurationBuilder;
-import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
 
 /**
  * Unit test the {@link LDAPAuthenticationManager}
- * 
+ *
  * @author anil saldhana
  * @since Jul 16, 2012
  */
@@ -61,17 +53,17 @@ public class LDAPAuthenticationManagerUnitTestCase extends AbstractLDAPTest {
                 .storeURL("ldap://localhost:10389/");
 
         DefaultPicketBoxManager manager = new DefaultPicketBoxManager(builder.build());
-        
+
         manager.start();
-        
+
         PicketBoxSubject subject = new PicketBoxSubject();
-        
+
         subject.setCredential(new UsernamePasswordCredential("jduke", "theduke"));
-        
+
         PicketBoxSubject authenticatedSubject = manager.authenticate(subject);
-        
+
         System.out.println(authenticatedSubject);
-        
+
 //        LDAPAuthenticationManager auth = new LDAPAuthenticationManager();
 //
 //        Map<String, Object> options = new HashMap<String, Object>();

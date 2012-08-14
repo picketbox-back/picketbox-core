@@ -34,7 +34,9 @@ import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
+import org.picketbox.core.session.SessionManager;
 
 /**
  * <p>
@@ -48,6 +50,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
 
     private AuthenticationProvider authenticationProvider;
     private AuthorizationManager authorizationManager;
+    private SessionManager sessionManager;
     private EntitlementsManager entitlementsManager;
     private IdentityManager identityManager;
     private PicketBoxConfiguration configuration;
@@ -64,7 +67,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     @Override
     public void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException {
         if (authenticatedUser.isAuthenticated()) {
-            authenticatedUser.getSession().expire();
+            authenticatedUser.getSession().invalidate();
             authenticatedUser.setAuthenticated(false);
         } else {
             throw PicketBoxMessages.MESSAGES.invalidUserSession();
@@ -76,6 +79,20 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      * @throws AuthenticationException
      */
     public PicketBoxSubject authenticate(PicketBoxSubject subject) throws AuthenticationException {
+        checkIfStarted();
+
+        if (this.sessionManager != null) {
+            if (subject.isAuthenticated()) {
+                PicketBoxSession session = this.sessionManager.retrieve(subject.getSession().getId());
+
+                if (session != null && session.isValid()) {
+                    return subject;
+                } else {
+                    throw new IllegalArgumentException("User is authenticated, but no associated session was found or it was invalid. Session: " + session);
+                }
+            }
+        }
+
         Credential credential = subject.getCredential();
 
         if (credential == null) {
@@ -144,25 +161,13 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             throw new IllegalArgumentException("Subject is not authenticated. Session can not be created.");
         }
 
-        PicketBoxSession session = doCreateSession(authenticatedSubject);
-
-        if (session != null) {
-            authenticatedSubject.setSession(session);
+        if (this.sessionManager == null) {
+            return;
         }
-    }
 
-    /**
-     * <p>
-     * Subclasses should override this method to implement how {@link PicketBoxSession} are created.
-     * </p>
-     *
-     * @param securityContext the security context with environment specific information
-     * @param authenticatedSubject the authenticated subject
-     *
-     * @return
-     */
-    protected PicketBoxSession doCreateSession(PicketBoxSubject resultingSubject) {
-        return new PicketBoxSession();
+        PicketBoxSession session = this.sessionManager.create(authenticatedSubject);
+
+        authenticatedSubject.setSession(session);
     }
 
     /*
@@ -231,6 +236,10 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         this.entitlementsManager = entitlementsManager;
     }
 
+    protected void setSessionManager(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -250,6 +259,12 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             }
 
             this.identityManager = this.configuration.getIdentityManager().getManagers().get(0);
+
+            this.sessionManager = this.configuration.getSessionManager().getManager();
+
+            if (this.sessionManager == null && this.configuration.getSessionManager().getStore() != null) {
+                this.sessionManager = new DefaultSessionManager(this.configuration);
+            }
 
             doConfigure();
         }

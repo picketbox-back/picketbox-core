@@ -20,16 +20,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
+package org.picketbox.core.config;
 
-import org.picketbox.core.authentication.event.AuthenticationEvent;
-import org.picketbox.core.authentication.event.AuthenticationEventHandler;
+import org.picketbox.core.session.InMemorySessionStore;
+import org.picketbox.core.session.SessionManager;
+import org.picketbox.core.session.SessionStore;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationEventManager {
+public class SessionManagerConfigurationBuilder extends AbstractConfigurationBuilder<SessionManagerConfig> {
 
-    void raiseEvent(AuthenticationEvent<? extends AuthenticationEventHandler> event);
+    private SessionManager manager;
+    private SessionStore store;
+
+    public SessionManagerConfigurationBuilder(ConfigurationBuilder configurationBuilder) {
+        super(configurationBuilder);
+    }
+
+    public SessionManagerConfigurationBuilder inMemorySessionStore() {
+        if (this.store == null) {
+            this.store = new InMemorySessionStore();
+        }
+
+        return this;
+    }
+
+    @Override
+    protected void setDefaults() {
+    }
+
+    @Override
+    protected SessionManagerConfig doBuild() {
+        return new SessionManagerConfig(this.manager, this.store);
+    }
+
 }
