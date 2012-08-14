@@ -67,7 +67,9 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     @Override
     public void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException {
         if (authenticatedUser.isAuthenticated()) {
-            this.sessionManager.remove(authenticatedUser.getSession());
+            if (this.sessionManager != null) {
+                this.sessionManager.remove(authenticatedUser.getSession());
+            }
             authenticatedUser.setAuthenticated(false);
         } else {
             throw PicketBoxMessages.MESSAGES.invalidUserSession();
