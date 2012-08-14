@@ -48,12 +48,12 @@ import org.picketbox.core.session.SessionManager;
  */
 public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycle implements PicketBoxManager {
 
-    private AuthenticationProvider authenticationProvider;
-    private AuthorizationManager authorizationManager;
-    private SessionManager sessionManager;
-    private EntitlementsManager entitlementsManager;
-    private IdentityManager identityManager;
-    private PicketBoxConfiguration configuration;
+    protected AuthenticationProvider authenticationProvider;
+    protected AuthorizationManager authorizationManager;
+    protected SessionManager sessionManager;
+    protected EntitlementsManager entitlementsManager;
+    protected IdentityManager identityManager;
+    protected PicketBoxConfiguration configuration;
 
     public AbstractPicketBoxManager(PicketBoxConfiguration configuration) {
         this.configuration = configuration;
@@ -67,7 +67,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     @Override
     public void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException {
         if (authenticatedUser.isAuthenticated()) {
-            authenticatedUser.getSession().invalidate();
+            this.sessionManager.remove(authenticatedUser.getSession());
             authenticatedUser.setAuthenticated(false);
         } else {
             throw PicketBoxMessages.MESSAGES.invalidUserSession();
@@ -188,56 +188,6 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         } catch (Exception e) {
             throw PicketBoxMessages.MESSAGES.authorizationFailed(e);
         }
-    }
-
-    /**
-     * @return the authorizationManager
-     */
-    public AuthorizationManager getAuthorizationManager() {
-        return authorizationManager;
-    }
-
-    /**
-     * @param authorizationManager the authorizationManager to set
-     */
-    public void setAuthorizationManager(AuthorizationManager authorizationManager) {
-        this.authorizationManager = authorizationManager;
-    }
-
-    /**
-     * @return the identityManager
-     */
-    public IdentityManager getIdentityManager() {
-        return identityManager;
-    }
-
-    /**
-     * @param identityManager the identityManager to set
-     */
-    public void setIdentityManager(IdentityManager identityManager) {
-        this.identityManager = identityManager;
-    }
-
-    /**
-     * Get the {@link EntitlementsManager}
-     *
-     * @return
-     */
-    public EntitlementsManager getEntitlementsManager() {
-        return entitlementsManager;
-    }
-
-    /**
-     * Set the {@link EntitlementsManager}
-     *
-     * @param entitlementsManager
-     */
-    public void setEntitlementsManager(EntitlementsManager entitlementsManager) {
-        this.entitlementsManager = entitlementsManager;
-    }
-
-    protected void setSessionManager(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
     }
 
     /*

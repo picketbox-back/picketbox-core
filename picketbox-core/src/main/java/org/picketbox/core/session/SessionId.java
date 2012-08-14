@@ -25,11 +25,18 @@ package org.picketbox.core.session;
 import java.io.Serializable;
 
 /**
+ * <p>This interfaces represents a identifier for {@link PicketBoxSession} instances.</p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public interface SessionId<ID extends Serializable> extends Serializable {
 
+    /**
+     * <p>Returns the session identifier.</p>
+     *
+     * @return
+     */
     ID getId();
 
 }

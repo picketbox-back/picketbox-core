@@ -36,4 +36,6 @@ public interface SessionManager {
 
     PicketBoxSession retrieve(SessionId<? extends Serializable> id);
 
+    void remove(PicketBoxSession session);
+
 }

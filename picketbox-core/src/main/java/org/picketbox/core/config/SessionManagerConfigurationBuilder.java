@@ -56,4 +56,8 @@ public class SessionManagerConfigurationBuilder extends AbstractConfigurationBui
         return new SessionManagerConfig(this.manager, this.store);
     }
 
+    public void store(SessionStore store) {
+        this.store = store;
+    }
+
 }

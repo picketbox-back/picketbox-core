@@ -38,14 +38,17 @@ import org.picketbox.core.exceptions.PicketBoxSessionException;
  * @author anil saldhana
  * @since Jul 16, 2012
  */
-public class PicketBoxSession {
+public class PicketBoxSession implements Serializable {
+
+    private static final long serialVersionUID = 2149908831443524877L;
+
     protected ConcurrentMap<String, Object> attributes = new ConcurrentHashMap<String, Object>();
 
     protected SessionId<? extends Serializable> id;
 
     protected boolean invalid = false;
 
-    protected List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
+    protected transient List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
 
     /**
      * Usable by {@link PicketBoxSessionManager#create()}

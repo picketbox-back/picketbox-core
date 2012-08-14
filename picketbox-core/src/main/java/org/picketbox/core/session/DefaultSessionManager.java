@@ -78,6 +78,15 @@ public class DefaultSessionManager implements SessionManager {
         return this.sessionStore.load(id);
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.session.SessionManager#remove(org.picketbox.core.session.PicketBoxSession)
+     */
+    @Override
+    public void remove(PicketBoxSession session) {
+        this.sessionStore.remove(session.getId());
+        session.invalidate();
+    }
+
     protected PicketBoxSession doCreateSession(PicketBoxSubject authenticatedSubject) {
         return new PicketBoxSession(new DefaultSessionKey());
     }
