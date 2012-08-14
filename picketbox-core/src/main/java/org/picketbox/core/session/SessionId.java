@@ -20,16 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
+package org.picketbox.core.session;
 
-import org.picketbox.core.authentication.event.AuthenticationEvent;
-import org.picketbox.core.authentication.event.AuthenticationEventHandler;
+import java.io.Serializable;
 
 /**
+ * <p>This interfaces represents a identifier for {@link PicketBoxSession} instances.</p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationEventManager {
+public interface SessionId<ID extends Serializable> extends Serializable {
 
-    void raiseEvent(AuthenticationEvent<? extends AuthenticationEventHandler> event);
+    /**
+     * <p>Returns the session identifier.</p>
+     *
+     * @return
+     */
+    ID getId();
+
 }

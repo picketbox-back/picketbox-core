@@ -29,12 +29,12 @@ package org.picketbox.core.config;
  */
 public abstract class AbstractConfigurationBuilder<T> {
 
-    protected AbstractConfigurationBuilder builder;
+    protected AbstractConfigurationBuilder<?> builder;
 
     public AbstractConfigurationBuilder() {
     }
 
-    protected AbstractConfigurationBuilder(AbstractConfigurationBuilder builder) {
+    protected AbstractConfigurationBuilder(AbstractConfigurationBuilder<?> builder) {
         this.builder = builder;
     }
 
@@ -65,6 +65,11 @@ public abstract class AbstractConfigurationBuilder<T> {
     public EventManagerConfigurationBuilder eventManager() {
         return this.builder.eventManager();
     }
+
+    public SessionManagerConfigurationBuilder sessionManager() {
+        return this.builder.sessionManager();
+    }
+
 
     /**
      * <p>Subclasses should override to provide default values for missing configurations.</p>
