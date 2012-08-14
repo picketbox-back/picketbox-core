@@ -20,16 +20,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
+package org.picketbox.core.session;
 
-import org.picketbox.core.authentication.event.AuthenticationEvent;
-import org.picketbox.core.authentication.event.AuthenticationEventHandler;
+import java.util.UUID;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationEventManager {
+public class DefaultSessionKey implements SessionId<String> {
 
-    void raiseEvent(AuthenticationEvent<? extends AuthenticationEventHandler> event);
+    private static final long serialVersionUID = -1256668631793102510L;
+
+    private String id = UUID.randomUUID().toString();
+
+    public DefaultSessionKey() {
+
+    }
+
+    public DefaultSessionKey(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
 }

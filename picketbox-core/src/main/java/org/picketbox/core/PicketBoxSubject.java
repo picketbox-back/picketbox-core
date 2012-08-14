@@ -159,7 +159,7 @@ public class PicketBoxSubject implements Serializable {
         return authenticated;
     }
 
-    void setSession(PicketBoxSession session) {
+    public void setSession(PicketBoxSession session) {
         this.session = session;
     }
 

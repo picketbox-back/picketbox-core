@@ -31,12 +31,14 @@ public class PicketBoxConfiguration {
     private AuthenticationConfiguration authentication;
     private AuthorizationConfig authorization;
     private IdentityManagerConfig identityManager;
+    private SessionManagerConfig sessionManager;
 
     public PicketBoxConfiguration(AuthenticationConfiguration authentication, AuthorizationConfig authorization,
-            IdentityManagerConfig identityManager) {
+            IdentityManagerConfig identityManager, SessionManagerConfig sessionManager) {
         this.authentication = authentication;
         this.authorization = authorization;
         this.identityManager = identityManager;
+        this.sessionManager = sessionManager;
     }
 
     /**
@@ -47,24 +49,10 @@ public class PicketBoxConfiguration {
     }
 
     /**
-     * @param authentication the authentication to set
-     */
-    public void setAuthentication(AuthenticationConfiguration authentication) {
-        this.authentication = authentication;
-    }
-
-    /**
      * @return the authorization
      */
     public AuthorizationConfig getAuthorization() {
         return authorization;
-    }
-
-    /**
-     * @param authorization the authorization to set
-     */
-    public void setAuthorization(AuthorizationConfig authorization) {
-        this.authorization = authorization;
     }
 
     /**
@@ -74,11 +62,8 @@ public class PicketBoxConfiguration {
         return identityManager;
     }
 
-    /**
-     * @param identityManager the identityManager to set
-     */
-    public void setIdentityManager(IdentityManagerConfig identityManager) {
-        this.identityManager = identityManager;
+    public SessionManagerConfig getSessionManager() {
+        return this.sessionManager;
     }
 
 }

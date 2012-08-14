@@ -51,9 +51,9 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
  * <p>
  * Tests the PicketBox configuration API.
  * </p>
- * 
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- * 
+ *
  */
 public class PicketBoxConfigurationTestCase {
 
@@ -98,7 +98,7 @@ public class PicketBoxConfigurationTestCase {
      * <p>
      * Tests a simple configuration using only the default values.
      * </p>
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -125,7 +125,7 @@ public class PicketBoxConfigurationTestCase {
      * <p>
      * Tests a simple configuration using only the default values.
      * </p>
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -167,7 +167,7 @@ public class PicketBoxConfigurationTestCase {
      * <p>
      * Tests a simple configuration using only the default values.
      * </p>
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -194,12 +194,12 @@ public class PicketBoxConfigurationTestCase {
         Assert.assertNotNull(subject);
         Assert.assertTrue(subject.isAuthenticated());
     }
-    
+
     @Test
     public void testEventHandlersConfiguration() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
         final StringBuffer eventStatus = new StringBuffer();
-        
+
         builder.authentication().eventManager().handler(new UserAuthenticationEventHandler() {
 
             @Override
@@ -218,9 +218,9 @@ public class PicketBoxConfigurationTestCase {
                 eventStatus.delete(0, eventStatus.length());
                 eventStatus.append("FAILED");
             }
-            
+
         });
-        
+
         PicketBoxConfiguration build = builder.build();
 
         DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);

@@ -28,7 +28,6 @@ import org.picketbox.core.authentication.AuthenticationEventManager;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
-import org.picketbox.core.authentication.event.DefaultAuthenticationEventManager;
 import org.picketbox.core.config.PicketBoxConfiguration;
 
 /**

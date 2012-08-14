@@ -21,11 +21,11 @@
  */
 package org.picketbox.core.session;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -38,19 +38,23 @@ import org.picketbox.core.exceptions.PicketBoxSessionException;
  * @author anil saldhana
  * @since Jul 16, 2012
  */
-public class PicketBoxSession {
+public class PicketBoxSession implements Serializable {
+
+    private static final long serialVersionUID = 2149908831443524877L;
+
     protected ConcurrentMap<String, Object> attributes = new ConcurrentHashMap<String, Object>();
-    // Level 4 UUID based id
-    protected String id = UUID.randomUUID().toString();
+
+    protected SessionId<? extends Serializable> id;
 
     protected boolean invalid = false;
 
-    protected List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
+    protected transient List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
 
     /**
      * Usable by {@link PicketBoxSessionManager#create()}
      */
-    public PicketBoxSession() {
+    public PicketBoxSession(SessionId<? extends Serializable> id) {
+        this.id = id;
     }
 
     /**
@@ -67,7 +71,7 @@ public class PicketBoxSession {
      *
      * @return
      */
-    public String getId() {
+    public SessionId<? extends Serializable> getId() {
         return id;
     }
 

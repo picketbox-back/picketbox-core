@@ -67,7 +67,7 @@ public class PicketBoxSessionManager {
      * @return
      */
     public static PicketBoxSession create() {
-        PicketBoxSession session = new PicketBoxSession();
+        PicketBoxSession session = new PicketBoxSession(new DefaultSessionKey());
         setTimer(session);
         return session;
     }
@@ -78,7 +78,7 @@ public class PicketBoxSessionManager {
      * @return
      */
     public static PicketBoxSession create(PicketBoxSessionListener listener) {
-        PicketBoxSession session = new PicketBoxSession();
+        PicketBoxSession session = new PicketBoxSession(new DefaultSessionKey());
         setTimer(session);
         session.addListener(listener);
         listener.onCreate(session);

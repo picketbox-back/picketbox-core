@@ -86,11 +86,11 @@ public class LDAPBasedSecurityWorkflowTestCase extends AbstractLDAPTest {
         im.setLdapSearchConfig(searchConfig);
 
         PicketBoxSubject subject = new PicketBoxSubject();
-        
+
         subject.setUser(new PicketBoxPrincipal("jduke"));
 
         subject = im.getIdentity(subject);
-        
+
         assertNotNull(subject);
         List<String> roleNames = subject.getRoleNames();
         assertTrue(roleNames != null && roleNames.size() > 0);
