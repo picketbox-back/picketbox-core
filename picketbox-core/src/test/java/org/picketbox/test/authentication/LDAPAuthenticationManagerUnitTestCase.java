@@ -64,23 +64,23 @@ public class LDAPAuthenticationManagerUnitTestCase extends AbstractLDAPTest {
 
         System.out.println(authenticatedSubject);
 
-//        LDAPAuthenticationManager auth = new LDAPAuthenticationManager();
-//
-//        Map<String, Object> options = new HashMap<String, Object>();
-//
-//        options.put("userDN", "uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
-//
-//        auth.setOptions(options);
-//
-//        BasicLDAPStoreConfig config = new BasicLDAPStoreConfig();
-//        config.setUserName("uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
-//        config.setUserPassword("WILL_BE_REPLACED");
-//        config.setStoreURL("ldap://localhost:10389/");
-//
-//        auth.setLdapStoreConfig(config);
-//        Principal principal = auth.authenticate("jduke", "theduke");
-//
-//        assertNotNull(principal);
-//        assertEquals("jduke", principal.getName());
+        // LDAPAuthenticationManager auth = new LDAPAuthenticationManager();
+        //
+        // Map<String, Object> options = new HashMap<String, Object>();
+        //
+        // options.put("userDN", "uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
+        //
+        // auth.setOptions(options);
+        //
+        // BasicLDAPStoreConfig config = new BasicLDAPStoreConfig();
+        // config.setUserName("uid=CHANGE_USER,ou=People,dc=jboss,dc=org");
+        // config.setUserPassword("WILL_BE_REPLACED");
+        // config.setStoreURL("ldap://localhost:10389/");
+        //
+        // auth.setLdapStoreConfig(config);
+        // Principal principal = auth.authenticate("jduke", "theduke");
+        //
+        // assertNotNull(principal);
+        // assertEquals("jduke", principal.getName());
     }
 }

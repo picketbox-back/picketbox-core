@@ -30,8 +30,9 @@ import java.util.Map;
 import org.picketbox.core.authentication.AuthenticationEventManager;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * Default Implementation of the {@link AuthenticationEventManager}
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public class DefaultAuthenticationEventManager implements AuthenticationEventManager {
 
@@ -72,5 +73,4 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
 
         handlers.add(handler);
     }
-
 }

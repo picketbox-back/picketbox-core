@@ -34,7 +34,9 @@ public class InMemorySessionStore implements SessionStore {
 
     private Map<Serializable, PicketBoxSession> sessions = new HashMap<Serializable, PicketBoxSession>();
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionStore#load(org.picketbox.core.session.SessionId)
      */
     @Override
@@ -42,7 +44,9 @@ public class InMemorySessionStore implements SessionStore {
         return this.sessions.get(key.getId());
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionStore#store(org.picketbox.core.session.PicketBoxSession)
      */
     @Override
@@ -50,7 +54,9 @@ public class InMemorySessionStore implements SessionStore {
         this.sessions.put(session.getId().getId(), session);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionStore#remove(org.picketbox.core.session.SessionId)
      */
     @Override

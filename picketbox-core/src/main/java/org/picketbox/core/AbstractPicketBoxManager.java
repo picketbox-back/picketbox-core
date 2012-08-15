@@ -90,7 +90,8 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                 if (session != null && session.isValid()) {
                     return subject;
                 } else {
-                    throw new IllegalArgumentException("User is authenticated, but no associated session was found or it was invalid. Session: " + session);
+                    throw new IllegalArgumentException(
+                            "User is authenticated, but no associated session was found or it was invalid. Session: " + session);
                 }
             }
         }

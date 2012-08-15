@@ -80,7 +80,9 @@ public class LDAPBasedIdentityManager implements IdentityManager {
         this.ldapSearchConfig = ldapSearchConfig;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.identity.IdentityManager#getIdentity(org.picketbox.core.PicketBoxSubject)
      */
     @Override

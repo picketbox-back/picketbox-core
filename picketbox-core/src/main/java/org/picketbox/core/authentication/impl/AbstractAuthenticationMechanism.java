@@ -88,8 +88,8 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
         return result;
     }
 
-    protected AuthenticationResult performAuthentication(AuthenticationResult result,
-            Credential credential) throws AuthenticationException {
+    protected AuthenticationResult performAuthentication(AuthenticationResult result, Credential credential)
+            throws AuthenticationException {
         Principal principal = null;
 
         for (AuthenticationManager authenticationManager : this.authenticationProvider.getAuthenticationManagers()) {
@@ -170,5 +170,4 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
     protected void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
     }
-
 }

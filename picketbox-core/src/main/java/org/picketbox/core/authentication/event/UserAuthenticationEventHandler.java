@@ -22,15 +22,24 @@
 
 package org.picketbox.core.authentication.event;
 
-
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * An Event Handler for the User Authentication
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public interface UserAuthenticationEventHandler extends AuthenticationEventHandler {
 
-    void onSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
+    /**
+     * Successful Authentication
+     *
+     * @param userAuthenticatedEvent
+     */
+    void onSuccessfulAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
 
-    void onUnSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
-
+    /**
+     * Unsuccessful Authentication
+     *
+     * @param userAuthenticatedEvent
+     */
+    void onUnSuccessfulAuthentication(UserAuthenticatedEvent userAuthenticatedEvent);
 }
