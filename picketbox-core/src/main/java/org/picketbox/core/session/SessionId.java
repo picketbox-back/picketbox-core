@@ -42,5 +42,4 @@ public interface SessionId<ID extends Serializable> extends Serializable {
      * @return
      */
     ID getId();
-
 }

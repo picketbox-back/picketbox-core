@@ -28,13 +28,19 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.PicketBoxConfiguration;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * Default implementation of the {@link SessionManager}
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public class DefaultSessionManager implements SessionManager {
 
     private SessionStore sessionStore;
 
+    /**
+     * Construct the session manager
+     *
+     * @param configuration PicketBox Configuration
+     */
     public DefaultSessionManager(PicketBoxConfiguration configuration) {
         this.sessionStore = configuration.getSessionManager().getStore();
 
@@ -93,8 +99,18 @@ public class DefaultSessionManager implements SessionManager {
         session.invalidate();
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.session.SessionManager#remove(org.picketbox.core.session.SessionId)
+     */
+    @Override
+    public void remove(SessionId<? extends Serializable> id) {
+        PicketBoxSession session = retrieve(id);
+        remove(session);
+    }
+
     protected PicketBoxSession doCreateSession(PicketBoxSubject authenticatedSubject) {
         return new PicketBoxSession(new DefaultSessionKey());
     }
-
 }

@@ -27,15 +27,39 @@ import java.io.Serializable;
 import org.picketbox.core.PicketBoxSubject;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * Interface to manage sessions
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * @author Anil Saldhana
  */
 public interface SessionManager {
-
+    /**
+     * Construct a session
+     *
+     * @param authenticatedSubject
+     * @return
+     */
     PicketBoxSession create(PicketBoxSubject authenticatedSubject);
 
+    /**
+     * Retrieve a session given the ID
+     *
+     * @param id
+     * @return
+     */
     PicketBoxSession retrieve(SessionId<? extends Serializable> id);
 
+    /**
+     * Remove the session from the managed sessions
+     *
+     * @param session
+     */
     void remove(PicketBoxSession session);
 
+    /**
+     * Remove a session given the ID
+     *
+     * @param id
+     */
+    void remove(SessionId<? extends Serializable> id);
 }
