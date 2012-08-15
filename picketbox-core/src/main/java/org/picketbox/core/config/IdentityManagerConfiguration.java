@@ -24,21 +24,21 @@ package org.picketbox.core.config;
 
 import java.util.List;
 
-import org.picketbox.core.authorization.AuthorizationManager;
+import org.picketbox.core.identity.IdentityManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class AuthorizationConfig {
+public class IdentityManagerConfiguration {
 
-    private List<AuthorizationManager> managers;
+    private List<IdentityManager> managers;
 
-    public AuthorizationConfig(List<AuthorizationManager> managers) {
+    public IdentityManagerConfiguration(List<IdentityManager> managers) {
         this.managers = managers;
     }
 
-    public List<AuthorizationManager> getManagers() {
+    public List<IdentityManager> getManagers() {
         return this.managers;
     }
 
