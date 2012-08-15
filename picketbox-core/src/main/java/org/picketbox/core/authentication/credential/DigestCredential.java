@@ -26,6 +26,8 @@ import org.picketbox.core.AbstractCredential;
 import org.picketbox.core.authentication.DigestHolder;
 
 /**
+ * <p>Credential for HTTP Digest Authentication.</p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */

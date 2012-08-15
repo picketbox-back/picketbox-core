@@ -26,10 +26,19 @@ import org.picketbox.core.authentication.event.AuthenticationEvent;
 import org.picketbox.core.authentication.event.AuthenticationEventHandler;
 
 /**
+ * <p>
+ * Authentication event managers are responsible for handle specific authentication events during the authentication.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public interface AuthenticationEventManager {
 
+    /**
+     * <p>Raises an event.</p>
+     *
+     * @param event
+     */
     void raiseEvent(AuthenticationEvent<? extends AuthenticationEventHandler> event);
 }
