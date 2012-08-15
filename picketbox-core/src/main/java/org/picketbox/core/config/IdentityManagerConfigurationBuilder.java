@@ -32,7 +32,7 @@ import org.picketbox.core.identity.IdentityManager;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBuilder<IdentityManagerConfig> {
+public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBuilder<IdentityManagerConfiguration> {
 
     private List<IdentityManager> managers;
 
@@ -57,8 +57,8 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
     }
 
     @Override
-    public IdentityManagerConfig doBuild() {
-        return new IdentityManagerConfig(this.managers);
+    public IdentityManagerConfiguration doBuild() {
+        return new IdentityManagerConfiguration(this.managers);
     }
 
 }

@@ -27,8 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * A Session Store that resides in the memory
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public class InMemorySessionStore implements SessionStore {
 
