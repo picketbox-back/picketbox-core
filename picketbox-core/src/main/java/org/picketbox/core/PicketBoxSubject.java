@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.security.auth.Subject;
 
 import org.picketbox.core.session.PicketBoxSession;
+import org.picketbox.core.session.SessionId;
 
 /**
  * An Application View of the authenticated/authorized Subject
@@ -47,15 +48,23 @@ public class PicketBoxSubject implements Serializable {
     protected Principal user;
     protected List<String> roleNames = new ArrayList<String>();
     protected Map<String, Object> attributes = new HashMap<String, Object>();
-    protected Map<String, Object> contextData = new HashMap<String, Object>();
+    protected transient Map<String, Object> contextData = new HashMap<String, Object>();
 
     private boolean authenticated;
 
-    private PicketBoxSession session;
+    private transient PicketBoxSession session;
 
-    private Credential credential;
+    private transient Credential credential;
 
     // TODO: how to deal with groups/nested groups etc
+
+    public PicketBoxSubject() {
+
+    }
+
+    public PicketBoxSubject(SessionId<? extends Serializable> sessionId) {
+        this.session = new PicketBoxSession(sessionId);
+    }
 
     /**
      * get the user
@@ -173,5 +182,13 @@ public class PicketBoxSubject implements Serializable {
 
     public void setCredential(Credential credential) {
         this.credential = credential;
+    }
+
+    public void invalidate() {
+        this.authenticated = false;
+        this.credential = null;
+        this.contextData.clear();
+        this.roleNames.clear();
+        this.user = null;
     }
 }
