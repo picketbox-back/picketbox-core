@@ -24,11 +24,13 @@ package org.picketbox.core.session;
 
 import java.io.Serializable;
 
+import org.picketbox.core.PicketBoxLifecycle;
+
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface SessionStore {
+public interface SessionStore extends PicketBoxLifecycle {
 
     PicketBoxSession load(SessionId<? extends Serializable> key);
 

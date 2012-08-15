@@ -25,6 +25,7 @@ package org.picketbox.core.session;
 import java.io.Serializable;
 import java.util.List;
 
+import org.picketbox.core.AbstractPicketBoxLifeCycle;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.PicketBoxConfiguration;
 
@@ -32,7 +33,7 @@ import org.picketbox.core.config.PicketBoxConfiguration;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class DefaultSessionManager implements SessionManager {
+public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements SessionManager {
 
     private SessionStore sessionStore;
     private final SessionExpirationManager sessionExpirationManager;
@@ -111,6 +112,19 @@ public class DefaultSessionManager implements SessionManager {
 
     protected PicketBoxSession doCreateSession(PicketBoxSubject authenticatedSubject) {
         return new PicketBoxSession(authenticatedSubject, new DefaultSessionId());
+    }
+
+    @Override
+    protected void doStart() {
+        this.sessionStore.start();
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.AbstractPicketBoxLifeCycle#doStop()
+     */
+    @Override
+    protected void doStop() {
+        this.sessionStore.stop();
     }
 
 }

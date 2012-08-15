@@ -24,6 +24,7 @@ package org.picketbox.core.session;
 
 import java.io.Serializable;
 
+import org.picketbox.core.PicketBoxLifecycle;
 import org.picketbox.core.PicketBoxSubject;
 
 /**
@@ -35,7 +36,7 @@ import org.picketbox.core.PicketBoxSubject;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  * @see SessionStore
  */
-public interface SessionManager {
+public interface SessionManager extends PicketBoxLifecycle {
 
     /**
      * <p>

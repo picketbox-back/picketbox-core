@@ -53,4 +53,23 @@ public class DefaultSessionId implements SessionId<String> {
         return this.id;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof DefaultSessionId)) {
+            return false;
+        }
+
+        DefaultSessionId other = (DefaultSessionId) obj;
+
+        return this.getId() != null && other.getId() != null && this.getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getId().hashCode();
+    }
 }

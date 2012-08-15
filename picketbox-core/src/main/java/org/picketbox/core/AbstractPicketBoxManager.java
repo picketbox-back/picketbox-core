@@ -227,6 +227,10 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                 this.sessionManager = new DefaultSessionManager(this.configuration);
             }
 
+            if (this.sessionManager != null) {
+                this.sessionManager.start();
+            }
+
             doConfigure();
         }
 
@@ -256,7 +260,13 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      */
     @Override
     protected void doStop() {
+        if (this.authorizationManager != null) {
+            this.authorizationManager.stop();
+        }
 
+        if (this.sessionManager != null) {
+            this.sessionManager.stop();
+        }
     }
 
 }
