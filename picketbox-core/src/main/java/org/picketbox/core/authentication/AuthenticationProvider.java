@@ -63,12 +63,18 @@ public interface AuthenticationProvider {
      */
     AuthenticationMechanism getMechanism(String string);
 
-    void addAuthManager(AuthenticationManager manager);
-
+    /**
+     * <p>Returns the registered {@link AuthenticationManager} instances.</p>
+     *
+     * @return
+     */
     List<AuthenticationManager> getAuthenticationManagers();
 
+    /**
+     * <p>Returns the registered {@link AuthenticationEventManager} instance.</p>
+     *
+     * @return
+     */
     AuthenticationEventManager getEventManager();
-
-    void setEventManager(AuthenticationEventManager eventManager);
 
 }

@@ -26,7 +26,7 @@ import org.picketbox.core.AbstractCredential;
 
 /**
  * <p>
- * A {@link AuthenticationCallbackHandler} implementation for username/password authentication.
+ * A simple credential for username/password authentication.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>

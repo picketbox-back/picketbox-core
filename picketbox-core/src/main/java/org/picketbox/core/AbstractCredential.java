@@ -34,6 +34,9 @@ public class AbstractCredential implements Credential {
 
     private String userName;
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.Credential#getUserName()
+     */
     @Override
     public String getUserName() {
         return this.userName;

@@ -29,11 +29,14 @@ import java.util.List;
 import org.picketbox.core.Credential;
 import org.picketbox.core.authentication.AuthenticationInfo;
 import org.picketbox.core.authentication.AuthenticationManager;
+import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.credential.DigestCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
+ * <p>A {@link AuthenticationMechanism} implementation for HTTP Digest based authentication.</p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
