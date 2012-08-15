@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.picketbox.core.PicketBoxMessages;
+import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.exceptions.PicketBoxSessionException;
 
 /**
@@ -48,22 +49,24 @@ public class PicketBoxSession implements Serializable {
 
     protected boolean invalid = false;
 
+    protected PicketBoxSubject subject;
+
     protected transient List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
+
+    public PicketBoxSession() {
+        this(new DefaultSessionId());
+    }
+
+    public PicketBoxSession(PicketBoxSubject subject, SessionId<? extends Serializable> id) {
+        this(id);
+        this.subject = subject;
+    }
 
     /**
      * Usable by {@link PicketBoxSessionManager#create()}
      */
     public PicketBoxSession(SessionId<? extends Serializable> id) {
         this.id = id;
-    }
-
-    /**
-     * Add a session listener
-     *
-     * @param listener
-     */
-    protected void addListener(PicketBoxSessionListener listener) {
-        listeners.add(listener);
     }
 
     /**
@@ -83,8 +86,7 @@ public class PicketBoxSession implements Serializable {
      * @throws PicketBoxSessionException
      */
     public void setAttribute(String key, Object val) throws PicketBoxSessionException {
-        if (invalid)
-            throw PicketBoxMessages.MESSAGES.invalidatedSession();
+        checkIfIsInvalid();
         attributes.put(key, val);
         for (PicketBoxSessionListener listener : listeners) {
             listener.onSetAttribute(this, key, val);
@@ -98,8 +100,7 @@ public class PicketBoxSession implements Serializable {
      * @throws PicketBoxSessionException
      */
     public Map<String, Object> getAttributes() throws PicketBoxSessionException {
-        if (invalid)
-            throw PicketBoxMessages.MESSAGES.invalidatedSession();
+        checkIfIsInvalid();
         return Collections.unmodifiableMap(attributes);
     }
 
@@ -111,8 +112,10 @@ public class PicketBoxSession implements Serializable {
      * @throws PicketBoxSessionException
      */
     public Object getAttribute(String key) throws PicketBoxSessionException {
-        if (invalid)
-            throw PicketBoxMessages.MESSAGES.invalidatedSession();
+        checkIfIsInvalid();
+        for (PicketBoxSessionListener listener : listeners) {
+            listener.onGetAttribute(this);
+        }
         return attributes.get(key);
     }
 
@@ -122,27 +125,84 @@ public class PicketBoxSession implements Serializable {
      * @return
      */
     public boolean isValid() {
-        return invalid == false;
+        return !invalid;
     }
 
     /**
-     * Invalidate the session
+     * Invalidate the session and notify the registered {@link PicketBoxSessionListener}.
+     *
+     * @throws PicketBoxSessionException
      */
-    public void invalidate() {
-        for (PicketBoxSessionListener listener : listeners) {
-            listener.onInvalidate(this);
+    public void invalidate() throws PicketBoxSessionException {
+        invalidate(true);
+    }
+
+    /**
+     * <p>Invalidate the session and notigy the registered {@link PicketBoxSessionListener} only if the specified argument is true.</p>
+     *
+     * @param raiseEvent
+     * @throws PicketBoxSessionException
+     */
+    public void invalidate(boolean raiseEvent) throws PicketBoxSessionException {
+        checkIfIsInvalid();
+        if (raiseEvent) {
+            for (PicketBoxSessionListener listener : listeners) {
+                listener.onInvalidate(this);
+            }
         }
-        attributes.clear();
+        this.attributes.clear();
+        if (this.subject != null) {
+            this.subject.invalidate();
+        }
         invalid = true;
     }
 
     /**
      * Expire the session
+     *
+     * @throws PicketBoxSessionException
      */
-    public void expire() {
+    public void expire() throws PicketBoxSessionException {
         invalidate();
         for (PicketBoxSessionListener listener : listeners) {
             listener.onExpiration(this);
         }
     }
+
+    /**
+     * @return the subject
+     */
+    public PicketBoxSubject getSubject() {
+        return subject;
+    }
+
+    public boolean hasListener(Class<PicketBoxSessionStoreListener> class1) {
+        for (PicketBoxSessionListener listener : listeners) {
+            if (listener.getClass().equals(class1)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add a session listener
+     *
+     * @param listener
+     */
+    protected void addListener(PicketBoxSessionListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * <p>Checks if the session is invalid.</p>
+     *
+     * @throws PicketBoxSessionException in the case this instance is marked as invalid.
+     */
+    private void checkIfIsInvalid() throws PicketBoxSessionException {
+        if (invalid)
+            throw PicketBoxMessages.MESSAGES.invalidatedSession();
+    }
+
 }

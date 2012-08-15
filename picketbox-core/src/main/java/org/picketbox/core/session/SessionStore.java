@@ -36,4 +36,6 @@ public interface SessionStore {
 
     void remove(SessionId<? extends Serializable> id);
 
+    void update(PicketBoxSession session);
+
 }

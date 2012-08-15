@@ -83,10 +83,14 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     public PicketBoxSubject authenticate(PicketBoxSubject subject) throws AuthenticationException {
         checkIfStarted();
 
-        if (this.sessionManager != null) {
-            if (subject.isAuthenticated()) {
-                PicketBoxSession session = this.sessionManager.retrieve(subject.getSession().getId());
+        PicketBoxSession session = null;
 
+        if (this.sessionManager != null) {
+            if (subject.getSession() != null && subject.getSession().getId() != null) {
+                session = this.sessionManager.retrieve(subject.getSession().getId());
+            }
+
+            if (subject.isAuthenticated()) {
                 if (session != null && session.isValid()) {
                     return subject;
                 } else {
@@ -95,43 +99,48 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             }
         }
 
-        Credential credential = subject.getCredential();
+        if (session != null) {
+            subject = session.getSubject();
+            subject.setSession(session);
+        } else {
+            Credential credential = subject.getCredential();
 
-        if (credential == null) {
-            throw PicketBoxMessages.MESSAGES.failedToValidateCredentials();
-        }
-
-        if (doPreAuthentication(subject)) {
-            AuthenticationResult result = null;
-
-            String[] mechanisms = this.authenticationProvider.getSupportedMechanisms();
-
-            for (String mechanismName : mechanisms) {
-                AuthenticationMechanism mechanism = this.authenticationProvider.getMechanism(mechanismName);
-
-                if (mechanism.supports(credential)) {
-                    try {
-                        result = mechanism.authenticate(credential);
-                    } catch (AuthenticationException e) {
-                        throw PicketBoxMessages.MESSAGES.authenticationFailed(e);
-                    }
-                }
-            }
-
-            if (result == null) {
+            if (credential == null) {
                 throw PicketBoxMessages.MESSAGES.failedToValidateCredentials();
             }
 
-            subject.setAuthenticated(result.getStatus().equals(AuthenticationStatus.SUCCESS));
+            if (doPreAuthentication(subject)) {
+                AuthenticationResult result = null;
 
-            if (subject.isAuthenticated()) {
-                subject.setUser(result.getPrincipal());
+                String[] mechanisms = this.authenticationProvider.getSupportedMechanisms();
 
-                this.identityManager.getIdentity(subject);
+                for (String mechanismName : mechanisms) {
+                    AuthenticationMechanism mechanism = this.authenticationProvider.getMechanism(mechanismName);
 
-                subject.setCredential(null);
+                    if (mechanism.supports(credential)) {
+                        try {
+                            result = mechanism.authenticate(credential);
+                        } catch (AuthenticationException e) {
+                            throw PicketBoxMessages.MESSAGES.authenticationFailed(e);
+                        }
+                    }
+                }
 
-                createSession(subject);
+                if (result == null) {
+                    throw PicketBoxMessages.MESSAGES.failedToValidateCredentials();
+                }
+
+                subject.setAuthenticated(result.getStatus().equals(AuthenticationStatus.SUCCESS));
+
+                if (subject.isAuthenticated()) {
+                    subject.setUser(result.getPrincipal());
+
+                    this.identityManager.getIdentity(subject);
+
+                    subject.setCredential(null);
+
+                    createSession(subject);
+                }
             }
         }
 

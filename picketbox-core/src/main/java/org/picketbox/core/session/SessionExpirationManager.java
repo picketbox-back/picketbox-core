@@ -21,41 +21,49 @@
  */
 package org.picketbox.core.session;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.picketbox.core.config.PicketBoxConfiguration;
+import org.picketbox.core.exceptions.PicketBoxSessionException;
+
 /**
- * A listener for the {@link PicketBoxSession}
+ * A manager capable of creating PicketBox sessions
  *
  * @author anil saldhana
  * @since Jul 16, 2012
  */
-public interface PicketBoxSessionListener {
+public class SessionExpirationManager {
+
+    private static Timer timer = new Timer();
+
+    private final long expiryValue;
+
+    public SessionExpirationManager(PicketBoxConfiguration configuration) {
+        this.expiryValue = configuration.getSessionManager().getSessionTimeout() * 60 * 1000;
+    }
 
     /**
-     * Called when a session is created
-     */
-    void onCreate(PicketBoxSession session);
-
-    /**
-     * Called when there is a set attribute call
-     *
-     * @param session
-     * @param key
-     * @param value
-     */
-    void onSetAttribute(PicketBoxSession session, String key, Object value);
-
-    /**
-     * Called when the session is invalidated
+     * Set a timer for the configured delay. If the delay is <= 0 no task will be scheduled.
      *
      * @param session
      */
-    void onInvalidate(PicketBoxSession session);
+    void setTimer(final PicketBoxSession session) {
+        if (this.expiryValue <= 0) {
+            return;
+        }
 
-    /**
-     * Called when the session expires
-     *
-     * @param session
-     */
-    void onExpiration(PicketBoxSession session);
-
-    void onGetAttribute(PicketBoxSession picketBoxSession);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (session.isValid()) {
+                    try {
+                        session.expire();
+                    } catch (PicketBoxSessionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, expiryValue);
+    }
 }

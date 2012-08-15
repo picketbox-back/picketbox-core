@@ -22,57 +22,43 @@
 
 package org.picketbox.core.session;
 
-import java.io.Serializable;
-
-import org.picketbox.core.PicketBoxSubject;
-
 /**
- * <p>
- * Session managers are responsible for managing the {@link PicketBoxSession} instances. Session managers usually delegate the
- * storage of sessions to {@link SessionStore} implementations.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- * @see SessionStore
+ *
  */
-public interface SessionManager {
+public class PicketBoxSessionStoreListener implements PicketBoxSessionListener {
 
-    /**
-     * <p>
-     * Creates a new {@link PicketBoxSession} for the given authenticated {@link PicketBoxSubject}.
-     * </p>
-     *
-     * @param authenticatedSubject
-     * @return
-     */
-    PicketBoxSession create(PicketBoxSubject authenticatedSubject);
+    private SessionManager sessionManager;
 
-    /**
-     * <p>
-     * Retrieve a {@link PicketBoxSession} using its {@link SessionId}.
-     * </p>
-     *
-     * @param id
-     * @return
-     */
-    PicketBoxSession retrieve(SessionId<? extends Serializable> id);
+    PicketBoxSessionStoreListener(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
 
-    /**
-     * <p>
-     * Removes a {@link PicketBoxSession}.
-     * </p>
-     *
-     * @param session
-     */
-    void remove(PicketBoxSession session);
+    @Override
+    public void onSetAttribute(PicketBoxSession session, String key, Object value) {
+        sessionManager.update(session);
+    }
 
-    /**
-     * <p>
-     * Updates a {@link PicketBoxSession}.
-     * </p>
-     *
-     * @param session
-     */
-    void update(PicketBoxSession session);
+    @Override
+    public void onInvalidate(PicketBoxSession session) {
+        sessionManager.remove(session);
+    }
+
+    @Override
+    public void onExpiration(PicketBoxSession session) {
+        sessionManager.remove(session);
+    }
+
+    @Override
+    public void onCreate(PicketBoxSession session) {
+
+    }
+
+    @Override
+    public void onGetAttribute(PicketBoxSession currentSession) {
+        PicketBoxSession session = this.sessionManager.retrieve(currentSession.getId());
+
+        currentSession.attributes = session.attributes;
+    }
 
 }

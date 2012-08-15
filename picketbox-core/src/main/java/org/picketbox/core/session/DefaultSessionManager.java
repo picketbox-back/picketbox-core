@@ -23,6 +23,7 @@
 package org.picketbox.core.session;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.PicketBoxConfiguration;
@@ -34,13 +35,19 @@ import org.picketbox.core.config.PicketBoxConfiguration;
 public class DefaultSessionManager implements SessionManager {
 
     private SessionStore sessionStore;
+    private final SessionExpirationManager sessionExpirationManager;
+    private final List<PicketBoxSessionListener> listeners;
 
     public DefaultSessionManager(PicketBoxConfiguration configuration) {
+        this.sessionExpirationManager = new SessionExpirationManager(configuration);
         this.sessionStore = configuration.getSessionManager().getStore();
 
         if (this.sessionStore == null) {
             this.sessionStore = new InMemorySessionStore();
         }
+
+        this.listeners = configuration.getSessionManager().getListeners();
+        this.listeners.add(new PicketBoxSessionStoreListener(this));
     }
 
     /* (non-Javadoc)
@@ -48,11 +55,12 @@ public class DefaultSessionManager implements SessionManager {
      */
     @Override
     public PicketBoxSession create(PicketBoxSubject authenticatedSubject) {
-        if (!authenticatedSubject.isAuthenticated()) {
-            throw new IllegalArgumentException("Subject is not authenticated. Session can not be created.");
-        }
-
         PicketBoxSession session = doCreateSession(authenticatedSubject);
+
+        for (PicketBoxSessionListener listener : this.listeners) {
+            session.addListener(listener);
+            listener.onCreate(session);
+        }
 
         if (session.getId() == null || session.getId().getId() == null) {
             throw new IllegalStateException("Invalid session id: " + session.getId());
@@ -67,6 +75,8 @@ public class DefaultSessionManager implements SessionManager {
 
         this.sessionStore.store(session);
 
+        this.sessionExpirationManager.setTimer(session);
+
         return session;
     }
 
@@ -75,7 +85,13 @@ public class DefaultSessionManager implements SessionManager {
      */
     @Override
     public PicketBoxSession retrieve(SessionId<? extends Serializable> id) {
-        return this.sessionStore.load(id);
+        PicketBoxSession session = this.sessionStore.load(id);
+
+        if (session != null && !session.hasListener(PicketBoxSessionStoreListener.class)) {
+            session.addListener(new PicketBoxSessionStoreListener(this));
+        }
+
+        return session;
     }
 
     /* (non-Javadoc)
@@ -83,12 +99,18 @@ public class DefaultSessionManager implements SessionManager {
      */
     @Override
     public void remove(PicketBoxSession session) {
-        this.sessionStore.remove(session.getId());
-        session.invalidate();
+        if (session != null) {
+            this.sessionStore.remove(session.getId());
+        }
+    }
+
+    @Override
+    public void update(PicketBoxSession session) {
+        this.sessionStore.update(session);
     }
 
     protected PicketBoxSession doCreateSession(PicketBoxSubject authenticatedSubject) {
-        return new PicketBoxSession(new DefaultSessionKey());
+        return new PicketBoxSession(authenticatedSubject, new DefaultSessionId());
     }
 
 }

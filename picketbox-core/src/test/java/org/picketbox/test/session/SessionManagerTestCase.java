@@ -22,66 +22,159 @@
 
 package org.picketbox.test.session;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
-import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
+import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
+import org.picketbox.core.session.PicketBoxSessionListener;
+import org.picketbox.core.session.SessionManager;
 
 /**
+ * <p>Tests the core functionality for the {@link DefaultSessionManager}.</p>
+ * 
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public class SessionManagerTestCase {
 
-    private DefaultPicketBoxManager picketBoxManager;
+    private SessionManager sessionManager;
+    
+    private boolean onSetAttributeCalled;
+    private boolean onGetAttributeCalled;
+    private boolean onInvalidateCalled;
+    private boolean onExpirationCalled;
+    private boolean onCreateCalled;
 
     @Before
     public void onSetup() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder.sessionManager().inMemorySessionStore();
+        builder.sessionManager().listener(new PicketBoxSessionListener() {
+            
+            @Override
+            public void onSetAttribute(PicketBoxSession session, String key, Object value) {
+                onSetAttributeCalled = true;
+            }
+            
+            @Override
+            public void onInvalidate(PicketBoxSession session) {
+                onInvalidateCalled = true;
+            }
+            
+            @Override
+            public void onGetAttribute(PicketBoxSession picketBoxSession) {
+                onGetAttributeCalled = true;
+            }
+            
+            @Override
+            public void onExpiration(PicketBoxSession session) {
+                onExpirationCalled = true;
+            }
+            
+            @Override
+            public void onCreate(PicketBoxSession session) {
+                onCreateCalled = true;
+            }
+        });
 
-        this.picketBoxManager = new DefaultPicketBoxManager(builder.build());
-        this.picketBoxManager.start();
+        this.sessionManager = new DefaultSessionManager(builder.build());
     }
 
+    /**
+     * <p>Tests if the session is properly created.</p>
+     * 
+     * @throws Exception
+     */
     @Test
     public void testCreateSession() throws Exception {
-        PicketBoxSubject subject = new PicketBoxSubject();
-
-        subject.setCredential(new UsernamePasswordCredential("admin", "admin"));
-
-        PicketBoxSubject authenticatedSubject = this.picketBoxManager.authenticate(subject);
-
-        Assert.assertTrue(authenticatedSubject.isAuthenticated());
-
-        PicketBoxSession session = authenticatedSubject.getSession();
-
-        Assert.assertNotNull(session);
+        PicketBoxSession session = createSession();
+        
+        assertNotNull(session);
+        assertNotNull(session.getId());
+        assertNotNull(session.getId().getId());
+        assertNotNull(getStoredSession(session));
+        
+        assertTrue(this.onCreateCalled);
     }
 
+    /**
+     * <p>Tests if attributes are properly stored and if {@link PicketBoxSessionListener}.onSetAttribute and onGetAttribute methods are properly called.</p>
+     * 
+     * @throws Exception
+     */
     @Test
-    public void testInvalidateSession() throws Exception {
-        PicketBoxSubject subject = new PicketBoxSubject();
+    public void testOnSetAndGetAttribute() throws Exception {
+        PicketBoxSession session = createSession();
+        
+        session.setAttribute("test", "test");
+        
+        assertTrue(onSetAttributeCalled);
+        
+        PicketBoxSession storedSession = getStoredSession(session);
+        
+        assertNotNull(storedSession.getAttribute("test"));
+        assertEquals("test", storedSession.getAttribute("test"));
+        assertTrue(onGetAttributeCalled);
+    }
 
-        subject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+    /**
+     * <p>Tests if the the session is properly invalidated and the {@link PicketBoxSessionListener}.onInvalidate method is properly called.</p>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSessionInvalidation() throws Exception {
+        PicketBoxSession session = createSession();
+        
+        session.invalidate();
+        
+        assertTrue(onInvalidateCalled);
+        assertFalse(session.isValid());
+        
+        Assert.assertNull(getStoredSession(session));
+    }
 
-        PicketBoxSubject authenticatedSubject = this.picketBoxManager.authenticate(subject);
+    /**
+     * <p>Tests if the the session is properly expired and the {@link PicketBoxSessionListener}.onExpiration method is properly called.</p>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSessionExpiration() throws Exception {
+        PicketBoxSession session = createSession();
+        
+        session.expire();
+        
+        assertTrue(onExpirationCalled);
+        assertFalse(session.isValid());
+        
+        Assert.assertNull(getStoredSession(session));
+    }
 
-        Assert.assertTrue(authenticatedSubject.isAuthenticated());
+    private PicketBoxSession createSession() {
+        PicketBoxSubject subject = new PicketBoxSubject() {
+          
+            private static final long serialVersionUID = 1L;
 
-        PicketBoxSession session = authenticatedSubject.getSession();
+            @Override
+            public boolean isAuthenticated() {
+                return true;
+            }
+        };
+        
+        return this.sessionManager.create(subject);
+    }
 
-        Assert.assertNotNull(session);
-
-        this.picketBoxManager.logout(authenticatedSubject);
-
-        Assert.assertFalse(session.isValid());
+    private PicketBoxSession getStoredSession(PicketBoxSession session) {
+        return this.sessionManager.retrieve(session.getId());
     }
 
 }

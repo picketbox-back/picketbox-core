@@ -22,57 +22,35 @@
 
 package org.picketbox.core.session;
 
-import java.io.Serializable;
-
-import org.picketbox.core.PicketBoxSubject;
+import java.util.UUID;
 
 /**
  * <p>
- * Session managers are responsible for managing the {@link PicketBoxSession} instances. Session managers usually delegate the
- * storage of sessions to {@link SessionStore} implementations.
+ * Default implementation for {@link SessionId}. Instances can be created using the no-arg constructor or by using the
+ * constructor that expects a {@link String} as the identifier. If the no-arg constructor is used a random identifier will be
+ * generated.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- * @see SessionStore
+ *
  */
-public interface SessionManager {
+public class DefaultSessionId implements SessionId<String> {
 
-    /**
-     * <p>
-     * Creates a new {@link PicketBoxSession} for the given authenticated {@link PicketBoxSubject}.
-     * </p>
-     *
-     * @param authenticatedSubject
-     * @return
-     */
-    PicketBoxSession create(PicketBoxSubject authenticatedSubject);
+    private static final long serialVersionUID = -1256668631793102510L;
 
-    /**
-     * <p>
-     * Retrieve a {@link PicketBoxSession} using its {@link SessionId}.
-     * </p>
-     *
-     * @param id
-     * @return
-     */
-    PicketBoxSession retrieve(SessionId<? extends Serializable> id);
+    private String id;
 
-    /**
-     * <p>
-     * Removes a {@link PicketBoxSession}.
-     * </p>
-     *
-     * @param session
-     */
-    void remove(PicketBoxSession session);
+    public DefaultSessionId() {
+        this.id = UUID.randomUUID().toString();
+    }
 
-    /**
-     * <p>
-     * Updates a {@link PicketBoxSession}.
-     * </p>
-     *
-     * @param session
-     */
-    void update(PicketBoxSession session);
+    public DefaultSessionId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
 }

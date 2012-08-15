@@ -57,4 +57,9 @@ public class InMemorySessionStore implements SessionStore {
     public void remove(SessionId<? extends Serializable> id) {
         this.sessions.remove(id.getId());
     }
+
+    @Override
+    public void update(PicketBoxSession session) {
+        this.sessions.put(session.getId().getId(), session);
+    }
 }

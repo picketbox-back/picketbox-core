@@ -25,7 +25,7 @@ package org.picketbox.core.session;
 import java.io.Serializable;
 
 /**
- * <p>This interfaces represents a identifier for {@link PicketBoxSession} instances.</p>
+ * <p>This interfaces represents the id for {@link PicketBoxSession} instances.</p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *

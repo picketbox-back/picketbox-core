@@ -25,6 +25,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.picketbox.core.PicketBoxMessages;
+import org.picketbox.core.exceptions.PicketBoxSessionException;
 
 /**
  * A manager capable of creating PicketBox sessions
@@ -67,7 +68,7 @@ public class PicketBoxSessionManager {
      * @return
      */
     public static PicketBoxSession create() {
-        PicketBoxSession session = new PicketBoxSession(new DefaultSessionKey());
+        PicketBoxSession session = new PicketBoxSession(new DefaultSessionId());
         setTimer(session);
         return session;
     }
@@ -78,7 +79,7 @@ public class PicketBoxSessionManager {
      * @return
      */
     public static PicketBoxSession create(PicketBoxSessionListener listener) {
-        PicketBoxSession session = new PicketBoxSession(new DefaultSessionKey());
+        PicketBoxSession session = new PicketBoxSession(new DefaultSessionId());
         setTimer(session);
         session.addListener(listener);
         listener.onCreate(session);
@@ -132,7 +133,11 @@ public class PicketBoxSessionManager {
             @Override
             public void run() {
                 if (session.isValid()) {
-                    session.expire();
+                    try {
+                        session.expire();
+                    } catch (PicketBoxSessionException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }, expiryValue);

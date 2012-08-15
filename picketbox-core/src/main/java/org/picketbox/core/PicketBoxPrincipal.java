@@ -21,6 +21,7 @@
  */
 package org.picketbox.core;
 
+import java.io.Serializable;
 import java.security.Principal;
 
 /**
@@ -29,7 +30,9 @@ import java.security.Principal;
  * @author anil saldhana
  * @since Jul 10, 2012
  */
-public class PicketBoxPrincipal implements Principal {
+public class PicketBoxPrincipal implements Principal, Serializable {
+
+    private static final long serialVersionUID = -4530563465949509821L;
 
     protected String name;
 

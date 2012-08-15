@@ -22,6 +22,9 @@
 
 package org.picketbox.core.config;
 
+import java.util.List;
+
+import org.picketbox.core.session.PicketBoxSessionListener;
 import org.picketbox.core.session.SessionManager;
 import org.picketbox.core.session.SessionStore;
 
@@ -33,10 +36,14 @@ public class SessionManagerConfig {
 
     private SessionManager manager;
     private SessionStore store;
+    private List<PicketBoxSessionListener> listeners;
+    private int sessionTimeout;
 
-    public SessionManagerConfig(SessionManager manager, SessionStore store) {
+    public SessionManagerConfig(SessionManager manager, SessionStore store, List<PicketBoxSessionListener> listeners, int sessionTimeout) {
         this.manager = manager;
         this.store = store;
+        this.listeners = listeners;
+        this.sessionTimeout = sessionTimeout;
     }
 
     public SessionManager getManager() {
@@ -45,6 +52,14 @@ public class SessionManagerConfig {
 
     public SessionStore getStore() {
         return this.store;
+    }
+
+    public List<PicketBoxSessionListener> getListeners() {
+        return listeners;
+    }
+
+    public int getSessionTimeout() {
+        return this.sessionTimeout;
     }
 
 }

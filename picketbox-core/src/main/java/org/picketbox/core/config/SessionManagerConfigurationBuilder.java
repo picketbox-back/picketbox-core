@@ -22,7 +22,11 @@
 
 package org.picketbox.core.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.picketbox.core.session.InMemorySessionStore;
+import org.picketbox.core.session.PicketBoxSessionListener;
 import org.picketbox.core.session.SessionManager;
 import org.picketbox.core.session.SessionStore;
 
@@ -34,6 +38,8 @@ public class SessionManagerConfigurationBuilder extends AbstractConfigurationBui
 
     private SessionManager manager;
     private SessionStore store;
+    private List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
+    private int sessionTimeout;
 
     public SessionManagerConfigurationBuilder(ConfigurationBuilder configurationBuilder) {
         super(configurationBuilder);
@@ -47,17 +53,28 @@ public class SessionManagerConfigurationBuilder extends AbstractConfigurationBui
         return this;
     }
 
+    public SessionManagerConfigurationBuilder store(SessionStore store) {
+        this.store = store;
+        return this;
+    }
+
+    public SessionManagerConfigurationBuilder listener(PicketBoxSessionListener picketBoxSessionListener) {
+        this.listeners.add(picketBoxSessionListener);
+        return this;
+    }
+
+    public SessionManagerConfigurationBuilder sessionTimeout(int timeoutInMinutes) {
+        this.sessionTimeout = timeoutInMinutes;
+        return this;
+    }
+
     @Override
     protected void setDefaults() {
     }
 
     @Override
     protected SessionManagerConfig doBuild() {
-        return new SessionManagerConfig(this.manager, this.store);
-    }
-
-    public void store(SessionStore store) {
-        this.store = store;
+        return new SessionManagerConfig(this.manager, this.store, this.listeners, this.sessionTimeout);
     }
 
 }
