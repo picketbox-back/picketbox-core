@@ -64,11 +64,10 @@ public class DigestAuthenticationMechanism extends AbstractAuthenticationMechani
      * org.picketbox.core.authentication.api.AuthenticationResult)
      */
     @Override
-    protected Principal doAuthenticate(AuthenticationManager authenticationManager,
-            Credential credential, AuthenticationResult result) throws AuthenticationException {
+    protected Principal doAuthenticate(AuthenticationManager authenticationManager, Credential credential,
+            AuthenticationResult result) throws AuthenticationException {
         DigestCredential digestCredential = (DigestCredential) credential;
 
         return authenticationManager.authenticate(digestCredential.getDigest());
     }
-
 }

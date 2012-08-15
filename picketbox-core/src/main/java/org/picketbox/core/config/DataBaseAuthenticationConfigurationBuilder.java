@@ -28,7 +28,8 @@ import javax.sql.DataSource;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class DataBaseAuthenticationConfigurationBuilder extends AbstractConfigurationBuilder<DataBaseAuthenticationConfiguration> {
+public class DataBaseAuthenticationConfigurationBuilder extends
+        AbstractConfigurationBuilder<DataBaseAuthenticationConfiguration> {
 
     private DataBaseAuthenticationConfiguration configuration = new DataBaseAuthenticationConfiguration();
 

@@ -22,9 +22,6 @@
 
 package org.picketbox.core.config;
 
-
-
-
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -46,21 +43,27 @@ public class ConfigurationBuilder extends AbstractConfigurationBuilder<PicketBox
         this.sessionManager = new SessionManagerConfigurationBuilder(this);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.config.AbstractConfigurationBuilder#authentication()
      */
     public AuthenticationConfigurationBuilder authentication() {
         return this.authentication;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.config.AbstractConfigurationBuilder#authorization()
      */
     public AuthorizationConfigurationBuilder authorization() {
         return this.authorization;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.config.AbstractConfigurationBuilder#identityManager()
      */
     public IdentityManagerConfigurationBuilder identityManager() {
@@ -72,7 +75,9 @@ public class ConfigurationBuilder extends AbstractConfigurationBuilder<PicketBox
         return this.eventManager;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.config.AbstractConfigurationBuilder#sessionManager()
      */
     @Override
@@ -80,8 +85,9 @@ public class ConfigurationBuilder extends AbstractConfigurationBuilder<PicketBox
         return this.sessionManager;
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.config.AbstractConfigurationBuilder#setDefaults()
      */
     @Override
@@ -90,7 +96,8 @@ public class ConfigurationBuilder extends AbstractConfigurationBuilder<PicketBox
 
     @Override
     public PicketBoxConfiguration doBuild() {
-        return new PicketBoxConfiguration(this.authentication.build(), this.authorization.build(), this.identityManager.build(), this.sessionManager.build());
+        return new PicketBoxConfiguration(this.authentication.build(), this.authorization.build(),
+                this.identityManager.build(), this.sessionManager.build());
     }
 
 }

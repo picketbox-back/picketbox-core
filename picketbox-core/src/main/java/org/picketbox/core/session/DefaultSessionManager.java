@@ -43,7 +43,9 @@ public class DefaultSessionManager implements SessionManager {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionManager#create(org.picketbox.core.PicketBoxSubject)
      */
     @Override
@@ -70,7 +72,9 @@ public class DefaultSessionManager implements SessionManager {
         return session;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionManager#retrieve(org.picketbox.core.session.SessionId)
      */
     @Override
@@ -78,7 +82,9 @@ public class DefaultSessionManager implements SessionManager {
         return this.sessionStore.load(id);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionManager#remove(org.picketbox.core.session.PicketBoxSession)
      */
     @Override

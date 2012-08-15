@@ -41,5 +41,4 @@ public class CertificateCredential extends AbstractCredential {
     public X509Certificate[] getCertificates() {
         return certificates;
     }
-
 }

@@ -26,13 +26,17 @@ import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.AuthenticationStatus;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * Event to indicate an user is authenticated
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public class UserAuthenticatedEvent implements AuthenticationEvent<UserAuthenticationEventHandler> {
 
     private AuthenticationResult result;
 
+    /**
+     * @param result
+     */
     public UserAuthenticatedEvent(AuthenticationResult result) {
         this.result = result;
     }
@@ -46,14 +50,18 @@ public class UserAuthenticatedEvent implements AuthenticationEvent<UserAuthentic
     @Override
     public void dispatch(UserAuthenticationEventHandler handler) {
         if (result.getStatus().equals(AuthenticationStatus.SUCCESS)) {
-            handler.onSuccessfullAuthentication(this);
+            handler.onSuccessfulAuthentication(this);
         } else {
-            handler.onUnSuccessfullAuthentication(this);
+            handler.onUnSuccessfulAuthentication(this);
         }
     }
 
+    /**
+     * Get the {@link AuthenticationResult}
+     *
+     * @return
+     */
     public AuthenticationResult getResult() {
         return result;
     }
-
 }

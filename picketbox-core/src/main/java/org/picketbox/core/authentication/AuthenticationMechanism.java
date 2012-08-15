@@ -32,8 +32,8 @@ import org.picketbox.core.exceptions.AuthenticationException;
  * This interface defines a server view of a specific {@link AuthenticationMechanism}.
  * </p>
  * <p>
- * {@link AuthenticationMechanism} implementations provide an abstraction for servers hiding from them the complexity and specific
- * logic for a specific {@link AuthenticationMechanism}.
+ * {@link AuthenticationMechanism} implementations provide an abstraction for servers hiding from them the complexity and
+ * specific logic for a specific {@link AuthenticationMechanism}.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
