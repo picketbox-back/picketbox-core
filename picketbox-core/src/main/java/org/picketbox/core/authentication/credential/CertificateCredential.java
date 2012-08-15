@@ -27,6 +27,8 @@ import java.security.cert.X509Certificate;
 import org.picketbox.core.AbstractCredential;
 
 /**
+ * <p>Credential for X.509 Certificates.</p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */

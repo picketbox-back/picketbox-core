@@ -29,11 +29,11 @@ import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
  * <p>
- * This interface defines a server view of a specific {@link AuthenticationMechanism}.
+ * This interface defines a specific authentication mechanism.
  * </p>
  * <p>
- * {@link AuthenticationMechanism} implementations provide an abstraction for servers hiding from them the complexity and
- * specific logic for a specific {@link AuthenticationMechanism}.
+ * {@link AuthenticationMechanism} implementations hides the complexity and specific logic for a specific
+ * authentication mechanism.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -43,7 +43,7 @@ public interface AuthenticationMechanism {
 
     /**
      * <p>
-     * Checks if the specified {@link Credential} class is supported by this service.
+     * Checks if the specified {@link Credential} class is supported by this mechanism.
      * </p>
      *
      * @param handlerClass

@@ -22,7 +22,6 @@
 
 package org.picketbox.core;
 
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationResult;
@@ -43,6 +42,7 @@ import org.picketbox.core.session.SessionManager;
  * Base class for {@link PicketBoxManager} implementations.
  * </p>
  *
+ * @author anil saldhana
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
@@ -211,10 +211,6 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     protected void doStart() {
         if (this.configuration != null) {
             this.authenticationProvider = new PicketBoxAuthenticationProvider(this.configuration);
-
-            for (AuthenticationManager authManager : this.configuration.getAuthentication().getAuthManagers()) {
-                this.authenticationProvider.addAuthManager(authManager);
-            }
 
             if (!this.configuration.getAuthorization().getManagers().isEmpty()) {
                 this.authorizationManager = this.configuration.getAuthorization().getManagers().get(0);

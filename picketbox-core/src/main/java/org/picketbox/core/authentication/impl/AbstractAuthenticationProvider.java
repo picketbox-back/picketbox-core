@@ -104,17 +104,6 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
     /*
      * (non-Javadoc)
      *
-     * @see org.picketbox.core.authentication.api.AuthenticationProvider#addAuthManager(org.picketbox.core.authentication.
-     * AuthenticationManager)
-     */
-    @Override
-    public void addAuthManager(AuthenticationManager manager) {
-        this.authenticationManagers.add(manager);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
      * @see org.picketbox.core.authentication.api.AuthenticationProvider#getAuthenticationManagers()
      */
     @Override
@@ -130,11 +119,6 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
     @Override
     public AuthenticationEventManager getEventManager() {
         return this.authenticationEventManager;
-    }
-
-    @Override
-    public void setEventManager(AuthenticationEventManager eventManager) {
-        this.authenticationEventManager = eventManager;
     }
 
 }
