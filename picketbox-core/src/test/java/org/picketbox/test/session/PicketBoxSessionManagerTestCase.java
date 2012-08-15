@@ -82,5 +82,11 @@ public class PicketBoxSessionManagerTestCase {
         @Override
         public void onExpiration(PicketBoxSession session) {
         }
+
+        @Override
+        public void onGetAttribute(PicketBoxSession picketBoxSession) {
+            // TODO Auto-generated method stub
+            
+        }
     }
 }

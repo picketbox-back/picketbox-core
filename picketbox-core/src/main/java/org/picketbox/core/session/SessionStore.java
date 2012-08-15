@@ -24,14 +24,18 @@ package org.picketbox.core.session;
 
 import java.io.Serializable;
 
+import org.picketbox.core.PicketBoxLifecycle;
+
 /**
  * Interface defining stores for the {@link PicketBoxSession}
  *
+ * @author Anil Saldhana
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public interface SessionStore {
+public interface SessionStore extends PicketBoxLifecycle {
+
     /**
-     * Load a session given the key
+     * <p>Loads a {@link PicketBoxSession} given its {@link SessionId}.</p>
      *
      * @param key
      * @return
@@ -39,16 +43,24 @@ public interface SessionStore {
     PicketBoxSession load(SessionId<? extends Serializable> key);
 
     /**
-     * Store the session
+     * <p>Stores a {@link PicketBoxSession}.</p>
      *
      * @param session
      */
     void store(PicketBoxSession session);
 
     /**
-     * Remove a session with id
+     * <p>Removes a {@link PicketBoxSession}.</p>
      *
      * @param id
      */
     void remove(SessionId<? extends Serializable> id);
+
+    /**
+     * <p>Updates a {@link PicketBoxSession}.</p>
+     *
+     * @param session
+     */
+    void update(PicketBoxSession session);
+
 }

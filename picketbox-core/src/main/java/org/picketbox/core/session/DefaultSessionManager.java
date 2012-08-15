@@ -23,7 +23,9 @@
 package org.picketbox.core.session;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.picketbox.core.AbstractPicketBoxLifeCycle;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.PicketBoxConfiguration;
 
@@ -32,9 +34,11 @@ import org.picketbox.core.config.PicketBoxConfiguration;
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public class DefaultSessionManager implements SessionManager {
+public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements SessionManager {
 
     private SessionStore sessionStore;
+    private final SessionExpirationManager sessionExpirationManager;
+    private final List<PicketBoxSessionListener> listeners;
 
     /**
      * Construct the session manager
@@ -42,11 +46,15 @@ public class DefaultSessionManager implements SessionManager {
      * @param configuration PicketBox Configuration
      */
     public DefaultSessionManager(PicketBoxConfiguration configuration) {
+        this.sessionExpirationManager = new SessionExpirationManager(configuration);
         this.sessionStore = configuration.getSessionManager().getStore();
 
         if (this.sessionStore == null) {
             this.sessionStore = new InMemorySessionStore();
         }
+
+        this.listeners = configuration.getSessionManager().getListeners();
+        this.listeners.add(new PicketBoxSessionStoreListener(this));
     }
 
     /*
@@ -56,11 +64,12 @@ public class DefaultSessionManager implements SessionManager {
      */
     @Override
     public PicketBoxSession create(PicketBoxSubject authenticatedSubject) {
-        if (!authenticatedSubject.isAuthenticated()) {
-            throw new IllegalArgumentException("Subject is not authenticated. Session can not be created.");
-        }
-
         PicketBoxSession session = doCreateSession(authenticatedSubject);
+
+        for (PicketBoxSessionListener listener : this.listeners) {
+            session.addListener(listener);
+            listener.onCreate(session);
+        }
 
         if (session.getId() == null || session.getId().getId() == null) {
             throw new IllegalStateException("Invalid session id: " + session.getId());
@@ -75,6 +84,8 @@ public class DefaultSessionManager implements SessionManager {
 
         this.sessionStore.store(session);
 
+        this.sessionExpirationManager.setTimer(session);
+
         return session;
     }
 
@@ -85,7 +96,13 @@ public class DefaultSessionManager implements SessionManager {
      */
     @Override
     public PicketBoxSession retrieve(SessionId<? extends Serializable> id) {
-        return this.sessionStore.load(id);
+        PicketBoxSession session = this.sessionStore.load(id);
+
+        if (session != null && !session.hasListener(PicketBoxSessionStoreListener.class)) {
+            session.addListener(new PicketBoxSessionStoreListener(this));
+        }
+
+        return session;
     }
 
     /*
@@ -95,22 +112,30 @@ public class DefaultSessionManager implements SessionManager {
      */
     @Override
     public void remove(PicketBoxSession session) {
-        this.sessionStore.remove(session.getId());
-        session.invalidate();
+        if (session != null) {
+            this.sessionStore.remove(session.getId());
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.session.SessionManager#remove(org.picketbox.core.session.SessionId)
-     */
     @Override
-    public void remove(SessionId<? extends Serializable> id) {
-        PicketBoxSession session = retrieve(id);
-        remove(session);
+    public void update(PicketBoxSession session) {
+        this.sessionStore.update(session);
     }
 
     protected PicketBoxSession doCreateSession(PicketBoxSubject authenticatedSubject) {
-        return new PicketBoxSession(new DefaultSessionKey());
+        return new PicketBoxSession(authenticatedSubject, new DefaultSessionId());
+    }
+
+    @Override
+    protected void doStart() {
+        this.sessionStore.start();
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.AbstractPicketBoxLifeCycle#doStop()
+     */
+    @Override
+    protected void doStop() {
+        this.sessionStore.stop();
     }
 }

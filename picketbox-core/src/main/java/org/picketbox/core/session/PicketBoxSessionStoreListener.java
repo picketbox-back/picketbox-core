@@ -22,29 +22,43 @@
 
 package org.picketbox.core.session;
 
-import java.util.UUID;
-
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class DefaultSessionKey implements SessionId<String> {
+public class PicketBoxSessionStoreListener implements PicketBoxSessionListener {
 
-    private static final long serialVersionUID = -1256668631793102510L;
+    private SessionManager sessionManager;
 
-    private String id = UUID.randomUUID().toString();
-
-    public DefaultSessionKey() {
-
-    }
-
-    public DefaultSessionKey(String id) {
-        this.id = id;
+    PicketBoxSessionStoreListener(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
     }
 
     @Override
-    public String getId() {
-        return this.id;
+    public void onSetAttribute(PicketBoxSession session, String key, Object value) {
+        sessionManager.update(session);
+    }
+
+    @Override
+    public void onInvalidate(PicketBoxSession session) {
+        sessionManager.remove(session);
+    }
+
+    @Override
+    public void onExpiration(PicketBoxSession session) {
+        sessionManager.remove(session);
+    }
+
+    @Override
+    public void onCreate(PicketBoxSession session) {
+
+    }
+
+    @Override
+    public void onGetAttribute(PicketBoxSession currentSession) {
+        PicketBoxSession session = this.sessionManager.retrieve(currentSession.getId());
+
+        currentSession.attributes = session.attributes;
     }
 
 }
