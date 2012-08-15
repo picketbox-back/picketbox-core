@@ -24,8 +24,6 @@ package org.picketbox.core;
 
 import org.picketbox.core.config.PicketBoxConfiguration;
 
-
-
 /**
  * <p>
  * Default implementation for the {@link PicketBoxManager} interface.

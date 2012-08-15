@@ -58,8 +58,8 @@ public class UserNamePasswordAuthenticationMechanism extends AbstractAuthenticat
      * org.picketbox.core.authentication.api.AuthenticationResult)
      */
     @Override
-    protected Principal doAuthenticate(AuthenticationManager authenticationManager,
-            Credential credential, AuthenticationResult result) throws AuthenticationException {
+    protected Principal doAuthenticate(AuthenticationManager authenticationManager, Credential credential,
+            AuthenticationResult result) throws AuthenticationException {
         UsernamePasswordCredential userCredential = (UsernamePasswordCredential) credential;
         return authenticationManager.authenticate(userCredential.getUserName(), userCredential.getPassword());
     }

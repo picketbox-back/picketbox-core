@@ -40,7 +40,9 @@ public class AuthorizationConfigurationBuilder extends AbstractConfigurationBuil
         this.managers = new ArrayList<AuthorizationManager>();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.config.AbstractConfigurationBuilder#setDefaults()
      */
     @Override
@@ -53,7 +55,9 @@ public class AuthorizationConfigurationBuilder extends AbstractConfigurationBuil
         return this;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.config.AbstractConfigurationBuilder#doBuild()
      */
     @Override

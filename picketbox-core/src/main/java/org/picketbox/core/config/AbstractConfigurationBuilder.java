@@ -22,7 +22,6 @@
 
 package org.picketbox.core.config;
 
-
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -70,14 +69,17 @@ public abstract class AbstractConfigurationBuilder<T> {
         return this.builder.sessionManager();
     }
 
-
     /**
-     * <p>Subclasses should override to provide default values for missing configurations.</p>
+     * <p>
+     * Subclasses should override to provide default values for missing configurations.
+     * </p>
      */
     protected abstract void setDefaults();
 
     /**
-     * <p>Creates a T instance with all defined configurations.</p>
+     * <p>
+     * Creates a T instance with all defined configurations.
+     * </p>
      *
      * @return
      */
@@ -87,7 +89,9 @@ public abstract class AbstractConfigurationBuilder<T> {
     }
 
     /**
-     * <p>Subclasses should override this method to create a specific T instance.</p>
+     * <p>
+     * Subclasses should override this method to create a specific T instance.
+     * </p>
      *
      * @return
      */
