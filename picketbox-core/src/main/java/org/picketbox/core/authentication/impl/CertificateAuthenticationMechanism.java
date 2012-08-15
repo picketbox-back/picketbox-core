@@ -67,8 +67,8 @@ public class CertificateAuthenticationMechanism extends AbstractAuthenticationMe
      * org.picketbox.core.authentication.api.AuthenticationResult)
      */
     @Override
-    protected Principal doAuthenticate(AuthenticationManager authenticationManager,
-            Credential credential, AuthenticationResult result) throws AuthenticationException {
+    protected Principal doAuthenticate(AuthenticationManager authenticationManager, Credential credential,
+            AuthenticationResult result) throws AuthenticationException {
         if (credential instanceof UsernamePasswordCredential) {
             UsernamePasswordCredential userCredential = (UsernamePasswordCredential) credential;
 
@@ -80,7 +80,5 @@ public class CertificateAuthenticationMechanism extends AbstractAuthenticationMe
         } else {
             throw new UnsupportedOperationException("Credential " + credential.getClass() + " not supported by this mechanism.");
         }
-
     }
-
 }

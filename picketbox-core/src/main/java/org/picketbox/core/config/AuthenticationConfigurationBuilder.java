@@ -36,8 +36,9 @@ import org.picketbox.core.authentication.manager.PropertiesFileBasedAuthenticati
 import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * A {@link ConfigurationBuilder} for Authentication
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public class AuthenticationConfigurationBuilder extends AbstractConfigurationBuilder<AuthenticationConfiguration> {
 
@@ -125,5 +126,4 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
     public AuthenticationConfiguration doBuild() {
         return new AuthenticationConfiguration(this.mechanisms, this.authManagers, this.builder.eventManager().build());
     }
-
 }

@@ -28,29 +28,45 @@ import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * Defines a configuration for authentication
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public class AuthenticationConfiguration {
-
     private EventManagerConfiguration eventManager;
     private List<AuthenticationManager> authManagers;
     private List<AuthenticationMechanism> mechanisms;
 
-    public AuthenticationConfiguration(List<AuthenticationMechanism> mechanisms, List<AuthenticationManager> authManagers, EventManagerConfiguration eventManager) {
+    public AuthenticationConfiguration(List<AuthenticationMechanism> mechanisms, List<AuthenticationManager> authManagers,
+            EventManagerConfiguration eventManager) {
         this.eventManager = eventManager;
         this.authManagers = authManagers;
         this.mechanisms = mechanisms;
     }
 
+    /**
+     * Get a list of authentication managers
+     *
+     * @return
+     */
     public List<AuthenticationManager> getAuthManagers() {
         return authManagers;
     }
 
+    /**
+     * Get a list of authentication mechanisms
+     *
+     * @return
+     */
     public List<AuthenticationMechanism> getMechanisms() {
         return this.mechanisms;
     }
 
+    /**
+     * Get the Event Manager configuration
+     *
+     * @return
+     */
     public EventManagerConfiguration getEventManager() {
         return this.eventManager;
     }

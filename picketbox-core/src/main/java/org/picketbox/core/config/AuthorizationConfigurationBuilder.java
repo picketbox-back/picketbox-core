@@ -31,7 +31,7 @@ import org.picketbox.core.authorization.AuthorizationManager;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class AuthorizationConfigurationBuilder extends AbstractConfigurationBuilder<AuthorizationConfig> {
+public class AuthorizationConfigurationBuilder extends AbstractConfigurationBuilder<AuthorizationConfiguration> {
 
     private final List<AuthorizationManager> managers;
 
@@ -40,7 +40,9 @@ public class AuthorizationConfigurationBuilder extends AbstractConfigurationBuil
         this.managers = new ArrayList<AuthorizationManager>();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.config.AbstractConfigurationBuilder#setDefaults()
      */
     @Override
@@ -53,12 +55,14 @@ public class AuthorizationConfigurationBuilder extends AbstractConfigurationBuil
         return this;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.config.AbstractConfigurationBuilder#doBuild()
      */
     @Override
-    public AuthorizationConfig doBuild() {
-        return new AuthorizationConfig(this.managers);
+    public AuthorizationConfiguration doBuild() {
+        return new AuthorizationConfiguration(this.managers);
     }
 
 }

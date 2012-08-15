@@ -30,8 +30,9 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.PicketBoxConfiguration;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * Default implementation of the {@link SessionManager}
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements SessionManager {
 
@@ -39,6 +40,11 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
     private final SessionExpirationManager sessionExpirationManager;
     private final List<PicketBoxSessionListener> listeners;
 
+    /**
+     * Construct the session manager
+     *
+     * @param configuration PicketBox Configuration
+     */
     public DefaultSessionManager(PicketBoxConfiguration configuration) {
         this.sessionExpirationManager = new SessionExpirationManager(configuration);
         this.sessionStore = configuration.getSessionManager().getStore();
@@ -51,7 +57,9 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
         this.listeners.add(new PicketBoxSessionStoreListener(this));
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionManager#create(org.picketbox.core.PicketBoxSubject)
      */
     @Override
@@ -81,7 +89,9 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
         return session;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionManager#retrieve(org.picketbox.core.session.SessionId)
      */
     @Override
@@ -95,7 +105,9 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
         return session;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionManager#remove(org.picketbox.core.session.PicketBoxSession)
      */
     @Override
@@ -126,5 +138,4 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
     protected void doStop() {
         this.sessionStore.stop();
     }
-
 }

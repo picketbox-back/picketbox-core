@@ -33,15 +33,15 @@ import org.picketbox.core.PicketBoxSubject;
  * storage of sessions to {@link SessionStore} implementations.
  * </p>
  *
+ * @author Anil Saldhana
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  * @see SessionStore
  */
 public interface SessionManager extends PicketBoxLifecycle {
 
     /**
-     * <p>
-     * Creates a new {@link PicketBoxSession} for the given authenticated {@link PicketBoxSubject}.
-     * </p>
+     * Construct a session
      *
      * @param authenticatedSubject
      * @return
@@ -62,7 +62,6 @@ public interface SessionManager extends PicketBoxLifecycle {
      * <p>
      * Removes a {@link PicketBoxSession}.
      * </p>
-     *
      * @param session
      */
     void remove(PicketBoxSession session);
@@ -75,5 +74,4 @@ public interface SessionManager extends PicketBoxLifecycle {
      * @param session
      */
     void update(PicketBoxSession session);
-
 }

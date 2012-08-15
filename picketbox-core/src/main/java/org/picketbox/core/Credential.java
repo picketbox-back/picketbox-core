@@ -37,10 +37,11 @@ package org.picketbox.core;
 public interface Credential {
 
     /**
-     * <p>Returns the username.</p>
+     * <p>
+     * Returns the username.
+     * </p>
      *
      * @return
      */
     String getUserName();
-
 }

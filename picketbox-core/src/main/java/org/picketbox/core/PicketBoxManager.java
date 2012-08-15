@@ -36,7 +36,9 @@ import org.picketbox.core.exceptions.AuthenticationException;
 public interface PicketBoxManager extends PicketBoxLifecycle {
 
     /**
-     * <p>Authenticates an {@link PicketBoxSubject}.</p>
+     * <p>
+     * Authenticates an {@link PicketBoxSubject}.
+     * </p>
      *
      * @param subject
      * @return

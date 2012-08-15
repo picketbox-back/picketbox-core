@@ -29,12 +29,12 @@ package org.picketbox.core.config;
 public class PicketBoxConfiguration {
 
     private AuthenticationConfiguration authentication;
-    private AuthorizationConfig authorization;
-    private IdentityManagerConfig identityManager;
+    private AuthorizationConfiguration authorization;
+    private IdentityManagerConfiguration identityManager;
     private SessionManagerConfig sessionManager;
 
-    public PicketBoxConfiguration(AuthenticationConfiguration authentication, AuthorizationConfig authorization,
-            IdentityManagerConfig identityManager, SessionManagerConfig sessionManager) {
+    public PicketBoxConfiguration(AuthenticationConfiguration authentication, AuthorizationConfiguration authorization,
+            IdentityManagerConfiguration identityManager, SessionManagerConfig sessionManager) {
         this.authentication = authentication;
         this.authorization = authorization;
         this.identityManager = identityManager;
@@ -51,14 +51,14 @@ public class PicketBoxConfiguration {
     /**
      * @return the authorization
      */
-    public AuthorizationConfig getAuthorization() {
+    public AuthorizationConfiguration getAuthorization() {
         return authorization;
     }
 
     /**
      * @return the identityManager
      */
-    public IdentityManagerConfig getIdentityManager() {
+    public IdentityManagerConfiguration getIdentityManager() {
         return identityManager;
     }
 

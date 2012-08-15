@@ -23,11 +23,16 @@
 package org.picketbox.core.authentication.event;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * An handler for authentication events
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public interface AuthenticationEventHandler {
 
+    /**
+     * Get the Event type
+     *
+     * @return
+     */
     Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType();
-
 }

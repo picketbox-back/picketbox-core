@@ -174,9 +174,7 @@ public class PicketBoxConfigurationTestCase {
     public void testDataBaseAuthenticationManager() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder.authentication()
-            .dataBaseAuthManager()
-                .dataSource(dataSource)
+        builder.authentication().dataBaseAuthManager().dataSource(dataSource)
                 .passwordQuery("SELECT PASSWORD FROM USERS WHERE USERNAME = ?");
 
         PicketBoxConfiguration build = builder.build();
@@ -208,13 +206,13 @@ public class PicketBoxConfigurationTestCase {
             }
 
             @Override
-            public void onSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
+            public void onSuccessfulAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
                 eventStatus.delete(0, eventStatus.length());
                 eventStatus.append("SUCCESS");
             }
 
             @Override
-            public void onUnSuccessfullAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
+            public void onUnSuccessfulAuthentication(UserAuthenticatedEvent userAuthenticatedEvent) {
                 eventStatus.delete(0, eventStatus.length());
                 eventStatus.append("FAILED");
             }

@@ -29,14 +29,17 @@ import java.util.Map;
 import org.picketbox.core.AbstractPicketBoxLifeCycle;
 
 /**
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ * A Session Store that resides in the memory
  *
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public class InMemorySessionStore extends AbstractPicketBoxLifeCycle implements SessionStore {
 
     private Map<Serializable, PicketBoxSession> sessions = new HashMap<Serializable, PicketBoxSession>();
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionStore#load(org.picketbox.core.session.SessionId)
      */
     @Override
@@ -44,7 +47,9 @@ public class InMemorySessionStore extends AbstractPicketBoxLifeCycle implements 
         return this.sessions.get(key.getId());
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionStore#store(org.picketbox.core.session.PicketBoxSession)
      */
     @Override
@@ -52,7 +57,9 @@ public class InMemorySessionStore extends AbstractPicketBoxLifeCycle implements 
         this.sessions.put(session.getId().getId(), session);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.session.SessionStore#remove(org.picketbox.core.session.SessionId)
      */
     @Override
@@ -60,6 +67,9 @@ public class InMemorySessionStore extends AbstractPicketBoxLifeCycle implements 
         this.sessions.remove(id.getId());
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.session.SessionStore#update(org.picketbox.core.session.PicketBoxSession)
+     */
     @Override
     public void update(PicketBoxSession session) {
         this.sessions.put(session.getId().getId(), session);
