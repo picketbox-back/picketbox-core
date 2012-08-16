@@ -32,6 +32,7 @@ import javax.naming.directory.DirContext;
 
 import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.config.LDAPIdentityManagerConfiguration;
 import org.picketbox.core.identity.IdentityManager;
 import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.core.ldap.config.LDAPSearchConfig;
@@ -61,6 +62,15 @@ public class LDAPBasedIdentityManager implements IdentityManager {
     protected BasicLDAPStoreConfig basicLdapConfig = null;
 
     protected LDAPSearchConfig ldapSearchConfig = null;
+
+    public LDAPBasedIdentityManager() {
+
+    }
+
+    public LDAPBasedIdentityManager(LDAPIdentityManagerConfiguration build) {
+        this.basicLdapConfig = build.getStoreConfig();
+        this.ldapSearchConfig = build.getSearchConfig();
+    }
 
     /**
      * Set the {@link BasicLDAPStoreConfig}
