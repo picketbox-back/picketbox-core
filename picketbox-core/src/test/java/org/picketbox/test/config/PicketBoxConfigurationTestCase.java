@@ -174,8 +174,7 @@ public class PicketBoxConfigurationTestCase {
     public void testDataBaseAuthenticationManager() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder.authentication().dataBaseAuthManager().dataSource(dataSource)
-                .passwordQuery("SELECT PASSWORD FROM USERS WHERE USERNAME = ?");
+        builder.authentication().dataBaseAuthManager().dataSource(dataSource).passwordQuery("SELECT PASSWORD FROM USERS WHERE USERNAME = ?");
 
         PicketBoxConfiguration build = builder.build();
 

@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.picketbox.core.identity.DefaultIdentityManager;
 import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -35,6 +36,7 @@ import org.picketbox.core.identity.IdentityManager;
 public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBuilder<IdentityManagerConfiguration> {
 
     private List<IdentityManager> managers;
+    private LDAPIdentityManagerConfigurationBuilder ldapIdentityManagerManager;
 
     public IdentityManagerConfigurationBuilder(ConfigurationBuilder builder) {
         super(builder);
@@ -43,6 +45,10 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
 
     @Override
     protected void setDefaults() {
+        if (this.ldapIdentityManagerManager != null) {
+            this.managers.add(new LDAPBasedIdentityManager(this.ldapIdentityManagerManager.build()));
+        }
+
         if (this.managers.isEmpty()) {
             this.managers.add(new DefaultIdentityManager());
         }
@@ -55,6 +61,14 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
 
         return this;
     }
+
+    public LDAPIdentityManagerConfigurationBuilder ldap() {
+        if (this.ldapIdentityManagerManager == null) {
+            this.ldapIdentityManagerManager = new LDAPIdentityManagerConfigurationBuilder(this);
+        }
+        return this.ldapIdentityManagerManager;
+    }
+
 
     @Override
     public IdentityManagerConfiguration doBuild() {

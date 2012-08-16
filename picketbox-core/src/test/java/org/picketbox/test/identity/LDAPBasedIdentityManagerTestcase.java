@@ -28,11 +28,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.core.PicketBoxPrincipal;
+import org.picketbox.core.DefaultPicketBoxManager;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
+import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
-import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
-import org.picketbox.core.ldap.config.LDAPSearchConfig;
 import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
 
 /**
@@ -51,28 +52,29 @@ public class LDAPBasedIdentityManagerTestcase extends AbstractLDAPTest {
 
     @Test
     public void testIdentity() throws Exception {
-        BasicLDAPStoreConfig basicLdapStoreConfig = new BasicLDAPStoreConfig();
-        basicLdapStoreConfig.setStoreURL("ldap://localhost:10389/");
-        basicLdapStoreConfig.setUserName("uid=jduke,ou=People,dc=jboss,dc=org");
-        basicLdapStoreConfig.setUserPassword("theduke");
-
-        LDAPSearchConfig searchConfig = new LDAPSearchConfig();
-
-        searchConfig.setScope("subtree");
-        searchConfig.setSearchBase("ou=Roles,dc=jboss,dc=org");
-        searchConfig.setSearchAttributes(new String[] { "cn" });
-        searchConfig.setSearchFilterExpression("member={0}");
-        searchConfig.setFilterArgs(new String[] { "uid=jduke,ou=People,dc=jboss,dc=org" });
-
-        LDAPBasedIdentityManager im = new LDAPBasedIdentityManager();
-        im.setBasicLdapConfig(basicLdapStoreConfig);
-        im.setLdapSearchConfig(searchConfig);
-
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+        
+        builder
+            .identityManager()
+                .ldap()
+                    .storeURL("ldap://localhost:10389/")
+                    .userName("uid=jduke,ou=People,dc=jboss,dc=org")
+                    .userPassword("theduke")
+                    .searchSubtree()
+                    .searchBase("ou=Roles,dc=jboss,dc=org")
+                    .searchAttributes(new String[] { "cn" })
+                    .searchFilterExpression("member={0}")
+                    .searchFilterArgs(new String[] { "uid=CHANGE_USER,ou=People,dc=jboss,dc=org" });
+        
+        PicketBoxManager picketBoxManager = new DefaultPicketBoxManager(builder.build());
+        
+        picketBoxManager.start();
+        
         PicketBoxSubject subject = new PicketBoxSubject();
 
-        subject.setUser(new PicketBoxPrincipal("jduke"));
-
-        subject = im.getIdentity(subject);
+        subject.setCredential(new UsernamePasswordCredential("jduke", "theduke"));
+        
+        subject = picketBoxManager.authenticate(subject);
 
         assertNotNull(subject);
         List<String> roleNames = subject.getRoleNames();
