@@ -79,6 +79,16 @@ public class PicketBoxSession implements Serializable {
     }
 
     /**
+     *
+     * @param key
+     * @throws PicketBoxSessionException
+     */
+    public void removeAttribute(String key) throws PicketBoxSessionException {
+        checkIfIsInvalid();
+        attributes.remove(key);
+    }
+
+    /**
      * Add an attribute
      *
      * @param key
