@@ -131,7 +131,9 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
         this.sessionStore.start();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see org.picketbox.core.AbstractPicketBoxLifeCycle#doStop()
      */
     @Override

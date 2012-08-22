@@ -62,6 +62,7 @@ public interface SessionManager extends PicketBoxLifecycle {
      * <p>
      * Removes a {@link PicketBoxSession}.
      * </p>
+     *
      * @param session
      */
     void remove(PicketBoxSession session);

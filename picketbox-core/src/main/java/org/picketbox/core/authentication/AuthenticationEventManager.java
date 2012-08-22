@@ -36,7 +36,9 @@ import org.picketbox.core.authentication.event.AuthenticationEventHandler;
 public interface AuthenticationEventManager {
 
     /**
-     * <p>Raises an event.</p>
+     * <p>
+     * Raises an event.
+     * </p>
      *
      * @param event
      */

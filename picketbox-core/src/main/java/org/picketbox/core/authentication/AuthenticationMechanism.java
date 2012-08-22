@@ -32,8 +32,8 @@ import org.picketbox.core.exceptions.AuthenticationException;
  * This interface defines a specific authentication mechanism.
  * </p>
  * <p>
- * {@link AuthenticationMechanism} implementations hides the complexity and specific logic for a specific
- * authentication mechanism.
+ * {@link AuthenticationMechanism} implementations hides the complexity and specific logic for a specific authentication
+ * mechanism.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>

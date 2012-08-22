@@ -19,34 +19,55 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.picketbox.core.util;
 
-package org.picketbox.core.authentication.credential;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
-import org.picketbox.core.AbstractCredential;
-import org.picketbox.core.authentication.DigestHolder;
+import org.omg.CORBA_2_3.portable.InputStream;
 
 /**
- * <p>
- * Credential for HTTP Digest Authentication.
- * </p>
+ * Utility to deal with streams
  *
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
+ * @author anil saldhana
+ * @since Aug 22, 2012
  */
-public class DigestCredential extends AbstractCredential {
-
-    private DigestHolder digest;
-
-    public DigestCredential(DigestHolder digest) {
-        this.digest = digest;
+public class StreamUtil {
+    public static void safeClose(InputStream is) {
+        try {
+            if (is != null) {
+                is.close();
+            }
+        } catch (IOException e) {
+        }
     }
 
-    @Override
-    public String getUserName() {
-        return digest.getUsername();
+    public static void safeClose(OutputStream os) {
+        try {
+            if (os != null) {
+                os.close();
+            }
+        } catch (IOException e) {
+        }
     }
 
-    public DigestHolder getDigest() {
-        return this.digest;
+    public static void safeClose(ObjectInputStream is) {
+        try {
+            if (is != null) {
+                is.close();
+            }
+        } catch (IOException e) {
+        }
+    }
+
+    public static void safeClose(ObjectOutputStream os) {
+        try {
+            if (os != null) {
+                os.close();
+            }
+        } catch (IOException e) {
+        }
     }
 }

@@ -157,4 +157,13 @@ public interface PicketBoxMessages {
 
     @Message(id = 46, value = "Unable to instantiate: %s")
     IllegalStateException unableToInstantiate(String fqn);
+
+    @Message(id = 47, value = "Wrong SessionStore: %s")
+    IllegalStateException wrongSessionStore(String fqn);
+
+    @Message(id = 48, value = "Unable to load from file: %s")
+    IllegalStateException unableToLoadFromFile(String fileName, @Cause Throwable throwable);
+
+    @Message(id = 49, value = "Unable to store to file: %s")
+    IllegalStateException unableToStoreToFile(String fileName, @Cause Throwable throwable);
 }

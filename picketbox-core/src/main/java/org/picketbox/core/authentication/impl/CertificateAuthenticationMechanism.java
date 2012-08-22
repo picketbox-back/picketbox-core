@@ -36,7 +36,9 @@ import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
- * <p>A {@link AuthenticationMechanism} implementation for a X.509 Certificate based authentication.</p>
+ * <p>
+ * A {@link AuthenticationMechanism} implementation for a X.509 Certificate based authentication.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
