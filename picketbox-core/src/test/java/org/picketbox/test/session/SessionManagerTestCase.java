@@ -38,15 +38,17 @@ import org.picketbox.core.session.PicketBoxSessionListener;
 import org.picketbox.core.session.SessionManager;
 
 /**
- * <p>Tests the core functionality for the {@link DefaultSessionManager}.</p>
- * 
+ * <p>
+ * Tests the core functionality for the {@link DefaultSessionManager}.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
 public class SessionManagerTestCase {
 
     private SessionManager sessionManager;
-    
+
     private boolean onSetAttributeCalled;
     private boolean onGetAttributeCalled;
     private boolean onInvalidateCalled;
@@ -58,27 +60,27 @@ public class SessionManagerTestCase {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         builder.sessionManager().listener(new PicketBoxSessionListener() {
-            
+
             @Override
             public void onSetAttribute(PicketBoxSession session, String key, Object value) {
                 onSetAttributeCalled = true;
             }
-            
+
             @Override
             public void onInvalidate(PicketBoxSession session) {
                 onInvalidateCalled = true;
             }
-            
+
             @Override
             public void onGetAttribute(PicketBoxSession picketBoxSession) {
                 onGetAttributeCalled = true;
             }
-            
+
             @Override
             public void onExpiration(PicketBoxSession session) {
                 onExpirationCalled = true;
             }
-            
+
             @Override
             public void onCreate(PicketBoxSession session) {
                 onCreateCalled = true;
@@ -89,79 +91,90 @@ public class SessionManagerTestCase {
     }
 
     /**
-     * <p>Tests if the session is properly created.</p>
-     * 
+     * <p>
+     * Tests if the session is properly created.
+     * </p>
+     *
      * @throws Exception
      */
     @Test
     public void testCreateSession() throws Exception {
         PicketBoxSession session = createSession();
-        
+
         assertNotNull(session);
         assertNotNull(session.getId());
         assertNotNull(session.getId().getId());
         assertNotNull(getStoredSession(session));
-        
+
         assertTrue(this.onCreateCalled);
     }
 
     /**
-     * <p>Tests if attributes are properly stored and if {@link PicketBoxSessionListener}.onSetAttribute and onGetAttribute methods are properly called.</p>
-     * 
+     * <p>
+     * Tests if attributes are properly stored and if {@link PicketBoxSessionListener}.onSetAttribute and onGetAttribute methods
+     * are properly called.
+     * </p>
+     *
      * @throws Exception
      */
     @Test
     public void testOnSetAndGetAttribute() throws Exception {
         PicketBoxSession session = createSession();
-        
+
         session.setAttribute("test", "test");
-        
+
         assertTrue(onSetAttributeCalled);
-        
+
         PicketBoxSession storedSession = getStoredSession(session);
-        
+
         assertNotNull(storedSession.getAttribute("test"));
         assertEquals("test", storedSession.getAttribute("test"));
         assertTrue(onGetAttributeCalled);
     }
 
     /**
-     * <p>Tests if the the session is properly invalidated and the {@link PicketBoxSessionListener}.onInvalidate method is properly called.</p>
-     * 
+     * <p>
+     * Tests if the the session is properly invalidated and the {@link PicketBoxSessionListener}.onInvalidate method is properly
+     * called.
+     * </p>
+     *
      * @throws Exception
      */
     @Test
     public void testSessionInvalidation() throws Exception {
         PicketBoxSession session = createSession();
-        
+
         session.invalidate();
-        
+
         assertTrue(onInvalidateCalled);
         assertFalse(session.isValid());
-        
+
         Assert.assertNull(getStoredSession(session));
     }
 
     /**
-     * <p>Tests if the the session is properly expired and the {@link PicketBoxSessionListener}.onExpiration method is properly called.</p>
-     * 
+     * <p>
+     * Tests if the the session is properly expired and the {@link PicketBoxSessionListener}.onExpiration method is properly
+     * called.
+     * </p>
+     *
      * @throws Exception
      */
     @Test
     public void testSessionExpiration() throws Exception {
         PicketBoxSession session = createSession();
-        
+
         session.expire();
-        
+
         assertTrue(onExpirationCalled);
         assertFalse(session.isValid());
-        
+
         Assert.assertNull(getStoredSession(session));
     }
 
     private PicketBoxSession createSession() {
         PicketBoxSubject subject = new PicketBoxSubject() {
-          
+
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -169,7 +182,7 @@ public class SessionManagerTestCase {
                 return true;
             }
         };
-        
+
         return this.sessionManager.create(subject);
     }
 

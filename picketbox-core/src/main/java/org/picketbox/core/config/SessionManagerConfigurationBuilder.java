@@ -25,6 +25,8 @@ package org.picketbox.core.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.picketbox.core.PicketBoxMessages;
+import org.picketbox.core.session.FileSessionStore;
 import org.picketbox.core.session.InMemorySessionStore;
 import org.picketbox.core.session.PicketBoxSessionListener;
 import org.picketbox.core.session.SessionManager;
@@ -32,7 +34,7 @@ import org.picketbox.core.session.SessionStore;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
+ * @author Anil Saldhana
  */
 public class SessionManagerConfigurationBuilder extends AbstractConfigurationBuilder<SessionManagerConfig> {
 
@@ -48,6 +50,42 @@ public class SessionManagerConfigurationBuilder extends AbstractConfigurationBui
     public SessionManagerConfigurationBuilder inMemorySessionStore() {
         if (this.store == null) {
             this.store = new InMemorySessionStore();
+        }
+        if (this.store instanceof InMemorySessionStore == false) {
+            throw PicketBoxMessages.MESSAGES.wrongSessionStore(this.store.getClass().getName());
+        }
+
+        return this;
+    }
+
+    /**
+     * Create a {@link FileSessionStore}
+     *
+     * @return
+     */
+    public SessionManagerConfigurationBuilder fileSessionStore() {
+        if (this.store == null) {
+            this.store = new FileSessionStore();
+        }
+        if (this.store instanceof FileSessionStore == false) {
+            throw PicketBoxMessages.MESSAGES.wrongSessionStore(this.store.getClass().getName());
+        }
+
+        return this;
+    }
+
+    /**
+     * Create a {@link FileSessionStore}
+     *
+     * @param fileName file name where the sessions are persisted
+     * @return
+     */
+    public SessionManagerConfigurationBuilder fileSessionStore(String fileName) {
+        if (this.store == null) {
+            this.store = new FileSessionStore(fileName);
+        }
+        if (this.store instanceof FileSessionStore == false) {
+            throw PicketBoxMessages.MESSAGES.wrongSessionStore(this.store.getClass().getName());
         }
 
         return this;
@@ -76,5 +114,4 @@ public class SessionManagerConfigurationBuilder extends AbstractConfigurationBui
     protected SessionManagerConfig doBuild() {
         return new SessionManagerConfig(this.manager, this.store, this.listeners, this.sessionTimeout);
     }
-
 }

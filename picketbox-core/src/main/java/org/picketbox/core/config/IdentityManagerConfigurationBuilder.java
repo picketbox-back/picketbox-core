@@ -69,7 +69,6 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
         return this.ldapIdentityManagerManager;
     }
 
-
     @Override
     public IdentityManagerConfiguration doBuild() {
         return new IdentityManagerConfiguration(this.managers);

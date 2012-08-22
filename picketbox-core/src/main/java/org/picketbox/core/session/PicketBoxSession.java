@@ -138,7 +138,9 @@ public class PicketBoxSession implements Serializable {
     }
 
     /**
-     * <p>Invalidate the session and notigy the registered {@link PicketBoxSessionListener} only if the specified argument is true.</p>
+     * <p>
+     * Invalidate the session and notigy the registered {@link PicketBoxSessionListener} only if the specified argument is true.
+     * </p>
      *
      * @param raiseEvent
      * @throws PicketBoxSessionException
@@ -196,7 +198,9 @@ public class PicketBoxSession implements Serializable {
     }
 
     /**
-     * <p>Checks if the session is invalid.</p>
+     * <p>
+     * Checks if the session is invalid.
+     * </p>
      *
      * @throws PicketBoxSessionException in the case this instance is marked as invalid.
      */

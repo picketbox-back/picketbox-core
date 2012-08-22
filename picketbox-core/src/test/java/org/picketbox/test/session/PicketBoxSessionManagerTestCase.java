@@ -86,7 +86,7 @@ public class PicketBoxSessionManagerTestCase {
         @Override
         public void onGetAttribute(PicketBoxSession picketBoxSession) {
             // TODO Auto-generated method stub
-            
+
         }
     }
 }

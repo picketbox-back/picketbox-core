@@ -39,7 +39,8 @@ public class SessionManagerConfig {
     private List<PicketBoxSessionListener> listeners;
     private int sessionTimeout;
 
-    public SessionManagerConfig(SessionManager manager, SessionStore store, List<PicketBoxSessionListener> listeners, int sessionTimeout) {
+    public SessionManagerConfig(SessionManager manager, SessionStore store, List<PicketBoxSessionListener> listeners,
+            int sessionTimeout) {
         this.manager = manager;
         this.store = store;
         this.listeners = listeners;
