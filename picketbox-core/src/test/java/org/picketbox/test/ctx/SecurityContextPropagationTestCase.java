@@ -22,6 +22,7 @@
 package org.picketbox.test.ctx;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.security.Principal;
 
@@ -57,6 +58,10 @@ public class SecurityContextPropagationTestCase {
         assertEquals(sc, retrievedCtx);
 
         assertEquals(anil, sc.getSubject().getUser());
+        
+        SecurityContextPropagation.clear(LEVEL.THREAD);
+        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.THREAD);
+        assertNull(retrievedCtx);
     }
 
     @Test
@@ -74,6 +79,10 @@ public class SecurityContextPropagationTestCase {
         assertEquals(sc, retrievedCtx);
 
         assertEquals(anil, sc.getSubject().getUser());
+        
+        SecurityContextPropagation.clear(LEVEL.SESSION);
+        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION);
+        assertNull(retrievedCtx);
     }
 
     @Test
@@ -92,6 +101,11 @@ public class SecurityContextPropagationTestCase {
         assertEquals(sc, retrievedCtx);
 
         assertEquals(anil, sc.getSubject().getUser());
+        
+
+        SecurityContextPropagation.clear(LEVEL.SESSION, session);
+        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION, session);
+        assertNull(retrievedCtx);
     }
 
     @Test(expected = IllegalStateException.class)
