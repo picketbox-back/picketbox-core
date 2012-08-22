@@ -166,4 +166,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 49, value = "Unable to store to file: %s")
     IllegalStateException unableToStoreToFile(String fileName, @Cause Throwable throwable);
+
+    @Message(id = 50, value = "Invalid Level: %s")
+    IllegalStateException invalidLevel(String level);
 }
