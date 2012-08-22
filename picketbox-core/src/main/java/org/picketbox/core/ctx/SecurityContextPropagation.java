@@ -129,4 +129,44 @@ public class SecurityContextPropagation {
             }
         }
     }
+
+    /**
+     * Clear the existing security context
+     *
+     * @param level
+     * @throws ProcessingException
+     */
+    public static void clear(LEVEL level) throws ProcessingException {
+        if (level == LEVEL.THREAD) {
+            storage.remove();
+        } else {
+            if (session != null) {
+                try {
+                    session.removeAttribute("CONTEXT");
+                } catch (PicketBoxSessionException e) {
+                    throw PicketBoxMessages.MESSAGES.processingException(e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Clear the existing security context
+     *
+     * @param level
+     * @throws ProcessingException
+     */
+    public static void clear(LEVEL level, PicketBoxSession theSession) throws ProcessingException {
+        if (level == LEVEL.THREAD) {
+            throw PicketBoxMessages.MESSAGES.invalidLevel(level.name());
+        } else {
+            if (theSession != null) {
+                try {
+                    theSession.removeAttribute("CONTEXT");
+                } catch (PicketBoxSessionException e) {
+                    throw PicketBoxMessages.MESSAGES.processingException(e);
+                }
+            }
+        }
+    }
 }
