@@ -64,14 +64,18 @@ public interface AuthenticationProvider {
     AuthenticationMechanism getMechanism(String string);
 
     /**
-     * <p>Returns the registered {@link AuthenticationManager} instances.</p>
+     * <p>
+     * Returns the registered {@link AuthenticationManager} instances.
+     * </p>
      *
      * @return
      */
     List<AuthenticationManager> getAuthenticationManagers();
 
     /**
-     * <p>Returns the registered {@link AuthenticationEventManager} instance.</p>
+     * <p>
+     * Returns the registered {@link AuthenticationEventManager} instance.
+     * </p>
      *
      * @return
      */

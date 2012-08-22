@@ -23,7 +23,9 @@
 package org.picketbox.core.authentication.event;
 
 /**
- * <p>Defines a contract for authentication events.</p>
+ * <p>
+ * Defines a contract for authentication events.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
@@ -31,7 +33,9 @@ package org.picketbox.core.authentication.event;
 public interface AuthenticationEvent<HANDLER extends AuthenticationEventHandler> {
 
     /**
-     * <p>Process a specific handler to handle the corresponding event.</p>
+     * <p>
+     * Process a specific handler to handle the corresponding event.
+     * </p>
      *
      * @param handler
      */

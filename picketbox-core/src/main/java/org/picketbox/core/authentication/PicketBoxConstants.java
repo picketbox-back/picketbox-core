@@ -108,7 +108,9 @@ public interface PicketBoxConstants {
     String LOGOUT_URI = "/picketbox_logout";
 
     /**
-     * <p>Defines the parameter name used to store a {@link ConfigurationBuilderProvider}.</p>
+     * <p>
+     * Defines the parameter name used to store a {@link ConfigurationBuilderProvider}.
+     * </p>
      */
     String HTTP_CONFIGURATION_PROVIDER = "org.picketbox.configuration.provider";
 }

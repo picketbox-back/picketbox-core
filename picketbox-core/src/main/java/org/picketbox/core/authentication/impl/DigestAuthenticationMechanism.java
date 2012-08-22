@@ -35,7 +35,9 @@ import org.picketbox.core.authentication.credential.DigestCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
- * <p>A {@link AuthenticationMechanism} implementation for HTTP Digest based authentication.</p>
+ * <p>
+ * A {@link AuthenticationMechanism} implementation for HTTP Digest based authentication.
+ * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *

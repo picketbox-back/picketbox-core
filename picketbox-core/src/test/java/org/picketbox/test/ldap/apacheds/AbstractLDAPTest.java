@@ -48,7 +48,6 @@ public class AbstractLDAPTest {
     @Before
     public void setup() throws Exception {
         String tempDir = System.getProperty("java.io.tmpdir");
-        System.out.println(tempDir);
 
         File workDir = new File(tempDir + "/server-work");
         workDir.mkdirs();
@@ -71,7 +70,7 @@ public class AbstractLDAPTest {
             ds.stopServer();
         }
         String tempDir = System.getProperty("java.io.tmpdir");
-        System.out.println(tempDir);
+        System.out.println("java.io.tmpdir=" + tempDir);
 
         System.out.println("Going to delete the server-work directory");
         File workDir = new File(tempDir + "/server-work");

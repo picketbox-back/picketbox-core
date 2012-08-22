@@ -53,27 +53,20 @@ public class LDAPBasedIdentityManagerTestcase extends AbstractLDAPTest {
     @Test
     public void testIdentity() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
-        
-        builder
-            .identityManager()
-                .ldap()
-                    .storeURL("ldap://localhost:10389/")
-                    .userName("uid=jduke,ou=People,dc=jboss,dc=org")
-                    .userPassword("theduke")
-                    .searchSubtree()
-                    .searchBase("ou=Roles,dc=jboss,dc=org")
-                    .searchAttributes(new String[] { "cn" })
-                    .searchFilterExpression("member={0}")
-                    .searchFilterArgs(new String[] { "uid=CHANGE_USER,ou=People,dc=jboss,dc=org" });
-        
+
+        builder.identityManager().ldap().storeURL("ldap://localhost:10389/").userName("uid=jduke,ou=People,dc=jboss,dc=org")
+                .userPassword("theduke").searchSubtree().searchBase("ou=Roles,dc=jboss,dc=org")
+                .searchAttributes(new String[] { "cn" }).searchFilterExpression("member={0}")
+                .searchFilterArgs(new String[] { "uid=CHANGE_USER,ou=People,dc=jboss,dc=org" });
+
         PicketBoxManager picketBoxManager = new DefaultPicketBoxManager(builder.build());
-        
+
         picketBoxManager.start();
-        
+
         PicketBoxSubject subject = new PicketBoxSubject();
 
         subject.setCredential(new UsernamePasswordCredential("jduke", "theduke"));
-        
+
         subject = picketBoxManager.authenticate(subject);
 
         assertNotNull(subject);
