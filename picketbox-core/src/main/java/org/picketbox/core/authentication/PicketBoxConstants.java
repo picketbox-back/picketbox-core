@@ -113,4 +113,11 @@ public interface PicketBoxConstants {
      * </p>
      */
     String HTTP_CONFIGURATION_PROVIDER = "org.picketbox.configuration.provider";
+
+    /**
+     * <p>
+     * Defines the http session parameter name used to store the authenticated {@link PicketBoxSubject}.
+     * </p>
+     */
+    String USER_ATTRIBUTE_NAME = "org.picketbox.http.session.user.attribute";
 }
