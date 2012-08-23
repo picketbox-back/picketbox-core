@@ -32,9 +32,6 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.ctx.PicketBoxSecurityContext;
 import org.picketbox.core.ctx.SecurityContext;
 import org.picketbox.core.ctx.SecurityContextPropagation;
-import org.picketbox.core.ctx.SecurityContextPropagation.LEVEL;
-import org.picketbox.core.session.PicketBoxSession;
-import org.picketbox.core.session.PicketBoxSessionManager;
 
 /**
  * Unit test the {@link SecurityContextPropagation}
@@ -52,73 +49,75 @@ public class SecurityContextPropagationTestCase {
         Principal anil = new PicketBoxPrincipal("anil");
         subject.setUser(anil);
 
-        SecurityContextPropagation.setContext(sc, LEVEL.THREAD);
+        SecurityContextPropagation.setContext(sc);
 
-        SecurityContext retrievedCtx = SecurityContextPropagation.getContext(LEVEL.THREAD);
+        SecurityContext retrievedCtx = SecurityContextPropagation.getContext();
         assertEquals(sc, retrievedCtx);
 
         assertEquals(anil, sc.getSubject().getUser());
         
-        SecurityContextPropagation.clear(LEVEL.THREAD);
-        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.THREAD);
-        assertNull(retrievedCtx);
-    }
-
-    @Test
-    public void testSessionLevelPropagation() throws Exception {
-        SecurityContext sc = new PicketBoxSecurityContext();
-        PicketBoxSubject subject = new PicketBoxSubject();
-        sc.setSubject(subject);
-
-        Principal anil = new PicketBoxPrincipal("anil");
-        subject.setUser(anil);
-
-        SecurityContextPropagation.setContext(sc, LEVEL.SESSION);
-
-        SecurityContext retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION);
-        assertEquals(sc, retrievedCtx);
-
-        assertEquals(anil, sc.getSubject().getUser());
+        SecurityContextPropagation.clear();
         
-        SecurityContextPropagation.clear(LEVEL.SESSION);
-        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION);
-        assertNull(retrievedCtx);
-    }
-
-    @Test
-    public void testExternalSessionLevelPropagation() throws Exception {
-        PicketBoxSession session = PicketBoxSessionManager.create();
-        SecurityContext sc = new PicketBoxSecurityContext();
-        PicketBoxSubject subject = new PicketBoxSubject();
-        sc.setSubject(subject);
-
-        Principal anil = new PicketBoxPrincipal("anil");
-        subject.setUser(anil);
-
-        SecurityContextPropagation.setContext(sc, LEVEL.SESSION,session);
-
-        SecurityContext retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION,session);
-        assertEquals(sc, retrievedCtx);
-
-        assertEquals(anil, sc.getSubject().getUser());
+        retrievedCtx = SecurityContextPropagation.getContext();
         
-
-        SecurityContextPropagation.clear(LEVEL.SESSION, session);
-        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION, session);
         assertNull(retrievedCtx);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testInvalid() throws Exception {
-        PicketBoxSession session = PicketBoxSessionManager.create();
-
-        SecurityContext sc = new PicketBoxSecurityContext();
-        PicketBoxSubject subject = new PicketBoxSubject();
-        sc.setSubject(subject);
-
-        Principal anil = new PicketBoxPrincipal("anil");
-        subject.setUser(anil);
-
-        SecurityContextPropagation.setContext(sc, LEVEL.THREAD, session);
-    }
+//    @Test
+//    public void testSessionLevelPropagation() throws Exception {
+//        SecurityContext sc = new PicketBoxSecurityContext();
+//        PicketBoxSubject subject = new PicketBoxSubject();
+//        sc.setSubject(subject);
+//
+//        Principal anil = new PicketBoxPrincipal("anil");
+//        subject.setUser(anil);
+//
+//        SecurityContextPropagation.setContext(sc, LEVEL.SESSION);
+//
+//        SecurityContext retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION);
+//        assertEquals(sc, retrievedCtx);
+//
+//        assertEquals(anil, sc.getSubject().getUser());
+//        
+//        SecurityContextPropagation.clear(LEVEL.SESSION);
+//        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION);
+//        assertNull(retrievedCtx);
+//    }
+//
+//    @Test
+//    public void testExternalSessionLevelPropagation() throws Exception {
+//        PicketBoxSession session = PicketBoxSessionManager.create();
+//        SecurityContext sc = new PicketBoxSecurityContext();
+//        PicketBoxSubject subject = new PicketBoxSubject();
+//        sc.setSubject(subject);
+//
+//        Principal anil = new PicketBoxPrincipal("anil");
+//        subject.setUser(anil);
+//
+//        SecurityContextPropagation.setContext(sc, LEVEL.SESSION,session);
+//
+//        SecurityContext retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION,session);
+//        assertEquals(sc, retrievedCtx);
+//
+//        assertEquals(anil, sc.getSubject().getUser());
+//        
+//
+//        SecurityContextPropagation.clear(LEVEL.SESSION, session);
+//        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION, session);
+//        assertNull(retrievedCtx);
+//    }
+//
+//    @Test(expected = IllegalStateException.class)
+//    public void testInvalid() throws Exception {
+//        PicketBoxSession session = PicketBoxSessionManager.create();
+//
+//        SecurityContext sc = new PicketBoxSecurityContext();
+//        PicketBoxSubject subject = new PicketBoxSubject();
+//        sc.setSubject(subject);
+//
+//        Principal anil = new PicketBoxPrincipal("anil");
+//        subject.setUser(anil);
+//
+//        SecurityContextPropagation.setContext(sc, LEVEL.THREAD, session);
+//    }
 }
