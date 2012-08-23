@@ -21,6 +21,8 @@
  */
 package org.picketbox.core.ctx;
 
+import java.security.Principal;
+
 import org.picketbox.core.PicketBoxSubject;
 
 /**
@@ -30,6 +32,7 @@ import org.picketbox.core.PicketBoxSubject;
  * @since Aug 22, 2012
  */
 public interface SecurityContext {
+
     /**
      * Get the {@link PicketBoxSubject}
      *
@@ -38,9 +41,17 @@ public interface SecurityContext {
     PicketBoxSubject getSubject();
 
     /**
-     * Set the {@link PicketBoxSubject}
+     * <p>Returns the current {@link Principal}, if authenticated.</p>
      *
-     * @param subject
+     * @return
      */
-    void setSubject(PicketBoxSubject subject);
+    Principal getPrincipal();
+
+    /**
+     * <p>Checks if the current user has the specified role.</p>
+     *
+     * @param role
+     * @return
+     */
+    boolean hasRole(String role);
 }
