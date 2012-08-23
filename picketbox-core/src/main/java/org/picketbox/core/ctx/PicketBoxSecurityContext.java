@@ -21,6 +21,8 @@
  */
 package org.picketbox.core.ctx;
 
+import java.security.Principal;
+
 import org.picketbox.core.PicketBoxSubject;
 
 /**
@@ -45,7 +47,13 @@ public class PicketBoxSecurityContext implements SecurityContext {
     }
 
     @Override
-    public void setSubject(PicketBoxSubject subject) {
-        this.subject = subject;
+    public Principal getPrincipal() {
+        return this.subject == null ? null : this.subject.getUser();
     }
+
+    @Override
+    public boolean hasRole(String role) {
+        return this.subject == null ? false : this.subject.hasRole(role);
+    }
+
 }

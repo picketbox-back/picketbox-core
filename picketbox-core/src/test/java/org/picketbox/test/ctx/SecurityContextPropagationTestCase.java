@@ -42,9 +42,9 @@ import org.picketbox.core.ctx.SecurityContextPropagation;
 public class SecurityContextPropagationTestCase {
     @Test
     public void testThreadLevelPropagation() throws Exception {
-        SecurityContext sc = new PicketBoxSecurityContext();
         PicketBoxSubject subject = new PicketBoxSubject();
-        sc.setSubject(subject);
+
+        SecurityContext sc = new PicketBoxSecurityContext(subject);
 
         Principal anil = new PicketBoxPrincipal("anil");
         subject.setUser(anil);
@@ -55,11 +55,11 @@ public class SecurityContextPropagationTestCase {
         assertEquals(sc, retrievedCtx);
 
         assertEquals(anil, sc.getSubject().getUser());
-        
+
         SecurityContextPropagation.clear();
-        
+
         retrievedCtx = SecurityContextPropagation.getContext();
-        
+
         assertNull(retrievedCtx);
     }
 
@@ -78,7 +78,7 @@ public class SecurityContextPropagationTestCase {
 //        assertEquals(sc, retrievedCtx);
 //
 //        assertEquals(anil, sc.getSubject().getUser());
-//        
+//
 //        SecurityContextPropagation.clear(LEVEL.SESSION);
 //        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION);
 //        assertNull(retrievedCtx);
@@ -100,7 +100,7 @@ public class SecurityContextPropagationTestCase {
 //        assertEquals(sc, retrievedCtx);
 //
 //        assertEquals(anil, sc.getSubject().getUser());
-//        
+//
 //
 //        SecurityContextPropagation.clear(LEVEL.SESSION, session);
 //        retrievedCtx = SecurityContextPropagation.getContext(LEVEL.SESSION, session);
