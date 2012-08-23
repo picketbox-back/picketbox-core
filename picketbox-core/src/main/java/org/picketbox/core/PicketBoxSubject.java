@@ -24,6 +24,7 @@ package org.picketbox.core;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -190,5 +191,17 @@ public class PicketBoxSubject implements Serializable {
         this.contextData.clear();
         this.roleNames.clear();
         this.user = null;
+    }
+
+    /**
+     * <p>Checks if this subject has the specified role.</p>
+     *
+     * @param role
+     * @return
+     */
+    public boolean hasRole(String role) {
+        String[] userRoles = this.roleNames.toArray(new String[this.roleNames.size()]);
+
+        return Arrays.binarySearch(userRoles, role) >= 0;
     }
 }
