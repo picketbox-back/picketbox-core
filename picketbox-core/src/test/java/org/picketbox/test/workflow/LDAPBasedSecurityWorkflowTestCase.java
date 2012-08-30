@@ -38,7 +38,7 @@ import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
 import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
 import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.core.ldap.config.LDAPSearchConfig;
-import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
+import org.picketbox.test.ldap.AbstractLDAPTest;
 
 /**
  * Unit test that uses {@link LDAPAuthenticationManager} to authenticate, {@link LDAPBasedIdentityManager} to extract the roles

@@ -35,7 +35,7 @@ import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.core.ldap.config.LDAPSearchConfig;
 import org.picketbox.core.ldap.handlers.LDAPContextHandler;
 import org.picketbox.core.ldap.handlers.LDAPSearchHandler;
-import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
+import org.picketbox.test.ldap.AbstractLDAPTest;
 
 /**
  * Unit test the {@link LDAPSearchHandler} got type 3 style usecase

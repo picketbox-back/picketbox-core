@@ -143,20 +143,16 @@
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.apache.directory.server</groupId>
-         <artifactId>apacheds-all</artifactId>
-         <version>1.5.7</version>
-         <scope>test</scope>
-         <exclusions>
-            <exclusion>
-               <artifactId>shared-ldap</artifactId>
-               <groupId>org.apache.directory.shared</groupId>
-            </exclusion>
-            <exclusion>
-               <artifactId>shared-ldap-schema</artifactId>
-               <groupId>org.apache.directory.shared</groupId>
-            </exclusion>
-         </exclusions>
+      	<groupId>org.picketbox</groupId>
+      	<artifactId>picketbox-ldap</artifactId>
+      	<version>1.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.picketbox</groupId>
+      	<artifactId>picketbox-ldap</artifactId>
+      	<version>1.0.0.Final</version>
+      	<scope>test</scope>
+        <type>test-jar</type>
       </dependency>
    </dependencies>
    <reporting>

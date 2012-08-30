@@ -34,7 +34,7 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
-import org.picketbox.test.ldap.apacheds.AbstractLDAPTest;
+import org.picketbox.test.ldap.AbstractLDAPTest;
 
 /**
  * Unit test the {@link LDAPBasedIdentityManager}
