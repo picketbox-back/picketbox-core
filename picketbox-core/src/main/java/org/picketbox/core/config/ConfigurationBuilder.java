@@ -28,7 +28,7 @@ package org.picketbox.core.config;
  */
 public class ConfigurationBuilder extends AbstractConfigurationBuilder<PicketBoxConfiguration> {
 
-    private AuthenticationConfigurationBuilder authentication;
+    protected AuthenticationConfigurationBuilder authentication;
     private IdentityManagerConfigurationBuilder identityManager;
     private AuthorizationConfigurationBuilder authorization;
     private EventManagerConfigurationBuilder eventManager;
@@ -36,11 +36,19 @@ public class ConfigurationBuilder extends AbstractConfigurationBuilder<PicketBox
 
     public ConfigurationBuilder() {
         this.builder = this;
-        this.authentication = new AuthenticationConfigurationBuilder(this);
+        this.authentication = createAuthenticationBuilder();
         this.authorization = new AuthorizationConfigurationBuilder(this);
-        this.identityManager = new IdentityManagerConfigurationBuilder(this);
+        this.identityManager = createIdentityManager();
         this.eventManager = new EventManagerConfigurationBuilder(this);
         this.sessionManager = new SessionManagerConfigurationBuilder(this);
+    }
+
+    protected IdentityManagerConfigurationBuilder createIdentityManager() {
+        return new IdentityManagerConfigurationBuilder(this);
+    }
+
+    protected AuthenticationConfigurationBuilder createAuthenticationBuilder() {
+        return new AuthenticationConfigurationBuilder(this);
     }
 
     /*
