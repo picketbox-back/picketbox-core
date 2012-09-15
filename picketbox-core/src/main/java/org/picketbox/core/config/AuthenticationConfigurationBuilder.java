@@ -42,10 +42,10 @@ import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
  */
 public class AuthenticationConfigurationBuilder extends AbstractConfigurationBuilder<AuthenticationConfiguration> {
 
-    private List<AuthenticationMechanism> mechanisms;
-    private List<AuthenticationManager> authManagers;
-    private DataBaseAuthenticationConfigurationBuilder dataBaseAuthenticationManager;
-    private LDAPAuthenticationConfigurationBuilder ldapAuthenticationManager;
+    protected List<AuthenticationMechanism> mechanisms;
+    protected List<AuthenticationManager> authManagers;
+    protected DataBaseAuthenticationConfigurationBuilder dataBaseAuthenticationManager;
+    protected LDAPAuthenticationConfigurationBuilder ldapAuthenticationManager;
 
     public AuthenticationConfigurationBuilder(ConfigurationBuilder builder) {
         super(builder);
