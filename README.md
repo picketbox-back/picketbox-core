@@ -1,14 +1,19 @@
-picketbox-core
-==============
-
+PicketBox Core 
+========================
 PicketBox Core Functionality
+
 This repository contains a security stack for Java applications. It can be used with any dependency injection framework of your choice.
 
+Building
+-------------------
+If you already have Maven 3 installed
 
-How do I fork this workspace?
+	mvn install
+	
+Documentation
+-------------------
+For more information, see https://docs.jboss.org/author/display/SECURITY/Java+Application+Security
 
-1) From the browser, hit the fork button. Then you can fork the repository into your account.
-2) From the command line, do
-git clone git@github.com:username/picketbox-core.git
-
-(Substitute the username with your name)
+License
+-------
+* [GNU Lesser General Public License Version 2.1](http://www.gnu.org/licenses/lgpl-2.1-standalone.html)
