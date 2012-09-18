@@ -146,6 +146,7 @@
       	<groupId>org.picketbox</groupId>
       	<artifactId>picketbox-ldap</artifactId>
       	<version>1.0.2.Final</version>
+      	<optional>true</optional>
       </dependency>
       <dependency>
       	<groupId>org.picketbox</groupId>
