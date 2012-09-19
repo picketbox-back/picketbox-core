@@ -9,6 +9,15 @@ objectclass: top
 objectclass: organizationalUnit
 ou: People
 
+dn: uid=admin,ou=People,dc=jboss,dc=org
+objectclass: top
+objectclass: uidObject
+objectclass: person
+uid: admin
+cn: admin
+sn: admin
+userPassword: admin
+
 dn: uid=jduke,ou=People,dc=jboss,dc=org
 objectclass: top
 objectclass: uidObject

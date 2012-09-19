@@ -21,23 +21,13 @@
  */
 package org.picketbox.core.identity.impl;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-
+import org.jboss.picketlink.idm.internal.LDAPIdentityStore;
+import org.jboss.picketlink.idm.internal.config.LDAPConfiguration;
+import org.jboss.picketlink.idm.spi.IdentityStore;
 import org.picketbox.core.PicketBoxMessages;
-import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.LDAPIdentityManagerConfiguration;
 import org.picketbox.core.identity.IdentityManager;
 import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
-import org.picketbox.core.ldap.config.LDAPSearchConfig;
-import org.picketbox.core.ldap.handlers.LDAPContextHandler;
-import org.picketbox.core.ldap.handlers.LDAPSearchHandler;
 
 /**
  * An instance of {@link IdentityManager} that obtains the information about an user from LDAP.
@@ -53,23 +43,16 @@ import org.picketbox.core.ldap.handlers.LDAPSearchHandler;
  * @author anil saldhana
  * @since Jul 17, 2012
  */
-public class LDAPBasedIdentityManager implements IdentityManager {
+public class LDAPBasedIdentityManager extends AbstractDelegateIdentityManager {
 
-    protected Map<String, String> options = new HashMap<String, String>();
-
-    protected String bindDN, bindCredential;
-
-    protected BasicLDAPStoreConfig basicLdapConfig = null;
-
-    protected LDAPSearchConfig ldapSearchConfig = null;
+    protected LDAPConfiguration ldapConfig = null;
 
     public LDAPBasedIdentityManager() {
 
     }
 
     public LDAPBasedIdentityManager(LDAPIdentityManagerConfiguration build) {
-        this.basicLdapConfig = build.getStoreConfig();
-        this.ldapSearchConfig = build.getSearchConfig();
+        this.ldapConfig = build.getStoreConfig();
     }
 
     /**
@@ -77,60 +60,25 @@ public class LDAPBasedIdentityManager implements IdentityManager {
      *
      * @param basicLdapConfig
      */
-    public void setBasicLdapConfig(BasicLDAPStoreConfig basicLdapConfig) {
-        this.basicLdapConfig = basicLdapConfig;
+    public void setLDAPConfiguration(LDAPConfiguration basicLdapConfig) {
+        this.ldapConfig = basicLdapConfig;
     }
 
-    /**
-     * Set the {@link LDAPSearchConfig}
-     *
-     * @param ldapSearchConfig
-     */
-    public void setLdapSearchConfig(LDAPSearchConfig ldapSearchConfig) {
-        this.ldapSearchConfig = ldapSearchConfig;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.identity.IdentityManager#getIdentity(org.picketbox.core.PicketBoxSubject)
+    /* (non-Javadoc)
+     * @see org.picketbox.core.identity.impl.AbstractDelegateIdentityManager#createIdentityStore()
      */
     @Override
-    public PicketBoxSubject getIdentity(PicketBoxSubject subject) {
-        if (subject == null) {
-            throw PicketBoxMessages.MESSAGES.invalidNullArgument("subject");
-        }
-        if (subject.getUser() == null) {
-            throw PicketBoxMessages.MESSAGES.invalidNullArgument("authenticated principal");
-        }
-        if (basicLdapConfig == null) {
+    protected IdentityStore createIdentityStore() {
+        if (ldapConfig == null) {
             throw PicketBoxMessages.MESSAGES.basicLdapConfigMissing();
         }
-        if (ldapSearchConfig == null) {
-            throw PicketBoxMessages.MESSAGES.ldapSearchConfigMissing();
-        }
 
-        Principal principal = subject.getUser();
+        LDAPIdentityStore store = new LDAPIdentityStore();
 
-        ldapSearchConfig.substituteUser(principal.getName());
+        store.setConfiguration(this.ldapConfig);
 
-        LDAPContextHandler ldapContextHandler = new LDAPContextHandler();
-        ldapContextHandler.setLdapStoreConfig(basicLdapConfig);
-        DirContext dc = ldapContextHandler.execute();
-
-        LDAPSearchHandler ldapSearchHandler = new LDAPSearchHandler();
-        ldapSearchHandler.setLdapSearchConfig(ldapSearchConfig);
-
-        List<String> roleNames = new ArrayList<String>();
-        try {
-            roleNames = ldapSearchHandler.executeSearch(dc);
-        } catch (NamingException e) {
-            throw PicketBoxMessages.MESSAGES.ldapSearchFailed(e);
-        }
-
-        subject.setRoleNames(roleNames);
-
-        return subject;
+        return store;
     }
+
 
 }

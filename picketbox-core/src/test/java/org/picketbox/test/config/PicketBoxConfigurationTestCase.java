@@ -22,14 +22,16 @@
 
 package org.picketbox.test.config;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
-
-import junit.framework.Assert;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -43,7 +45,11 @@ import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.authentication.event.UserAuthenticationEventHandler;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.config.PicketBoxConfiguration;
+import org.picketbox.core.identity.DefaultRole;
+import org.picketbox.core.identity.DefaultUser;
 import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.identity.Role;
+import org.picketbox.core.identity.User;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -117,8 +123,8 @@ public class PicketBoxConfigurationTestCase {
 
         PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
 
-        Assert.assertNotNull(subject);
-        Assert.assertTrue(subject.isAuthenticated());
+        assertNotNull(subject);
+        assertTrue(subject.isAuthenticated());
     }
 
     /**
@@ -135,14 +141,12 @@ public class PicketBoxConfigurationTestCase {
         builder.identityManager().manager(new IdentityManager() {
 
             @Override
-            public PicketBoxSubject getIdentity(PicketBoxSubject resultingSubject) {
-                List<String> roles = new ArrayList<String>();
+            public User getIdentity(String userName) {
+                List<Role> roles = new ArrayList<Role>();
 
-                roles.add("test");
+                roles.add(new DefaultRole("test"));
 
-                resultingSubject.setRoleNames(roles);
-
-                return resultingSubject;
+                return new DefaultUser(userName, roles);
             }
         });
 
@@ -158,9 +162,9 @@ public class PicketBoxConfigurationTestCase {
 
         PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
 
-        Assert.assertNotNull(subject);
-        Assert.assertTrue(subject.isAuthenticated());
-        Assert.assertEquals("test", subject.getRoleNames().get(0));
+        assertNotNull(subject);
+        assertTrue(subject.isAuthenticated());
+        assertTrue(subject.hasRole("test"));
     }
 
     /**
@@ -189,8 +193,8 @@ public class PicketBoxConfigurationTestCase {
 
         PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
 
-        Assert.assertNotNull(subject);
-        Assert.assertTrue(subject.isAuthenticated());
+        assertNotNull(subject);
+        assertTrue(subject.isAuthenticated());
     }
 
     @Test
@@ -231,9 +235,9 @@ public class PicketBoxConfigurationTestCase {
 
         PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
 
-        Assert.assertNotNull(subject);
-        Assert.assertTrue(subject.isAuthenticated());
-        Assert.assertEquals("SUCCESS", eventStatus.toString());
+        assertNotNull(subject);
+        assertTrue(subject.isAuthenticated());
+        assertEquals("SUCCESS", eventStatus.toString());
     }
 
 }

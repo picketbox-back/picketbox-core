@@ -22,25 +22,48 @@
 
 package org.picketbox.core.identity;
 
-import org.picketbox.core.PicketBoxSubject;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * <p>
- * This interface defines the contract for Identity Manager implementations used to populate {@link PicketBoxSubject} instances
- * with the informations retrieved from an specific identity store or IDM solution.
- * </p>
+ * <p>Default implementation for {@link User}.</p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public interface IdentityManager {
+public class DefaultUser implements User {
 
-    /**
-     * <p>
-     * Used to populate a {@link PicketBoxSubject} with additional information from some specific identity store.
-     * </p>
-     *
-     * @param resultingSubject
-     * @return
-     */
-    User getIdentity(String userName);
+    @SuppressWarnings("unchecked")
+    private List<Group> groups = Collections.EMPTY_LIST;
+
+    @SuppressWarnings("unchecked")
+    private List<Role> roles = Collections.EMPTY_LIST;
+
+    private String name;
+
+    public DefaultUser(String name) {
+        this.name = name;
+    }
+
+    public DefaultUser(String name, List<Role> roles) {
+        this.name = name;
+        this.roles = roles;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+
+    @Override
+    public List<Role> getRoles() {
+        return this.roles;
+    }
+
+    @Override
+    public List<Group> getGroups() {
+        return this.groups;
+    }
+
 }

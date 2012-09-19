@@ -23,15 +23,14 @@ package org.picketbox.core;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.Subject;
 
+import org.picketbox.core.identity.Role;
+import org.picketbox.core.identity.User;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionId;
 
@@ -46,9 +45,8 @@ public class PicketBoxSubject implements Serializable {
     private static final long serialVersionUID = -7767959770091515534L;
 
     protected Subject subject;
-    protected Principal user;
-    protected List<String> roleNames = new ArrayList<String>();
-    protected Map<String, Object> attributes = new HashMap<String, Object>();
+    protected Principal principal;
+    protected User user;
     protected transient Map<String, Object> contextData = new HashMap<String, Object>();
 
     private boolean authenticated;
@@ -72,8 +70,8 @@ public class PicketBoxSubject implements Serializable {
      *
      * @return
      */
-    public Principal getUser() {
-        return user;
+    public Principal getPrincipal() {
+        return principal;
     }
 
     /**
@@ -81,45 +79,22 @@ public class PicketBoxSubject implements Serializable {
      *
      * @param user
      */
-    public void setUser(Principal user) {
+    public void setPrincipal(Principal user) {
+        this.principal = user;
+    }
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return this.user;
+    }
+
+    /**
+     * @param user the user to set
+     */
+    public void setUser(User user) {
         this.user = user;
-    }
-
-    /**
-     * Get the role names
-     *
-     * @return
-     */
-    public List<String> getRoleNames() {
-        return Collections.unmodifiableList(roleNames);
-    }
-
-    /**
-     * Set the role names of the user
-     *
-     * @param rolesNames
-     */
-    public void setRoleNames(List<String> rolesNames) {
-        this.roleNames.addAll(rolesNames);
-    }
-
-    /**
-     * Get the user attributes
-     *
-     * @return
-     */
-    public Map<String, Object> getAttributes() {
-        return Collections.unmodifiableMap(attributes);
-    }
-
-    /**
-     * Set the attributes
-     *
-     * @param attributes
-     */
-    public void setAttributes(Map<String, Object> attributes) {
-        this.attributes.clear();
-        this.attributes.putAll(attributes);
     }
 
     /**
@@ -189,8 +164,7 @@ public class PicketBoxSubject implements Serializable {
         this.authenticated = false;
         this.credential = null;
         this.contextData.clear();
-        this.roleNames.clear();
-        this.user = null;
+        this.principal = null;
     }
 
     /**
@@ -200,8 +174,16 @@ public class PicketBoxSubject implements Serializable {
      * @return
      */
     public boolean hasRole(String role) {
-        String[] userRoles = this.roleNames.toArray(new String[this.roleNames.size()]);
+        if (!isAuthenticated()) {
+            throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
+        }
 
-        return Arrays.binarySearch(userRoles, role) >= 0;
+        for (Role userRole : getUser().getRoles()) {
+            if (role.equals(userRole.getName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -62,7 +62,7 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
         return this;
     }
 
-    public LDAPIdentityManagerConfigurationBuilder ldap() {
+    public LDAPIdentityManagerConfigurationBuilder ldapStore() {
         if (this.ldapIdentityManagerManager == null) {
             this.ldapIdentityManagerManager = new LDAPIdentityManagerConfigurationBuilder(this);
         }

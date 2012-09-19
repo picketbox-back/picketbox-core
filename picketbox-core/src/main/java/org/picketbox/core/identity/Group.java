@@ -22,25 +22,12 @@
 
 package org.picketbox.core.identity;
 
-import org.picketbox.core.PicketBoxSubject;
-
 /**
- * <p>
- * This interface defines the contract for Identity Manager implementations used to populate {@link PicketBoxSubject} instances
- * with the informations retrieved from an specific identity store or IDM solution.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public interface IdentityManager {
+public interface Group {
 
-    /**
-     * <p>
-     * Used to populate a {@link PicketBoxSubject} with additional information from some specific identity store.
-     * </p>
-     *
-     * @param resultingSubject
-     * @return
-     */
-    User getIdentity(String userName);
+    String getName();
+
 }

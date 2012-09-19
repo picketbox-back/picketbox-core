@@ -24,8 +24,11 @@ package org.picketbox.core.identity.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.identity.DefaultRole;
+import org.picketbox.core.identity.DefaultUser;
 import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.identity.Role;
+import org.picketbox.core.identity.User;
 
 /**
  * <p>
@@ -39,10 +42,12 @@ import org.picketbox.core.identity.IdentityManager;
  */
 public class ConfiguredRolesIdentityManager implements IdentityManager {
 
-    private List<String> roles = new ArrayList<String>();
+    private List<Role> roles = new ArrayList<Role>();
 
     public ConfiguredRolesIdentityManager(List<String> roles) {
-        this.roles.addAll(roles);
+        for (String string : roles) {
+            this.roles.add(new DefaultRole(string));
+        }
     }
 
     /*
@@ -51,8 +56,7 @@ public class ConfiguredRolesIdentityManager implements IdentityManager {
      * @see org.picketbox.core.identity.IdentityManager#getIdentity(org.picketbox.core.PicketBoxSubject)
      */
     @Override
-    public PicketBoxSubject getIdentity(PicketBoxSubject resultingSubject) {
-        resultingSubject.setRoleNames(roles);
-        return resultingSubject;
+    public User getIdentity(String name) {
+        return new DefaultUser(name, roles);
     }
 }

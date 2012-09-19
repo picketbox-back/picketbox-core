@@ -47,14 +47,14 @@ public class SecurityContextPropagationTestCase {
         SecurityContext sc = new PicketBoxSecurityContext(subject);
 
         Principal anil = new PicketBoxPrincipal("anil");
-        subject.setUser(anil);
+        subject.setPrincipal(anil);
 
         SecurityContextPropagation.setContext(sc);
 
         SecurityContext retrievedCtx = SecurityContextPropagation.getContext();
         assertEquals(sc, retrievedCtx);
 
-        assertEquals(anil, sc.getSubject().getUser());
+        assertEquals(anil, sc.getSubject().getPrincipal());
 
         SecurityContextPropagation.clear();
 

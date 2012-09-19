@@ -81,15 +81,13 @@ public class SimpleAuthorizationManager implements AuthorizationManager {
         if (!started) {
             throw PicketBoxMessages.MESSAGES.instanceNotStarted();
         }
-        List<String> subjectRoleNames = subject.getRoleNames();
-        if (subjectRoleNames == null || subjectRoleNames.size() == 0) {
-            return false;
-        }
-        for (String role : subjectRoleNames) {
-            if (roleNames.contains(role)) {
+
+        for (String role : this.roleNames) {
+            if (subject.hasRole(role)) {
                 return true;
             }
         }
+
         return false;
     }
 }

@@ -22,8 +22,7 @@
 
 package org.picketbox.core.config;
 
-import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
-import org.picketbox.core.ldap.config.LDAPSearchConfig;
+import org.jboss.picketlink.idm.internal.config.LDAPConfiguration;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -31,26 +30,24 @@ import org.picketbox.core.ldap.config.LDAPSearchConfig;
  */
 public class LDAPIdentityManagerConfiguration {
 
-    private BasicLDAPStoreConfig storeConfig = new BasicLDAPStoreConfig();
-    private LDAPSearchConfig searchConfig = new LDAPSearchConfig();
+    private LDAPConfiguration ldapConfig = new LDAPConfiguration();
 
-    public LDAPIdentityManagerConfiguration(BasicLDAPStoreConfig storeConfig, LDAPSearchConfig searchConfig) {
-        this.storeConfig = storeConfig;
-        this.searchConfig = searchConfig;
+    public LDAPIdentityManagerConfiguration(LDAPConfiguration ldapConfig) {
+        this.ldapConfig = ldapConfig;
     }
 
     /**
      * @return the storeConfig
      */
-    public BasicLDAPStoreConfig getStoreConfig() {
-        return storeConfig;
+    public LDAPConfiguration getStoreConfig() {
+        return ldapConfig;
     }
 
     /**
      * @return the searchConfig
      */
-    public LDAPSearchConfig getSearchConfig() {
-        return searchConfig;
+    public LDAPConfiguration getSearchConfig() {
+        return ldapConfig;
     }
 
 }
