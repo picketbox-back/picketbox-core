@@ -31,13 +31,11 @@ import org.jboss.picketlink.idm.internal.config.LDAPConfiguration;
 import org.jboss.picketlink.idm.internal.config.LDAPConfigurationBuilder;
 import org.jboss.picketlink.idm.spi.IdentityStoreConfigurationBuilder;
 import org.junit.Before;
-import org.junit.Test;
 import org.picketbox.core.PicketBoxPrincipal;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.manager.LDAPAuthenticationManager;
 import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.authorization.impl.SimpleAuthorizationManager;
-import org.picketbox.core.identity.User;
 import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
 import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
 import org.picketbox.core.ldap.config.LDAPSearchConfig;
@@ -97,10 +95,8 @@ public class LDAPBasedSecurityWorkflowTestCase extends AbstractLDAPTest {
 
         subject.setPrincipal(new PicketBoxPrincipal("jduke"));
 
-        User user = im.getIdentity(subject.getPrincipal().getName());
+        subject = im.getIdentity(subject);
 
-        subject.setUser(user);
-        
         assertNotNull(subject);
 
         //assertTrue(subject.hasRole("Echo"));

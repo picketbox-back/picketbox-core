@@ -23,14 +23,15 @@ package org.picketbox.core;
 
 import java.io.Serializable;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import org.picketbox.core.identity.Role;
-import org.picketbox.core.identity.User;
+import org.jboss.picketlink.idm.model.Role;
+import org.jboss.picketlink.idm.model.User;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionId;
 
@@ -44,10 +45,14 @@ public class PicketBoxSubject implements Serializable {
 
     private static final long serialVersionUID = -7767959770091515534L;
 
-    protected Subject subject;
-    protected Principal principal;
-    protected User user;
-    protected transient Map<String, Object> contextData = new HashMap<String, Object>();
+    private Subject subject;
+    private Principal principal;
+    private User user;
+
+    @SuppressWarnings("unchecked")
+    private Collection<Role> roles = Collections.EMPTY_LIST;
+
+    private transient Map<String, Object> contextData = new HashMap<String, Object>();
 
     private boolean authenticated;
 
@@ -178,12 +183,16 @@ public class PicketBoxSubject implements Serializable {
             throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
         }
 
-        for (Role userRole : getUser().getRoles()) {
+        for (Role userRole: this.roles) {
             if (role.equals(userRole.getName())) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 }

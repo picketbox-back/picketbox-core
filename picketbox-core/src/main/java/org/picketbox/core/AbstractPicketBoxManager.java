@@ -33,7 +33,6 @@ import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.identity.IdentityManager;
-import org.picketbox.core.identity.User;
 import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionManager;
@@ -138,9 +137,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                     subject.setPrincipal(result.getPrincipal());
 
                     // load the informations for the authenticated principal from the configured identity manager
-                    User user = this.identityManager.getIdentity(subject.getPrincipal().getName());
-
-                    subject.setUser(user);
+                    subject = this.identityManager.getIdentity(subject);
 
                     subject.setCredential(null);
 

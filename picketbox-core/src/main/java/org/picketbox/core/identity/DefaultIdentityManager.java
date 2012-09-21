@@ -22,6 +22,8 @@
 
 package org.picketbox.core.identity;
 
+import org.picketbox.core.PicketBoxSubject;
+
 
 /**
  * <p>
@@ -38,8 +40,8 @@ public class DefaultIdentityManager implements IdentityManager {
      * @see org.picketbox.core.IdentityManager#getIdentity()
      */
     @Override
-    public User getIdentity(String userName) {
-        return new DefaultUser(userName);
+    public PicketBoxSubject getIdentity(PicketBoxSubject authenticatedSubject) {
+        return authenticatedSubject;
     }
 
 }

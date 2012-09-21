@@ -36,13 +36,12 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.identity.impl.EntityManagerContext;
-import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
+import org.picketbox.core.identity.impl.JPABasedIdentityManager;
 
 /**
- * Unit test the {@link LDAPBasedIdentityManager}
+ * Unit test the {@link JPABasedIdentityManager}
  *
- * @author anil saldhana
- * @since Jul 18, 2012
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
 public class JPABasedIdentityManagerTestcase extends AbstractJPAIdentityStoreTestCase {
 

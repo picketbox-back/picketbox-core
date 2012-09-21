@@ -42,5 +42,5 @@ public interface IdentityManager {
      * @param resultingSubject
      * @return
      */
-    User getIdentity(String userName);
+    PicketBoxSubject getIdentity(PicketBoxSubject authenticatedSubject);
 }

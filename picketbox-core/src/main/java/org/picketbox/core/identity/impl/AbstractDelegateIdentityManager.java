@@ -22,18 +22,16 @@
 
 package org.picketbox.core.identity.impl;
 
-import java.util.ArrayList;
+import java.security.Principal;
 import java.util.Collection;
-import java.util.List;
 
 import org.jboss.picketlink.idm.internal.DefaultIdentityManager;
 import org.jboss.picketlink.idm.model.Role;
+import org.jboss.picketlink.idm.model.User;
 import org.jboss.picketlink.idm.spi.IdentityStore;
 import org.picketbox.core.PicketBoxMessages;
-import org.picketbox.core.identity.DefaultRole;
-import org.picketbox.core.identity.DefaultUser;
+import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.identity.IdentityManager;
-import org.picketbox.core.identity.User;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -44,23 +42,20 @@ public abstract class AbstractDelegateIdentityManager implements IdentityManager
     private DefaultIdentityManager delegateIdentityManager;
 
     @Override
-    public User getIdentity(String userName) {
-        if (userName == null) {
-            throw PicketBoxMessages.MESSAGES.invalidNullArgument("userName");
+    public PicketBoxSubject getIdentity(PicketBoxSubject authenticatedSubject) {
+        if (authenticatedSubject == null) {
+            throw PicketBoxMessages.MESSAGES.invalidNullArgument("authenticatedSubject");
         }
 
-        org.jboss.picketlink.idm.model.User userFromIDM = getDelegateIdentityManager().getUser(userName);
+        Principal principal = authenticatedSubject.getPrincipal();
+
+        User userFromIDM = getDelegateIdentityManager().getUser(principal.getName());
         Collection<Role> rolesFromIDM = getDelegateIdentityManager().getRoles(userFromIDM, null);
 
-        List<org.picketbox.core.identity.Role> roles = new ArrayList<org.picketbox.core.identity.Role>();
+        authenticatedSubject.setUser(userFromIDM);
+        authenticatedSubject.setRoles(rolesFromIDM);
 
-        for (Role role : rolesFromIDM) {
-            roles.add(new DefaultRole(role.getName()));
-        }
-
-        DefaultUser picketboxUser = new DefaultUser(userName, roles);
-
-        return picketboxUser;
+        return authenticatedSubject;
     }
 
     private DefaultIdentityManager getDelegateIdentityManager() {

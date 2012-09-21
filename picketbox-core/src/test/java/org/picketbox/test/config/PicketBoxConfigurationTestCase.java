@@ -33,6 +33,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.jboss.picketlink.idm.model.Role;
+import org.jboss.picketlink.idm.model.SimpleRole;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,11 +47,7 @@ import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.authentication.event.UserAuthenticationEventHandler;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.config.PicketBoxConfiguration;
-import org.picketbox.core.identity.DefaultRole;
-import org.picketbox.core.identity.DefaultUser;
 import org.picketbox.core.identity.IdentityManager;
-import org.picketbox.core.identity.Role;
-import org.picketbox.core.identity.User;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -141,12 +139,14 @@ public class PicketBoxConfigurationTestCase {
         builder.identityManager().manager(new IdentityManager() {
 
             @Override
-            public User getIdentity(String userName) {
+            public PicketBoxSubject getIdentity(PicketBoxSubject authenticatedSubject) {
                 List<Role> roles = new ArrayList<Role>();
 
-                roles.add(new DefaultRole("test"));
+                roles.add(new SimpleRole("test"));
+                
+                authenticatedSubject.setRoles(roles);
 
-                return new DefaultUser(userName, roles);
+                return authenticatedSubject;
             }
         });
 
