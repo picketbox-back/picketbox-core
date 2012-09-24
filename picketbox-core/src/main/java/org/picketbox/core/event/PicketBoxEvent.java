@@ -20,24 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.impl;
-
-import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.authentication.AuthenticationProvider;
-import org.picketbox.core.config.PicketBoxConfiguration;
+package org.picketbox.core.event;
 
 /**
  * <p>
- * A implementation of {@link AuthenticationProvider} that provides some basic authentication mechanisms.
+ * Defines a contract for events.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
+public interface PicketBoxEvent<HANDLER extends PicketBoxEventHandler> {
 
-    public PicketBoxAuthenticationProvider(PicketBoxManager picketBoxManager, PicketBoxConfiguration configuration) {
-        super(picketBoxManager, configuration);
-    }
+    /**
+     * <p>
+     * Process a specific handler to handle the corresponding event.
+     * </p>
+     *
+     * @param handler
+     */
+    void dispatch(HANDLER handler);
 
 }

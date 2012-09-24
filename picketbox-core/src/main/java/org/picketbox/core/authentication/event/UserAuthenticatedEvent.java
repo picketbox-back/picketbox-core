@@ -24,13 +24,14 @@ package org.picketbox.core.authentication.event;
 
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.AuthenticationStatus;
+import org.picketbox.core.event.PicketBoxEvent;
 
 /**
  * Event to indicate an user is authenticated
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public class UserAuthenticatedEvent implements AuthenticationEvent<UserAuthenticationEventHandler> {
+public class UserAuthenticatedEvent implements PicketBoxEvent<UserAuthenticationEventHandler> {
 
     private AuthenticationResult result;
 

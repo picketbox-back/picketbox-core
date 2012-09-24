@@ -22,14 +22,14 @@
 
 package org.picketbox.core.logout;
 
-import org.picketbox.core.authentication.event.AuthenticationEvent;
+import org.picketbox.core.event.PicketBoxEvent;
 
 /**
  * Event to indicate an user is authenticated
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public class UserLoggedOutEvent implements AuthenticationEvent<UserLoggedOutEventHandler> {
+public class UserLoggedOutEvent implements PicketBoxEvent<UserLoggedOutEventHandler> {
 
     /**
      * @param result
