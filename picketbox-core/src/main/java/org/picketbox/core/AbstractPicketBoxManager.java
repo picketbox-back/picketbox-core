@@ -26,6 +26,7 @@ import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.AuthenticationStatus;
+import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.EntitlementsManager;
@@ -74,9 +75,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                 this.sessionManager.remove(authenticatedUser.getSession());
             }
             authenticatedUser.setAuthenticated(false);
-            if (this.eventManager != null) {
-                this.eventManager.raiseEvent(new UserLoggedOutEvent());
-            }
+            getEventManager().raiseEvent(new UserLoggedOutEvent());
         } else {
             throw PicketBoxMessages.MESSAGES.invalidUserSession();
         }
@@ -98,6 +97,13 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
 
             if (subject.isAuthenticated()) {
                 if (session != null && session.isValid()) {
+                    AuthenticationResult result = new AuthenticationResult();
+
+                    result.setStatus(AuthenticationStatus.SUCCESS);
+                    result.setPrincipal(subject.getUser());
+
+                    getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
+
                     return subject;
                 } else {
                     throw new IllegalArgumentException(
@@ -147,6 +153,10 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                     subject.setCredential(null);
 
                     createSession(subject);
+
+                    getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
+                } else {
+                    getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
                 }
             }
         }
@@ -278,4 +288,5 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     public PicketBoxEventManager getEventManager() {
         return this.eventManager;
     }
+
 }
