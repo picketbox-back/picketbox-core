@@ -103,6 +103,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                     result.setPrincipal(subject.getUser());
 
                     getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
+
                     return subject;
                 } else {
                     throw new IllegalArgumentException(
