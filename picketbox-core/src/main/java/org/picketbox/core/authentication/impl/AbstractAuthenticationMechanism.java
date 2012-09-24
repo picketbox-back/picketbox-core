@@ -32,7 +32,6 @@ import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.AuthenticationStatus;
-import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
@@ -80,13 +79,11 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
      */
     protected AuthenticationResult performSuccessfulAuthentication(AuthenticationResult result) {
         result.setStatus(AuthenticationStatus.SUCCESS);
-        this.picketBoxManager.getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
         return result;
     }
 
     protected AuthenticationResult performFailedAuthentication(AuthenticationResult result) {
         result.setStatus(AuthenticationStatus.FAILED);
-        this.picketBoxManager.getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
         return result;
     }
 
@@ -175,5 +172,9 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
 
     protected void setPicketBoxManager(PicketBoxManager picketBoxManager) {
         this.picketBoxManager = picketBoxManager;
+    }
+
+    protected PicketBoxManager getPicketBoxManager() {
+        return this.picketBoxManager;
     }
 }
