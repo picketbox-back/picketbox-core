@@ -24,7 +24,7 @@ package org.picketbox.core.authentication.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.picketbox.core.authentication.AuthenticationEventManager;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
@@ -40,14 +40,14 @@ import org.picketbox.core.config.PicketBoxConfiguration;
  */
 public abstract class AbstractAuthenticationProvider implements AuthenticationProvider {
 
-    private AuthenticationEventManager authenticationEventManager;
     private final List<AuthenticationMechanism> mechanisms = new ArrayList<AuthenticationMechanism>();
     private final List<AuthenticationManager> authenticationManagers = new ArrayList<AuthenticationManager>();
+    private PicketBoxManager picketBoxManager;
 
-    public AbstractAuthenticationProvider(PicketBoxConfiguration configuration) {
+    public AbstractAuthenticationProvider(PicketBoxManager picketBoxManager, PicketBoxConfiguration configuration) {
+        this.picketBoxManager = picketBoxManager;
         this.authenticationManagers.addAll(configuration.getAuthentication().getAuthManagers());
         this.mechanisms.addAll(configuration.getAuthentication().getMechanisms());
-        this.authenticationEventManager = configuration.getAuthentication().getEventManager().getAuthenticationEventManager();
     }
 
     /*
@@ -91,6 +91,7 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
 
             if (currentMechanism instanceof AbstractAuthenticationMechanism) {
                 ((AbstractAuthenticationMechanism) currentMechanism).setAuthenticationProvider(this);
+                ((AbstractAuthenticationMechanism) currentMechanism).setPicketBoxManager(this.picketBoxManager);
             }
 
             if (currentMechanism.getClass().getName().equals(mechanismName)) {
@@ -109,16 +110,6 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
     @Override
     public List<AuthenticationManager> getAuthenticationManagers() {
         return this.authenticationManagers;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.api.AuthenticationProvider#getEventManager()
-     */
-    @Override
-    public AuthenticationEventManager getEventManager() {
-        return this.authenticationEventManager;
     }
 
 }

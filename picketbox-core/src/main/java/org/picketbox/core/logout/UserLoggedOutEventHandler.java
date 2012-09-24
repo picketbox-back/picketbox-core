@@ -22,14 +22,14 @@
 
 package org.picketbox.core.logout;
 
-import org.picketbox.core.authentication.event.AuthenticationEventHandler;
+import org.picketbox.core.event.PicketBoxEventHandler;
 
 /**
  * An Event Handler for the User Logging Out
  *
  * @author anil saldhana
  */
-public interface UserLoggedOutEventHandler extends AuthenticationEventHandler {
+public interface UserLoggedOutEventHandler extends PicketBoxEventHandler {
 
     /**
      * User Logged Out

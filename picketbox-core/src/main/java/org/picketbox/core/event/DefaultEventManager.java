@@ -20,27 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.event;
+package org.picketbox.core.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.picketbox.core.authentication.AuthenticationEventManager;
 
 /**
- * Default Implementation of the {@link AuthenticationEventManager}
+ * Default Implementation of the {@link PicketBoxEventManager}
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public class DefaultAuthenticationEventManager implements AuthenticationEventManager {
+public class DefaultEventManager implements PicketBoxEventManager {
 
     @SuppressWarnings("rawtypes")
-    private Map<Class<? extends AuthenticationEvent>, List<AuthenticationEventHandler>> observers = new HashMap<Class<? extends AuthenticationEvent>, List<AuthenticationEventHandler>>();
+    private Map<Class<? extends PicketBoxEvent>, List<PicketBoxEventHandler>> observers = new HashMap<Class<? extends PicketBoxEvent>, List<PicketBoxEventHandler>>();
 
-    public DefaultAuthenticationEventManager(List<AuthenticationEventHandler> handlers) {
-        for (AuthenticationEventHandler handler : handlers) {
+    public DefaultEventManager(List<PicketBoxEventHandler> handlers) {
+        for (PicketBoxEventHandler handler : handlers) {
             addHandler(handler.getEventType(), handler);
         }
     }
@@ -53,23 +52,23 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public void raiseEvent(AuthenticationEvent event) {
-        List<AuthenticationEventHandler> handlers = this.observers.get(event.getClass());
+    public void raiseEvent(PicketBoxEvent event) {
+        List<PicketBoxEventHandler> handlers = this.observers.get(event.getClass());
 
         if (handlers != null) {
-            for (AuthenticationEventHandler authenticationEventHandler : handlers) {
+            for (PicketBoxEventHandler authenticationEventHandler : handlers) {
                 event.dispatch(authenticationEventHandler);
             }
         }
     }
 
     @SuppressWarnings("rawtypes")
-    private void addHandler(Class<? extends AuthenticationEvent> eventType, AuthenticationEventHandler handler) {
+    private void addHandler(Class<? extends PicketBoxEvent> eventType, PicketBoxEventHandler handler) {
         if (!this.observers.containsKey(eventType)) {
-            this.observers.put(eventType, new ArrayList<AuthenticationEventHandler>());
+            this.observers.put(eventType, new ArrayList<PicketBoxEventHandler>());
         }
 
-        List<AuthenticationEventHandler> handlers = this.observers.get(eventType);
+        List<PicketBoxEventHandler> handlers = this.observers.get(eventType);
 
         handlers.add(handler);
     }
