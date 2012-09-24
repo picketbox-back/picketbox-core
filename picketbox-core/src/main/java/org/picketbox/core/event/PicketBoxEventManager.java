@@ -20,25 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.event;
+package org.picketbox.core.event;
+
 
 /**
  * <p>
- * Defines a contract for authentication events.
+ * Authentication event managers are responsible for handle specific authentication events during the authentication.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationEvent<HANDLER extends AuthenticationEventHandler> {
+public interface PicketBoxEventManager {
 
     /**
      * <p>
-     * Process a specific handler to handle the corresponding event.
+     * Raises an event.
      * </p>
      *
-     * @param handler
+     * @param event
      */
-    void dispatch(HANDLER handler);
-
+    void raiseEvent(PicketBoxEvent<? extends PicketBoxEventHandler> event);
 }

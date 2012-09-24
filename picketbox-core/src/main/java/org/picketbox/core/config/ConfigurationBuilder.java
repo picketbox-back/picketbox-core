@@ -105,7 +105,7 @@ public class ConfigurationBuilder extends AbstractConfigurationBuilder<PicketBox
     @Override
     public PicketBoxConfiguration doBuild() {
         return new PicketBoxConfiguration(this.authentication.build(), this.authorization.build(),
-                this.identityManager.build(), this.sessionManager.build());
+                this.identityManager.build(), this.sessionManager.build(), this.eventManager.build());
     }
 
 }

@@ -22,12 +22,14 @@
 
 package org.picketbox.core.authentication.event;
 
+import org.picketbox.core.event.PicketBoxEventHandler;
+
 /**
  * An Event Handler for the User Authentication
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public interface UserAuthenticationEventHandler extends AuthenticationEventHandler {
+public interface UserAuthenticationEventHandler extends PicketBoxEventHandler {
 
     /**
      * Successful Authentication

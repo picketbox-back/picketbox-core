@@ -22,6 +22,7 @@
 
 package org.picketbox.core.authentication.impl;
 
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.config.PicketBoxConfiguration;
 
@@ -35,8 +36,8 @@ import org.picketbox.core.config.PicketBoxConfiguration;
  */
 public class PicketBoxAuthenticationProvider extends AbstractAuthenticationProvider {
 
-    public PicketBoxAuthenticationProvider(PicketBoxConfiguration configuration) {
-        super(configuration);
+    public PicketBoxAuthenticationProvider(PicketBoxManager picketBoxManager, PicketBoxConfiguration configuration) {
+        super(picketBoxManager, configuration);
     }
 
 }

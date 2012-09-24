@@ -25,9 +25,9 @@ package org.picketbox.core.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.picketbox.core.authentication.AuthenticationEventManager;
-import org.picketbox.core.authentication.event.AuthenticationEventHandler;
-import org.picketbox.core.authentication.event.DefaultAuthenticationEventManager;
+import org.picketbox.core.event.PicketBoxEventHandler;
+import org.picketbox.core.event.PicketBoxEventManager;
+import org.picketbox.core.event.DefaultEventManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -35,12 +35,12 @@ import org.picketbox.core.authentication.event.DefaultAuthenticationEventManager
  */
 public class EventManagerConfigurationBuilder extends AbstractConfigurationBuilder<EventManagerConfiguration> {
 
-    private AuthenticationEventManager manager;
-    private List<AuthenticationEventHandler> handlers;
+    private PicketBoxEventManager manager;
+    private List<PicketBoxEventHandler> handlers;
 
     public EventManagerConfigurationBuilder(ConfigurationBuilder builder) {
         super(builder);
-        this.handlers = new ArrayList<AuthenticationEventHandler>();
+        this.handlers = new ArrayList<PicketBoxEventHandler>();
     }
 
     /*
@@ -51,16 +51,16 @@ public class EventManagerConfigurationBuilder extends AbstractConfigurationBuild
     @Override
     protected void setDefaults() {
         if (manager == null) {
-            manager = new DefaultAuthenticationEventManager(this.handlers);
+            manager = new DefaultEventManager(this.handlers);
         }
     }
 
-    public EventManagerConfigurationBuilder manager(AuthenticationEventManager eventManager) {
+    public EventManagerConfigurationBuilder manager(PicketBoxEventManager eventManager) {
         this.manager = eventManager;
         return this;
     }
 
-    public EventManagerConfigurationBuilder handler(AuthenticationEventHandler authenticationEventHandler) {
+    public EventManagerConfigurationBuilder handler(PicketBoxEventHandler authenticationEventHandler) {
         this.handlers.add(authenticationEventHandler);
         return this;
     }
@@ -75,7 +75,7 @@ public class EventManagerConfigurationBuilder extends AbstractConfigurationBuild
         return new EventManagerConfiguration(this.manager);
     }
 
-    public void setEventManager(AuthenticationEventManager eventManager) {
+    public void setEventManager(PicketBoxEventManager eventManager) {
         this.manager = eventManager;
     }
 
