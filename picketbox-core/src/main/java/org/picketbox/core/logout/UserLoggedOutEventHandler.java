@@ -20,25 +20,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.event;
+package org.picketbox.core.logout;
+
+import org.picketbox.core.event.PicketBoxEventHandler;
 
 /**
- * <p>
- * Defines a contract for authentication events.
- * </p>
+ * An Event Handler for the User Logging Out
  *
- * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
- *
+ * @author anil saldhana
  */
-public interface AuthenticationEvent<HANDLER extends AuthenticationEventHandler> {
+public interface UserLoggedOutEventHandler extends PicketBoxEventHandler {
 
     /**
-     * <p>
-     * Process a specific handler to handle the corresponding event.
-     * </p>
+     * User Logged Out
      *
-     * @param handler
+     * @param userAuthenticatedEvent
      */
-    void dispatch(HANDLER handler);
-
+    void onLogOut(UserLoggedOutEvent userLogOutEvent);
 }

@@ -72,13 +72,4 @@ public interface AuthenticationProvider {
      */
     List<AuthenticationManager> getAuthenticationManagers();
 
-    /**
-     * <p>
-     * Returns the registered {@link AuthenticationEventManager} instance.
-     * </p>
-     *
-     * @return
-     */
-    AuthenticationEventManager getEventManager();
-
 }

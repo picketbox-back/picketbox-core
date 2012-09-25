@@ -25,13 +25,13 @@ import java.security.Principal;
 import java.util.List;
 
 import org.picketbox.core.Credential;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.authentication.AuthenticationInfo;
 import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.AuthenticationStatus;
-import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.exceptions.AuthenticationException;
 
 /**
@@ -44,6 +44,7 @@ import org.picketbox.core.exceptions.AuthenticationException;
  */
 public abstract class AbstractAuthenticationMechanism implements AuthenticationMechanism {
 
+    private PicketBoxManager picketBoxManager;
     private AuthenticationProvider authenticationProvider;
 
     @Override
@@ -78,13 +79,11 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
      */
     protected AuthenticationResult performSuccessfulAuthentication(AuthenticationResult result) {
         result.setStatus(AuthenticationStatus.SUCCESS);
-        this.authenticationProvider.getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
         return result;
     }
 
     protected AuthenticationResult performFailedAuthentication(AuthenticationResult result) {
         result.setStatus(AuthenticationStatus.FAILED);
-        this.authenticationProvider.getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
         return result;
     }
 
@@ -169,5 +168,13 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
 
     protected void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
+    }
+
+    protected void setPicketBoxManager(PicketBoxManager picketBoxManager) {
+        this.picketBoxManager = picketBoxManager;
+    }
+
+    protected PicketBoxManager getPicketBoxManager() {
+        return this.picketBoxManager;
     }
 }

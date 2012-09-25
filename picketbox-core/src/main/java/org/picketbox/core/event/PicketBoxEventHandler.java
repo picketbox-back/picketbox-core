@@ -20,19 +20,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication.event;
+package org.picketbox.core.event;
 
 /**
  * An handler for authentication events
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public interface AuthenticationEventHandler {
+public interface PicketBoxEventHandler {
 
     /**
      * Get the Event type
      *
      * @return
      */
-    Class<? extends AuthenticationEvent<? extends AuthenticationEventHandler>> getEventType();
+    Class<? extends PicketBoxEvent<? extends PicketBoxEventHandler>> getEventType();
 }

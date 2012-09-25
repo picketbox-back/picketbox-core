@@ -26,13 +26,16 @@ import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.AuthenticationStatus;
+import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.EntitlementsManager;
 import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.config.PicketBoxConfiguration;
+import org.picketbox.core.event.PicketBoxEventManager;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.logout.UserLoggedOutEvent;
 import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionManager;
@@ -54,6 +57,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     protected EntitlementsManager entitlementsManager;
     protected IdentityManager identityManager;
     protected PicketBoxConfiguration configuration;
+    private PicketBoxEventManager eventManager;
 
     public AbstractPicketBoxManager(PicketBoxConfiguration configuration) {
         this.configuration = configuration;
@@ -71,6 +75,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                 this.sessionManager.remove(authenticatedUser.getSession());
             }
             authenticatedUser.setAuthenticated(false);
+            getEventManager().raiseEvent(new UserLoggedOutEvent());
         } else {
             throw PicketBoxMessages.MESSAGES.invalidUserSession();
         }
@@ -92,6 +97,13 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
 
             if (subject.isAuthenticated()) {
                 if (session != null && session.isValid()) {
+                    AuthenticationResult result = new AuthenticationResult();
+
+                    result.setStatus(AuthenticationStatus.SUCCESS);
+//                    result.setUser(subject.getUser());
+
+                    getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
+
                     return subject;
                 } else {
                     throw new IllegalArgumentException(
@@ -142,6 +154,10 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                     subject.setCredential(null);
 
                     createSession(subject);
+
+                    getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
+                } else {
+                    getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
                 }
             }
         }
@@ -211,7 +227,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     @Override
     protected void doStart() {
         if (this.configuration != null) {
-            this.authenticationProvider = new PicketBoxAuthenticationProvider(this.configuration);
+            this.authenticationProvider = new PicketBoxAuthenticationProvider(this, this.configuration);
 
             if (!this.configuration.getAuthorization().getManagers().isEmpty()) {
                 this.authorizationManager = this.configuration.getAuthorization().getManagers().get(0);
@@ -228,6 +244,8 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             if (this.sessionManager != null) {
                 this.sessionManager.start();
             }
+
+            this.eventManager = configuration.getEventManager().getEventManager();
 
             doConfigure();
         }
@@ -265,6 +283,11 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         if (this.sessionManager != null) {
             this.sessionManager.stop();
         }
+    }
+
+    @Override
+    public PicketBoxEventManager getEventManager() {
+        return this.eventManager;
     }
 
 }

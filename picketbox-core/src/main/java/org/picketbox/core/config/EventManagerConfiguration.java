@@ -22,7 +22,7 @@
 
 package org.picketbox.core.config;
 
-import org.picketbox.core.authentication.AuthenticationEventManager;
+import org.picketbox.core.event.PicketBoxEventManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -30,14 +30,14 @@ import org.picketbox.core.authentication.AuthenticationEventManager;
  */
 public class EventManagerConfiguration {
 
-    private AuthenticationEventManager authenticationEventManager;
+    private PicketBoxEventManager eventManager;
 
-    public EventManagerConfiguration(AuthenticationEventManager manager) {
-        this.authenticationEventManager = manager;
+    public EventManagerConfiguration(PicketBoxEventManager manager) {
+        this.eventManager = manager;
     }
 
-    public AuthenticationEventManager getAuthenticationEventManager() {
-        return authenticationEventManager;
+    public PicketBoxEventManager getEventManager() {
+        return this.eventManager;
     }
 
 }
