@@ -169,4 +169,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 50, value = "Invalid Level: %s")
     IllegalStateException invalidLevel(String level);
+
+    @Message(id = 51, value = "User not authenticated.")
+    IllegalStateException userNotAuthenticated();
 }
