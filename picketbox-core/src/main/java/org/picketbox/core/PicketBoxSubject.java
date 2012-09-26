@@ -200,7 +200,7 @@ public class PicketBoxSubject implements Serializable {
      */
     public boolean hasRole(String role) {
         if (!isAuthenticated()) {
-            return false;
+            throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
         }
 
         for (String userRole : this.roleNames) {
