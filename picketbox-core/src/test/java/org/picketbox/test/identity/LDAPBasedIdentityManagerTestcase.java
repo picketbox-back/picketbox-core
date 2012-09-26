@@ -23,6 +23,7 @@ package org.picketbox.test.identity;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
@@ -70,7 +71,7 @@ public class LDAPBasedIdentityManagerTestcase extends AbstractLDAPTest {
         assertNotNull(subject.getUser());
         
         // TODO: LDAP Identity Store role support is being implemented
-        //assertTrue(subject.hasRole("Echo"));
-        //assertTrue(subject.hasRole("TheDuke"));
+        Assert.assertTrue(subject.hasRole("Echo"));
+        Assert.assertTrue(subject.hasRole("TheDuke"));
     }
 }
