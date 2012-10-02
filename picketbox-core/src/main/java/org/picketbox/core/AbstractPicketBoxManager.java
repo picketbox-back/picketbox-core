@@ -34,11 +34,14 @@ import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.event.PicketBoxEventManager;
 import org.picketbox.core.exceptions.AuthenticationException;
-import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketbox.core.identity.impl.DefaultSubjectPopulator;
 import org.picketbox.core.logout.UserLoggedOutEvent;
 import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionManager;
+import org.picketlink.idm.IdentityManager;
+import org.picketlink.idm.internal.DefaultIdentityManager;
 
 /**
  * <p>
@@ -55,7 +58,8 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     protected AuthorizationManager authorizationManager;
     protected SessionManager sessionManager;
     protected EntitlementsManager entitlementsManager;
-    protected IdentityManager identityManager;
+    protected PicketBoxSubjectPopulator subjectPopulator;
+    private IdentityManager identityManager;
     protected PicketBoxConfiguration configuration;
     private PicketBoxEventManager eventManager;
 
@@ -100,7 +104,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                     AuthenticationResult result = new AuthenticationResult();
 
                     result.setStatus(AuthenticationStatus.SUCCESS);
-//                    result.setUser(subject.getUser());
+                    // result.setUser(subject.getUser());
 
                     getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
 
@@ -149,7 +153,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                     subject.setPrincipal(result.getPrincipal());
 
                     // load the informations for the authenticated principal from the configured identity manager
-                    subject = this.identityManager.getIdentity(subject);
+                    subject = this.subjectPopulator.getIdentity(subject);
 
                     subject.setCredential(null);
 
@@ -233,7 +237,14 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                 this.authorizationManager = this.configuration.getAuthorization().getManagers().get(0);
             }
 
-            this.identityManager = this.configuration.getIdentityManager().getManagers().get(0);
+            this.identityManager = new DefaultIdentityManager(this.configuration.getIdentityManager()
+                    .getIdentityManagerConfiguration().getIdentityStore());
+
+            this.subjectPopulator = this.configuration.getIdentityManager().getUserPopulator();
+
+            if (this.subjectPopulator == null) {
+                this.subjectPopulator = new DefaultSubjectPopulator(this.identityManager);
+            }
 
             this.sessionManager = this.configuration.getSessionManager().getManager();
 
@@ -254,8 +265,8 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             PicketBoxLogger.LOGGER.debug("Using Authorization Manager : " + this.authorizationManager.getClass().getName());
         }
 
-        if (this.identityManager != null) {
-            PicketBoxLogger.LOGGER.debug("Using Identity Manager : " + this.identityManager.getClass().getName());
+        if (this.subjectPopulator != null) {
+            PicketBoxLogger.LOGGER.debug("Using Identity Manager : " + this.subjectPopulator.getClass().getName());
         }
 
         PicketBoxLogger.LOGGER.startingPicketBox();
@@ -290,4 +301,13 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         return this.eventManager;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.PicketBoxManager#getIdentityManager()
+     */
+    @Override
+    public IdentityManager getIdentityManager() {
+        return this.identityManager;
+    }
 }

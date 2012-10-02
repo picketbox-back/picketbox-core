@@ -22,14 +22,21 @@
 
 package org.picketbox.core.config;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+
+import org.picketbox.core.identity.impl.EntityManagerContext;
+import org.picketlink.idm.internal.JPAIdentityStore;
+import org.picketlink.idm.internal.jpa.JPACallback;
+import org.picketlink.idm.internal.jpa.JPATemplate;
+import org.picketlink.idm.spi.IdentityStore;
 
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class JPAIdentityManagerConfiguration {
+public class JPAIdentityManagerConfiguration implements IdentityManagerConfiguration {
 
     private EntityManagerFactory entityManagerFactory;
 
@@ -39,6 +46,23 @@ public class JPAIdentityManagerConfiguration {
 
     public EntityManagerFactory getEntityManagerFactory() {
         return this.entityManagerFactory;
+    }
+
+    @Override
+    public IdentityStore getIdentityStore() {
+        JPAIdentityStore store = new JPAIdentityStore();
+
+        JPATemplate jpaTemplate = new JPATemplate() {
+            @Override
+            public Object execute(JPACallback callback) {
+                EntityManager entityManager = EntityManagerContext.get();
+                return callback.execute(entityManager);
+            }
+        };
+
+        store.setJpaTemplate(jpaTemplate);
+
+        return store;
     }
 
 }

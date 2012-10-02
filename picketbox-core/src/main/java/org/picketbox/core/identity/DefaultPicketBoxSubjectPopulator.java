@@ -27,12 +27,12 @@ import org.picketbox.core.PicketBoxSubject;
 
 /**
  * <p>
- * Default implementation for the {@link IdentityManager} interface.
+ * Default implementation for the {@link PicketBoxSubjectPopulator} interface.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public class DefaultIdentityManager implements IdentityManager {
+public class DefaultPicketBoxSubjectPopulator implements PicketBoxSubjectPopulator {
 
     /*
      * (non-Javadoc)

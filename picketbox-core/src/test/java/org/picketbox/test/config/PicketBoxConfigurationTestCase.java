@@ -32,8 +32,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.jboss.picketlink.idm.model.Role;
-import org.jboss.picketlink.idm.model.SimpleRole;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,7 +40,9 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.config.PicketBoxConfiguration;
-import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketlink.idm.model.Role;
+import org.picketlink.idm.model.SimpleRole;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -103,7 +103,7 @@ public class PicketBoxConfigurationTestCase {
     @Test
     public void testDefaultConfiguration() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
-
+        
         PicketBoxConfiguration build = builder.build();
 
         DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
@@ -131,14 +131,14 @@ public class PicketBoxConfigurationTestCase {
     public void testCustomIdentityManagerConfiguration() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder.identityManager().manager(new IdentityManager() {
+        builder.identityManager().userPopulator(new PicketBoxSubjectPopulator() {
 
             @Override
             public PicketBoxSubject getIdentity(PicketBoxSubject authenticatedSubject) {
                 List<Role> roles = new ArrayList<Role>();
 
                 roles.add(new SimpleRole("test"));
-                
+
                 authenticatedSubject.setRoles(roles);
 
                 return authenticatedSubject;
@@ -160,36 +160,6 @@ public class PicketBoxConfigurationTestCase {
         assertNotNull(subject);
         assertTrue(subject.isAuthenticated());
         assertTrue(subject.hasRole("test"));
-    }
-
-    /**
-     * <p>
-     * Tests a simple configuration using only the default values.
-     * </p>
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testDataBaseAuthenticationManager() throws Exception {
-        ConfigurationBuilder builder = new ConfigurationBuilder();
-
-        builder.authentication().dataBaseAuthManager().dataSource(dataSource)
-                .passwordQuery("SELECT PASSWORD FROM USERS WHERE USERNAME = ?");
-
-        PicketBoxConfiguration build = builder.build();
-
-        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
-
-        picketBoxManager.start();
-
-        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
-
-        authenticatingSubject.setCredential(new UsernamePasswordCredential("picketbox", "goodpass"));
-
-        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
-
-        assertNotNull(subject);
-        assertTrue(subject.isAuthenticated());
     }
 
 }

@@ -31,7 +31,6 @@ import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
-import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
 import org.picketbox.test.ldap.AbstractLDAPTest;
 
 /**
@@ -45,7 +44,7 @@ public class LDAPBasedIdentityManagerTestcase extends AbstractLDAPTest {
     @Before
     public void setup() throws Exception {
         super.setup();
-        importLDIF("ldap/users.ldif");
+        importLDIF("ldap/pb_core_users.ldif");
     }
 
     @Test
@@ -66,11 +65,10 @@ public class LDAPBasedIdentityManagerTestcase extends AbstractLDAPTest {
         subject = picketBoxManager.authenticate(subject);
 
         assertNotNull(subject);
-        
+
         // user was loaded by the identity manager ?
         assertNotNull(subject.getUser());
-        
-        // TODO: LDAP Identity Store role support is being implemented
+
         Assert.assertTrue(subject.hasRole("Echo"));
         Assert.assertTrue(subject.hasRole("TheDuke"));
     }

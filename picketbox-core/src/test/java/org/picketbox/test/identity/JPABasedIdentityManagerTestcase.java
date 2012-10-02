@@ -24,11 +24,6 @@ package org.picketbox.test.identity;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.jboss.picketlink.idm.internal.DefaultIdentityManager;
-import org.jboss.picketlink.idm.model.Group;
-import org.jboss.picketlink.idm.model.Role;
-import org.jboss.picketlink.idm.model.User;
-import org.jboss.picketlink.test.idm.internal.jpa.AbstractJPAIdentityStoreTestCase;
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxManager;
@@ -36,37 +31,21 @@ import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.identity.impl.EntityManagerContext;
-import org.picketbox.core.identity.impl.JPABasedIdentityManager;
+import org.picketlink.idm.IdentityManager;
+import org.picketlink.idm.model.Group;
+import org.picketlink.idm.model.Role;
+import org.picketlink.idm.model.User;
+import org.picketlink.test.idm.internal.jpa.AbstractJPAIdentityManagerTestCase;
 
 /**
  * Unit test the {@link JPABasedIdentityManager}
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public class JPABasedIdentityManagerTestcase extends AbstractJPAIdentityStoreTestCase {
+public class JPABasedIdentityManagerTestcase extends AbstractJPAIdentityManagerTestCase {
 
     @Test
     public void testIdentity() throws Exception {
-        DefaultIdentityManager identityManager = new DefaultIdentityManager();
-        
-        identityManager.setIdentityStore(createIdentityStore());
-        
-        User abstractj = identityManager.createUser("admin");
-
-        abstractj.setEmail("admin@picketbox.com");
-        abstractj.setFirstName("The");
-        abstractj.setLastName("Admin");
-        
-        identityManager.updatePassword(abstractj, "123");
-        
-        Role roleDeveloper = identityManager.createRole("developer");
-        Role roleAdmin = identityManager.createRole("admin");
-
-        Group groupCoreDeveloper = identityManager.createGroup("PicketBox Group");
-
-        identityManager.grantRole(roleDeveloper, abstractj, groupCoreDeveloper);
-        identityManager.grantRole(roleAdmin, abstractj, groupCoreDeveloper);
-        
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         builder.identityManager().jpaStore();
@@ -74,23 +53,41 @@ public class JPABasedIdentityManagerTestcase extends AbstractJPAIdentityStoreTes
         PicketBoxManager picketBoxManager = new DefaultPicketBoxManager(builder.build());
 
         picketBoxManager.start();
-        
+
         EntityManagerContext.set(this.entityManager);
+
+        IdentityManager identityManager = picketBoxManager.getIdentityManager();
+        
+        User adminUser = identityManager.createUser("admin");
+
+        adminUser.setEmail("admin@picketbox.com");
+        adminUser.setFirstName("The");
+        adminUser.setLastName("Admin");
+
+        identityManager.updatePassword(adminUser, "123");
+
+        Role roleDeveloper = identityManager.createRole("developer");
+        Role roleAdmin = identityManager.createRole("admin");
+
+        Group groupCoreDeveloper = identityManager.createGroup("PicketBox Group");
+
+        identityManager.grantRole(roleDeveloper, adminUser, groupCoreDeveloper);
+        identityManager.grantRole(roleAdmin, adminUser, groupCoreDeveloper);
 
         PicketBoxSubject subject = new PicketBoxSubject();
 
-        subject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+        subject.setCredential(new UsernamePasswordCredential("admin", "123"));
 
         subject = picketBoxManager.authenticate(subject);
 
         assertNotNull(subject);
-        
+
         // user was loaded by the identity manager ?
         assertNotNull(subject.getUser());
-        
+
         assertTrue(subject.hasRole("admin"));
         assertTrue(subject.hasRole("developer"));
-        
+
         EntityManagerContext.clear();
     }
 }

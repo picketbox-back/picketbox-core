@@ -30,10 +30,11 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import org.jboss.picketlink.idm.model.Role;
-import org.jboss.picketlink.idm.model.User;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionId;
+import org.picketlink.idm.model.Group;
+import org.picketlink.idm.model.Role;
+import org.picketlink.idm.model.User;
 
 /**
  * An Application View of the authenticated/authorized Subject
@@ -51,6 +52,9 @@ public class PicketBoxSubject implements Serializable {
 
     @SuppressWarnings("unchecked")
     private Collection<Role> roles = Collections.EMPTY_LIST;
+
+    @SuppressWarnings("unchecked")
+    private Collection<Group> groups = Collections.EMPTY_LIST;
 
     private transient Map<String, Object> contextData = new HashMap<String, Object>();
 
@@ -183,7 +187,7 @@ public class PicketBoxSubject implements Serializable {
             throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
         }
 
-        for (Role userRole: this.roles) {
+        for (Role userRole: getRoles()) {
             if (role.equals(userRole.getName())) {
                 return true;
             }
@@ -194,5 +198,14 @@ public class PicketBoxSubject implements Serializable {
 
     public void setRoles(Collection<Role> roles) {
         this.roles = roles;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<Role> getRoles() {
+        if (this.roles == null) {
+            this.roles = Collections.EMPTY_LIST;
+        }
+
+        return Collections.unmodifiableCollection(this.roles);
     }
 }

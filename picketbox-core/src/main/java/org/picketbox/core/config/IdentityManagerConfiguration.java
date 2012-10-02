@@ -22,24 +22,14 @@
 
 package org.picketbox.core.config;
 
-import java.util.List;
-
-import org.picketbox.core.identity.IdentityManager;
+import org.picketlink.idm.spi.IdentityStore;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class IdentityManagerConfiguration {
+public interface IdentityManagerConfiguration {
 
-    private List<IdentityManager> managers;
-
-    public IdentityManagerConfiguration(List<IdentityManager> managers) {
-        this.managers = managers;
-    }
-
-    public List<IdentityManager> getManagers() {
-        return this.managers;
-    }
+    IdentityStore getIdentityStore();
 
 }

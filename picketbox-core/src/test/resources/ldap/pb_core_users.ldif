@@ -11,7 +11,7 @@ ou: People
 
 dn: uid=admin,ou=People,dc=jboss,dc=org
 objectclass: top
-objectclass: uidObject
+objectclass: inetOrgPerson
 objectclass: person
 uid: admin
 cn: admin
@@ -38,6 +38,7 @@ objectClass: groupOfNames
 cn: Echo
 description: the JBossAdmin group
 member: uid=jduke,ou=People,dc=jboss,dc=org
+member: uid=admin,ou=People,dc=jboss,dc=org
 
 dn: cn=TheDuke,ou=Roles,dc=jboss,dc=org
 objectClass: groupOfNames
@@ -45,4 +46,4 @@ objectClass: top
 cn: TheDuke
 description: TheDuke role context
 member: uid=jduke,ou=People,dc=jboss,dc=org
-
+member: uid=admin,ou=People,dc=jboss,dc=org

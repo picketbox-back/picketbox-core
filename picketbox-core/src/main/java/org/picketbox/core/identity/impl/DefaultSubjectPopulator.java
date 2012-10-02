@@ -25,21 +25,24 @@ package org.picketbox.core.identity.impl;
 import java.security.Principal;
 import java.util.Collection;
 
-import org.jboss.picketlink.idm.internal.DefaultIdentityManager;
-import org.jboss.picketlink.idm.model.Role;
-import org.jboss.picketlink.idm.model.User;
-import org.jboss.picketlink.idm.spi.IdentityStore;
 import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.PicketBoxSubject;
-import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketlink.idm.IdentityManager;
+import org.picketlink.idm.model.Role;
+import org.picketlink.idm.model.User;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public abstract class AbstractDelegateIdentityManager implements IdentityManager {
+public class DefaultSubjectPopulator implements PicketBoxSubjectPopulator {
 
-    private DefaultIdentityManager delegateIdentityManager;
+    private IdentityManager identityManager;
+
+    public DefaultSubjectPopulator(IdentityManager identityManager) {
+        this.identityManager = identityManager;
+    }
 
     @Override
     public PicketBoxSubject getIdentity(PicketBoxSubject authenticatedSubject) {
@@ -49,8 +52,8 @@ public abstract class AbstractDelegateIdentityManager implements IdentityManager
 
         Principal principal = authenticatedSubject.getPrincipal();
 
-        User userFromIDM = getDelegateIdentityManager().getUser(principal.getName());
-        Collection<Role> rolesFromIDM = getDelegateIdentityManager().getRoles(userFromIDM, null);
+        User userFromIDM = getIdentityManager().getUser(principal.getName());
+        Collection<Role> rolesFromIDM = getIdentityManager().getRoles(userFromIDM, null);
 
         authenticatedSubject.setUser(userFromIDM);
         authenticatedSubject.setRoles(rolesFromIDM);
@@ -58,16 +61,11 @@ public abstract class AbstractDelegateIdentityManager implements IdentityManager
         return authenticatedSubject;
     }
 
-    private DefaultIdentityManager getDelegateIdentityManager() {
-        if (this.delegateIdentityManager == null) {
-            this.delegateIdentityManager = new DefaultIdentityManager();
-
-            this.delegateIdentityManager.setIdentityStore(createIdentityStore());
-        }
-
-        return this.delegateIdentityManager;
+    public IdentityManager getIdentityManager() {
+        return this.identityManager;
     }
 
-    protected abstract IdentityStore createIdentityStore();
-
+    public void setIdentityManager(IdentityManager identityManager) {
+        this.identityManager = identityManager;
+    }
 }

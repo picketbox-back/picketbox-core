@@ -22,13 +22,15 @@
 
 package org.picketbox.core.config;
 
-import org.jboss.picketlink.idm.internal.config.LDAPConfiguration;
+import org.picketlink.idm.internal.LDAPIdentityStore;
+import org.picketlink.idm.internal.config.LDAPConfiguration;
+import org.picketlink.idm.spi.IdentityStore;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class LDAPIdentityManagerConfiguration {
+public class LDAPIdentityManagerConfiguration implements IdentityManagerConfiguration {
 
     private LDAPConfiguration ldapConfig = new LDAPConfiguration();
 
@@ -48,6 +50,15 @@ public class LDAPIdentityManagerConfiguration {
      */
     public LDAPConfiguration getSearchConfig() {
         return ldapConfig;
+    }
+
+    @Override
+    public IdentityStore getIdentityStore() {
+        LDAPIdentityStore store = new LDAPIdentityStore();
+
+        store.setConfiguration(this.ldapConfig);
+
+        return store;
     }
 
 }

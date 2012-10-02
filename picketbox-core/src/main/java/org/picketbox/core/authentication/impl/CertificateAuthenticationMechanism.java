@@ -27,13 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.picketbox.core.Credential;
+import org.picketbox.core.PicketBoxPrincipal;
 import org.picketbox.core.authentication.AuthenticationInfo;
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.credential.CertificateCredential;
-import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketlink.idm.model.User;
 
 /**
  * <p>
@@ -56,34 +56,31 @@ public class CertificateAuthenticationMechanism extends AbstractAuthenticationMe
 
         arrayList.add(new AuthenticationInfo("Certificate authentication service.",
                 "A authentication service using certificates.", CertificateCredential.class));
-        arrayList.add(new AuthenticationInfo("User name and password.", "Where the password is the certificate's signature.",
-                UsernamePasswordCredential.class));
 
         return arrayList;
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.picketbox.core.authentication.spi.AbstractAuthenticationService#doAuthenticate(org.picketbox.core.authentication.
-     * AuthenticationManager, org.picketbox.core.authentication.api.AuthenticationCallbackHandler,
-     * org.picketbox.core.authentication.api.AuthenticationResult)
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.impl.AbstractAuthenticationMechanism#doAuthenticate(org.picketbox.core.Credential, org.picketbox.core.authentication.AuthenticationResult)
      */
     @Override
-    protected Principal doAuthenticate(AuthenticationManager authenticationManager, Credential credential,
+    protected Principal doAuthenticate(Credential credential,
             AuthenticationResult result) throws AuthenticationException {
-        if (credential instanceof UsernamePasswordCredential) {
-            UsernamePasswordCredential userCredential = (UsernamePasswordCredential) credential;
+        boolean isValidCredential = false;
 
-            return authenticationManager.authenticate(userCredential.getUserName(), userCredential.getPassword());
-        } else if (credential instanceof CertificateCredential) {
+        User user = getIdentityManager().getUser(credential.getUserName());
+
+        if (user != null) {
             CertificateCredential userCredential = (CertificateCredential) credential;
 
-            return authenticationManager.authenticate(userCredential.getCertificates());
-        } else {
-            throw new UnsupportedOperationException("Credential " + credential.getClass() + " not supported by this mechanism.");
+            isValidCredential = getIdentityManager().validateCertificate(user, userCredential.getCertificates()[0]);
         }
+
+        if (!isValidCredential) {
+            return null;
+        }
+
+        return new PicketBoxPrincipal(user.getKey());
     }
 }

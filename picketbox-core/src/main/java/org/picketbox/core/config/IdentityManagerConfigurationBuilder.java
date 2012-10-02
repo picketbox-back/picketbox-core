@@ -22,49 +22,44 @@
 
 package org.picketbox.core.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.picketbox.core.identity.DefaultIdentityManager;
-import org.picketbox.core.identity.IdentityManager;
-import org.picketbox.core.identity.impl.JPABasedIdentityManager;
-import org.picketbox.core.identity.impl.LDAPBasedIdentityManager;
+import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketlink.idm.IdentityManager;
+import org.picketlink.idm.internal.DefaultIdentityManager;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBuilder<IdentityManagerConfiguration> {
+public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBuilder<GlobalIdentityManagerConfiguration> {
 
-    private List<IdentityManager> managers;
+    private IdentityManager identityManager;
+
+    @SuppressWarnings("unused")
+    private AbstractConfigurationBuilder<? extends IdentityManagerConfiguration> identityManagerBuilder;
+
     private LDAPIdentityManagerConfigurationBuilder ldapIdentityManagerManager;
     private JPAIdentityManagerConfigurationBuilder jpaIdentityManagerManager;
+    private FileIdentityManagerConfigurationBuilder fileIdentityManagerManager;
+
+    private PicketBoxSubjectPopulator userPopulator;
 
     public IdentityManagerConfigurationBuilder(ConfigurationBuilder builder) {
         super(builder);
-        this.managers = new ArrayList<IdentityManager>();
     }
 
     @Override
     protected void setDefaults() {
-        if (this.ldapIdentityManagerManager != null) {
-            this.managers.add(new LDAPBasedIdentityManager(this.ldapIdentityManagerManager.build()));
+        if (this.identityManager == null) {
+            this.identityManager = new DefaultIdentityManager();
         }
 
-        if (this.jpaIdentityManagerManager != null) {
-            this.managers.add(new JPABasedIdentityManager(this.jpaIdentityManagerManager.build()));
-        }
-
-        if (this.managers.isEmpty()) {
-            this.managers.add(new DefaultIdentityManager());
+        if (identityManagerBuilder == null) {
+            fileStore();
         }
     }
 
     public IdentityManagerConfigurationBuilder manager(IdentityManager identityManager) {
-        if (identityManager != null) {
-            this.managers.add(identityManager);
-        }
-
+        this.identityManager = identityManager;
         return this;
     }
 
@@ -72,6 +67,7 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
         if (this.ldapIdentityManagerManager == null) {
             this.ldapIdentityManagerManager = new LDAPIdentityManagerConfigurationBuilder(this);
         }
+        this.identityManagerBuilder = this.ldapIdentityManagerManager;
         return this.ldapIdentityManagerManager;
     }
 
@@ -79,12 +75,27 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
         if (this.jpaIdentityManagerManager == null) {
             this.jpaIdentityManagerManager = new JPAIdentityManagerConfigurationBuilder(this);
         }
+        this.identityManagerBuilder = this.jpaIdentityManagerManager;
         return this.jpaIdentityManagerManager;
     }
 
+    public FileIdentityManagerConfigurationBuilder fileStore() {
+        if (this.fileIdentityManagerManager == null) {
+            this.fileIdentityManagerManager = new FileIdentityManagerConfigurationBuilder(this);
+        }
+        this.identityManagerBuilder = this.fileIdentityManagerManager;
+        return this.fileIdentityManagerManager;
+    }
+
+
     @Override
-    public IdentityManagerConfiguration doBuild() {
-        return new IdentityManagerConfiguration(this.managers);
+    public GlobalIdentityManagerConfiguration doBuild() {
+        return new GlobalIdentityManagerConfiguration(this.identityManagerBuilder.build(), this.userPopulator);
+    }
+
+    public IdentityManagerConfigurationBuilder userPopulator(PicketBoxSubjectPopulator userPopulator) {
+        this.userPopulator = userPopulator;
+        return this;
     }
 
 }

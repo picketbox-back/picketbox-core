@@ -19,37 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.ldap.config;
 
-import static org.junit.Assert.assertEquals;
+package org.picketbox.core.config;
 
-import org.junit.Test;
-import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
+import org.picketlink.idm.internal.file.FileBasedIdentityStore;
+import org.picketlink.idm.spi.IdentityStore;
+
+
 
 /**
- * Unit test the {@link BasicLDAPStoreConfig}
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
- * @author anil saldhana
- * @since Jul 23, 2012
  */
-public class BasicLdapConfigUnitTestCase {
+public class FileIdentityManagerConfiguration implements IdentityManagerConfiguration {
 
-    @Test
-    public void testSubstitution() throws Exception {
-        BasicLDAPStoreConfig config = new BasicLDAPStoreConfig();
-        config.setUserName("uid=admin,xyz");
-
-        config.substituteUser("anil");
-
-        String user = config.getUserName();
-        assertEquals("uid=anil,xyz", user);
-
-        config.setUserDN("uid=CHANGE_USER,ou=People");
-        config.setUserName("CN=Directory Manager");
-
-        config.substituteUser("anil");
-
-        user = config.getUserName();
-        assertEquals("uid=anil,ou=People", user);
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.IdentityManagerConfiguration#getIdentityStore()
+     */
+    @Override
+    public IdentityStore getIdentityStore() {
+        return new FileBasedIdentityStore();
     }
+
 }

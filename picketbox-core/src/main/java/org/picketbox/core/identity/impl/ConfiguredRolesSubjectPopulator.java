@@ -24,27 +24,27 @@ package org.picketbox.core.identity.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.picketlink.idm.model.Role;
-import org.jboss.picketlink.idm.model.SimpleRole;
-import org.jboss.picketlink.idm.model.SimpleUser;
 import org.picketbox.core.PicketBoxSubject;
-import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketlink.idm.model.Role;
+import org.picketlink.idm.model.SimpleRole;
+import org.picketlink.idm.model.SimpleUser;
 
 /**
  * <p>
  * A Simple Identity Manager that just takes in a list of roles and passes it back to the subject. Use this
- * {@link IdentityManager} when you have great confidence in your authentication process and all your authenticated users need
+ * {@link PicketBoxSubjectPopulator} when you have great confidence in your authentication process and all your authenticated users need
  * to get the same set of roles.
  * </p>
  *
  * @author anil saldhana
  * @since Aug 16, 2012
  */
-public class ConfiguredRolesIdentityManager implements IdentityManager {
+public class ConfiguredRolesSubjectPopulator implements PicketBoxSubjectPopulator {
 
     private List<Role> roles = new ArrayList<Role>();
 
-    public ConfiguredRolesIdentityManager(List<String> roles) {
+    public ConfiguredRolesSubjectPopulator(List<String> roles) {
         for (String string : roles) {
             this.roles.add(new SimpleRole(string));
         }
