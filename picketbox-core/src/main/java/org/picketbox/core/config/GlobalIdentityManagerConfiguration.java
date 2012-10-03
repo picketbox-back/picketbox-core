@@ -20,46 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.authentication;
+package org.picketbox.core.config;
 
+import org.picketbox.core.identity.PicketBoxSubjectPopulator;
 
 /**
- * <p>
- * This interface defines the contract for a Authentication Provider.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public interface AuthenticationProvider {
+public class GlobalIdentityManagerConfiguration {
 
-    /**
-     * <p>
-     * Returns the names for each supported mechanism.
-     * </p>
-     *
-     * @return
-     */
-    String[] getSupportedMechanisms();
+    private IdentityManagerConfiguration identityManagerConfiguration;
+    private PicketBoxSubjectPopulator userPopulator;
 
-    /**
-     * <p>
-     * Checks if a specific mechanism is supported.
-     * </p>
-     *
-     * @param mechanismName
-     * @return
-     */
-    boolean supports(String mechanismName);
+    public GlobalIdentityManagerConfiguration(IdentityManagerConfiguration identityManagerConfiguration, PicketBoxSubjectPopulator userPopulator) {
+        this.identityManagerConfiguration = identityManagerConfiguration;
+        this.userPopulator = userPopulator;
+    }
 
-    /**
-     * <p>
-     * Returns a specific {@link AuthenticationMechanism} instance.
-     * </p>
-     *
-     * @param string
-     * @return
-     */
-    AuthenticationMechanism getMechanism(String string);
+    public IdentityManagerConfiguration getIdentityManagerConfiguration() {
+        return this.identityManagerConfiguration;
+    }
 
+    public PicketBoxSubjectPopulator getUserPopulator() {
+        return this.userPopulator;
+    }
 }

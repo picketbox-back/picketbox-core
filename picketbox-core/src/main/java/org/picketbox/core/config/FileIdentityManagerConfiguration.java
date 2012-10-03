@@ -20,27 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.identity;
+package org.picketbox.core.config;
 
-import org.picketbox.core.PicketBoxSubject;
+import org.picketlink.idm.internal.file.FileBasedIdentityStore;
+import org.picketlink.idm.spi.IdentityStore;
+
+
 
 /**
- * <p>
- * This interface defines the contract for Identity Manager implementations used to populate {@link PicketBoxSubject} instances
- * with the informations retrieved from an specific identity store or IDM solution.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public interface IdentityManager {
+public class FileIdentityManagerConfiguration implements IdentityManagerConfiguration {
 
-    /**
-     * <p>
-     * Used to populate a {@link PicketBoxSubject} with additional information from some specific identity store.
-     * </p>
-     *
-     * @param resultingSubject
-     * @return
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.IdentityManagerConfiguration#getIdentityStore()
      */
-    PicketBoxSubject getIdentity(PicketBoxSubject resultingSubject);
+    @Override
+    public IdentityStore getIdentityStore() {
+        return new FileBasedIdentityStore();
+    }
+
 }

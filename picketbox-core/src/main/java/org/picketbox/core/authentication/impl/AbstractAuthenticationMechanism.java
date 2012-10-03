@@ -27,12 +27,11 @@ import java.util.List;
 import org.picketbox.core.Credential;
 import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.authentication.AuthenticationInfo;
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
-import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.AuthenticationStatus;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketlink.idm.IdentityManager;
 
 /**
  * <p>
@@ -45,7 +44,6 @@ import org.picketbox.core.exceptions.AuthenticationException;
 public abstract class AbstractAuthenticationMechanism implements AuthenticationMechanism {
 
     private PicketBoxManager picketBoxManager;
-    private AuthenticationProvider authenticationProvider;
 
     @Override
     public boolean supports(Credential credential) {
@@ -91,18 +89,10 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
             throws AuthenticationException {
         Principal principal = null;
 
-        for (AuthenticationManager authenticationManager : this.authenticationProvider.getAuthenticationManagers()) {
-            if (supports(credential)) {
-                try {
-                    principal = doAuthenticate(authenticationManager, credential, result);
-                } catch (AuthenticationException e) {
-                    throw new AuthenticationException(e);
-                }
-
-                if (principal != null) {
-                    break;
-                }
-            }
+        try {
+            principal = doAuthenticate(credential, result);
+        } catch (AuthenticationException e) {
+            throw new AuthenticationException(e);
         }
 
         if (principal != null) {
@@ -115,8 +105,7 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
         return result;
     }
 
-    protected abstract Principal doAuthenticate(AuthenticationManager authenticationManager, Credential credential,
-            AuthenticationResult result) throws AuthenticationException;
+    protected abstract Principal doAuthenticate(Credential credential, AuthenticationResult result) throws AuthenticationException;
 
     /**
      * <p>
@@ -166,15 +155,20 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
         return result;
     }
 
-    protected void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
-        this.authenticationProvider = authenticationProvider;
-    }
-
     protected void setPicketBoxManager(PicketBoxManager picketBoxManager) {
         this.picketBoxManager = picketBoxManager;
     }
 
     protected PicketBoxManager getPicketBoxManager() {
         return this.picketBoxManager;
+    }
+
+    /**
+     * <p>Returns the {@link IdentityManager} instance that can be used to retrieve informations from the identity store.</p>
+     *
+     * @return
+     */
+    protected IdentityManager getIdentityManager() {
+        return this.picketBoxManager.getIdentityManager();
     }
 }

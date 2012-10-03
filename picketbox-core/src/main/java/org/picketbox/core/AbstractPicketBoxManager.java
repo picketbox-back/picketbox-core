@@ -34,11 +34,14 @@ import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.event.PicketBoxEventManager;
 import org.picketbox.core.exceptions.AuthenticationException;
-import org.picketbox.core.identity.IdentityManager;
+import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketbox.core.identity.impl.DefaultSubjectPopulator;
 import org.picketbox.core.logout.UserLoggedOutEvent;
 import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionManager;
+import org.picketlink.idm.IdentityManager;
+import org.picketlink.idm.internal.DefaultIdentityManager;
 
 /**
  * <p>
@@ -55,7 +58,8 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     protected AuthorizationManager authorizationManager;
     protected SessionManager sessionManager;
     protected EntitlementsManager entitlementsManager;
-    protected IdentityManager identityManager;
+    protected PicketBoxSubjectPopulator subjectPopulator;
+    private IdentityManager identityManager;
     protected PicketBoxConfiguration configuration;
     private PicketBoxEventManager eventManager;
 
@@ -70,6 +74,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      */
     @Override
     public void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException {
+        checkIfStarted();
         if (authenticatedUser.isAuthenticated()) {
             if (this.sessionManager != null) {
                 this.sessionManager.remove(authenticatedUser.getSession());
@@ -100,7 +105,6 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                     AuthenticationResult result = new AuthenticationResult();
 
                     result.setStatus(AuthenticationStatus.SUCCESS);
-                    result.setPrincipal(subject.getUser());
 
                     getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
 
@@ -146,9 +150,9 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                 subject.setAuthenticated(result.getStatus().equals(AuthenticationStatus.SUCCESS));
 
                 if (subject.isAuthenticated()) {
-                    subject.setUser(result.getPrincipal());
+                    subject.setPrincipal(result.getPrincipal());
 
-                    this.identityManager.getIdentity(subject);
+                    subject = this.subjectPopulator.getIdentity(subject);
 
                     subject.setCredential(null);
 
@@ -162,6 +166,25 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         }
 
         return subject;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.PicketBoxManager#authorize(org.picketbox.core.PicketBoxSecurityContext)
+     */
+    @Override
+    public boolean authorize(PicketBoxSubject subject, Resource resource) {
+        checkIfStarted();
+        try {
+            if (this.authorizationManager == null || (subject == null || !subject.isAuthenticated())) {
+                return true;
+            }
+
+            return this.authorizationManager.authorize(resource, subject);
+        } catch (Exception e) {
+            throw PicketBoxMessages.MESSAGES.authorizationFailed(e);
+        }
     }
 
     /**
@@ -201,26 +224,6 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     /*
      * (non-Javadoc)
      *
-     * @see org.picketbox.core.PicketBoxManager#authorize(org.picketbox.core.PicketBoxSecurityContext)
-     */
-    @Override
-    public boolean authorize(PicketBoxSubject subject, Resource resource) {
-        try {
-            checkIfStarted();
-
-            if (this.authorizationManager == null || (subject == null || !subject.isAuthenticated())) {
-                return true;
-            }
-
-            return this.authorizationManager.authorize(resource, subject);
-        } catch (Exception e) {
-            throw PicketBoxMessages.MESSAGES.authorizationFailed(e);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
      * @see org.picketbox.core.AbstractPicketBoxLifeCycle#doStart()
      */
     @Override
@@ -232,7 +235,14 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
                 this.authorizationManager = this.configuration.getAuthorization().getManagers().get(0);
             }
 
-            this.identityManager = this.configuration.getIdentityManager().getManagers().get(0);
+            this.identityManager = new DefaultIdentityManager(this.configuration.getIdentityManager()
+                    .getIdentityManagerConfiguration().getIdentityStore());
+
+            this.subjectPopulator = this.configuration.getIdentityManager().getUserPopulator();
+
+            if (this.subjectPopulator == null) {
+                this.subjectPopulator = new DefaultSubjectPopulator(this.identityManager);
+            }
 
             this.sessionManager = this.configuration.getSessionManager().getManager();
 
@@ -253,8 +263,8 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             PicketBoxLogger.LOGGER.debug("Using Authorization Manager : " + this.authorizationManager.getClass().getName());
         }
 
-        if (this.identityManager != null) {
-            PicketBoxLogger.LOGGER.debug("Using Identity Manager : " + this.identityManager.getClass().getName());
+        if (this.subjectPopulator != null) {
+            PicketBoxLogger.LOGGER.debug("Using Identity Manager : " + this.subjectPopulator.getClass().getName());
         }
 
         PicketBoxLogger.LOGGER.startingPicketBox();
@@ -284,9 +294,21 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.PicketBoxManager#getEventManager()
+     */
     @Override
     public PicketBoxEventManager getEventManager() {
         return this.eventManager;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.PicketBoxManager#getIdentityManager()
+     */
+    @Override
+    public IdentityManager getIdentityManager() {
+        return this.identityManager;
+    }
 }

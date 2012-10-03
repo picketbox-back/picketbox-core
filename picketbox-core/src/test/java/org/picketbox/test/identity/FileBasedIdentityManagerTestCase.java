@@ -20,30 +20,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.config;
+package org.picketbox.test.identity;
 
-import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
+import org.junit.Test;
+import org.picketbox.core.config.ConfigurationBuilder;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class LDAPAuthenticationConfiguration {
+public class FileBasedIdentityManagerTestCase {
 
-    private BasicLDAPStoreConfig ldapStoreConfig = new BasicLDAPStoreConfig();
-
-    /**
-     * @return the ldapStoreConfig
-     */
-    public BasicLDAPStoreConfig getLdapStoreConfig() {
-        return ldapStoreConfig;
+    @Test
+    public void testIdentity() throws Exception {
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+        
+        builder.identityManager().fileStore();
     }
-
-    /**
-     * @param ldapStoreConfig the ldapStoreConfig to set
-     */
-    public void setLdapStoreConfig(BasicLDAPStoreConfig ldapStoreConfig) {
-        this.ldapStoreConfig = ldapStoreConfig;
-    }
-
+    
 }

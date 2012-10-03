@@ -19,37 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.test.ldap.config;
 
-import static org.junit.Assert.assertEquals;
+package org.picketbox.core.config;
 
-import org.junit.Test;
-import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
+
 
 /**
- * Unit test the {@link BasicLDAPStoreConfig}
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
- * @author anil saldhana
- * @since Jul 23, 2012
  */
-public class BasicLdapConfigUnitTestCase {
+public class JPAIdentityManagerConfigurationBuilder extends AbstractConfigurationBuilder<JPAIdentityManagerConfiguration> {
 
-    @Test
-    public void testSubstitution() throws Exception {
-        BasicLDAPStoreConfig config = new BasicLDAPStoreConfig();
-        config.setUserName("uid=admin,xyz");
+    private JPAIdentityManagerConfiguration configuration = new JPAIdentityManagerConfiguration();
 
-        config.substituteUser("anil");
-
-        String user = config.getUserName();
-        assertEquals("uid=anil,xyz", user);
-
-        config.setUserDN("uid=CHANGE_USER,ou=People");
-        config.setUserName("CN=Directory Manager");
-
-        config.substituteUser("anil");
-
-        user = config.getUserName();
-        assertEquals("uid=anil,ou=People", user);
+    public JPAIdentityManagerConfigurationBuilder(IdentityManagerConfigurationBuilder identityManagerConfigurationBuilder) {
+        super(identityManagerConfigurationBuilder);
     }
+
+    @Override
+    protected void setDefaults() {
+    }
+
+    @Override
+    protected JPAIdentityManagerConfiguration doBuild() {
+        return this.configuration;
+    }
+
 }

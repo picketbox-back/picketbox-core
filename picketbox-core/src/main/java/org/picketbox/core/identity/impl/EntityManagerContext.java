@@ -20,27 +20,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.identity;
+package org.picketbox.core.identity.impl;
 
-import org.picketbox.core.PicketBoxSubject;
+import javax.persistence.EntityManager;
 
 /**
- * <p>
- * Default implementation for the {@link IdentityManager} interface.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public class DefaultIdentityManager implements IdentityManager {
+public class EntityManagerContext {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.IdentityManager#getIdentity()
-     */
-    @Override
-    public PicketBoxSubject getIdentity(PicketBoxSubject subject) {
-        return subject;
+    public static final ThreadLocal<EntityManager> entityManagerStore = new ThreadLocal<EntityManager>();
+
+    public static void set(EntityManager entityManager) {
+        entityManagerStore.set(entityManager);
     }
 
+    public static void clear() {
+        entityManagerStore.remove();
+    }
+
+    public static EntityManager get() {
+        return entityManagerStore.get();
+    }
 }
