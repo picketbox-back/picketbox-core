@@ -56,7 +56,7 @@ public class PicketBoxSubject implements Serializable {
     @SuppressWarnings("unchecked")
     private Collection<Group> groups = Collections.EMPTY_LIST;
 
-    private transient Map<String, Object> contextData = new HashMap<String, Object>();
+    protected transient Map<String, Object> contextData = new HashMap<String, Object>();
 
     private boolean authenticated;
 
@@ -208,4 +208,5 @@ public class PicketBoxSubject implements Serializable {
 
         return Collections.unmodifiableCollection(this.roles);
     }
+
 }

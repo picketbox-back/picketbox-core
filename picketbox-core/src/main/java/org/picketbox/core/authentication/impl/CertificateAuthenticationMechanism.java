@@ -32,6 +32,7 @@ import org.picketbox.core.authentication.AuthenticationInfo;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.credential.CertificateCredential;
+import org.picketbox.core.authentication.credential.TrustedUsernameCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketlink.idm.model.User;
 
@@ -57,6 +58,9 @@ public class CertificateAuthenticationMechanism extends AbstractAuthenticationMe
         arrayList.add(new AuthenticationInfo("Certificate authentication service.",
                 "A authentication service using certificates.", CertificateCredential.class));
 
+        arrayList.add(new AuthenticationInfo("Certificate authentication service.",
+                "Trust the provided username and check if it maps to a valid user account.", TrustedUsernameCredential.class));
+
         return arrayList;
 
     }
@@ -72,9 +76,14 @@ public class CertificateAuthenticationMechanism extends AbstractAuthenticationMe
         User user = getIdentityManager().getUser(credential.getUserName());
 
         if (user != null) {
-            CertificateCredential userCredential = (CertificateCredential) credential;
+            if (credential instanceof CertificateCredential) {
+                CertificateCredential userCredential = (CertificateCredential) credential;
 
-            isValidCredential = getIdentityManager().validateCertificate(user, userCredential.getCertificates()[0]);
+                isValidCredential = getIdentityManager().validateCertificate(user, userCredential.getCertificates()[0]);
+            } else if (credential instanceof TrustedUsernameCredential) {
+                // trust the provided username. Probably because the certificate used to extract the username was already trusted.
+                isValidCredential = true;
+            }
         }
 
         if (!isValidCredential) {
