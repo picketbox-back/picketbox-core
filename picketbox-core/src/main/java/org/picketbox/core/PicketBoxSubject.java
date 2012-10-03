@@ -202,13 +202,6 @@ public class PicketBoxSubject implements Serializable {
         if (!isAuthenticated()) {
             throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
         }
-
-        for (String userRole : this.roleNames) {
-            if (userRole.equals(role)) {
-                return true;
-            }
-        }
-
-        return false;
+        return this.roleNames.contains(role);
     }
 }
