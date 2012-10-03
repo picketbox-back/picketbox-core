@@ -30,6 +30,9 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
+import org.picketbox.core.authentication.AuthenticationResult;
+import org.picketbox.core.authentication.AuthenticationStatus;
+import org.picketbox.core.authentication.credential.TrustedUsernameCredential;
 import org.picketbox.core.exceptions.PicketBoxSessionException;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionId;
@@ -65,6 +68,8 @@ public class PicketBoxSubject implements Serializable {
 
     private transient Credential credential;
 
+    private AuthenticationResult authenticationResult;
+
     // TODO: how to deal with groups/nested groups etc
 
     public PicketBoxSubject() {
@@ -78,23 +83,28 @@ public class PicketBoxSubject implements Serializable {
         this.session = new PicketBoxSession(sessionId);
     }
 
+    public PicketBoxSubject(TrustedUsernameCredential credential) {
+        this.credential = credential;
+    }
+
     /**
      * get the user
      *
      * @return
      */
     public Principal getPrincipal() {
-        return principal;
+        return getPrincipal(true);
     }
 
-    /**
-     * Set the user
-     *
-     * @param user
-     */
-    public void setPrincipal(Principal user) {
-        this.principal = user;
+    Principal getPrincipal(boolean userAuthenticatedRestriction) {
+        if (userAuthenticatedRestriction && !isAuthenticated()) {
+            throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
+        }
+
+        return this.authenticationResult.getPrincipal();
     }
+
+
 
     /**
      * @return the user
@@ -154,7 +164,15 @@ public class PicketBoxSubject implements Serializable {
      * @return
      */
     public boolean isAuthenticated() {
-        return authenticated;
+        boolean isAuthenticated = this.authenticationResult != null && this.authenticationResult.getStatus().equals(AuthenticationStatus.SUCCESS);
+
+        if (isAuthenticated) {
+            if (session != null && !session.isValid()) {
+                isAuthenticated = false;
+            }
+        }
+
+        return isAuthenticated;
     }
 
     public void setSession(PicketBoxSession session) {
@@ -185,6 +203,8 @@ public class PicketBoxSubject implements Serializable {
         this.groups = null;
         this.subject = null;
         this.user = null;
+        this.authenticationResult = null;
+
         if (this.session != null && this.session.isValid()) {
             try {
                 this.session.invalidate();
@@ -225,6 +245,14 @@ public class PicketBoxSubject implements Serializable {
         }
 
         return Collections.unmodifiableCollection(this.roles);
+    }
+
+    protected void setAuthenticationResult(AuthenticationResult result) {
+        this.authenticationResult = result;
+    }
+
+    public AuthenticationResult getAuthenticationResult() {
+        return authenticationResult;
     }
 
 }

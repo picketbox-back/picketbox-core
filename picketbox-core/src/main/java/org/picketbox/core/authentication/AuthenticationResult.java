@@ -22,8 +22,10 @@
 
 package org.picketbox.core.authentication;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,17 +39,27 @@ import java.util.List;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class AuthenticationResult {
+public class AuthenticationResult implements Serializable {
 
-    private List<String> messages = new ArrayList<String>();
-    private AuthenticationStatus status = AuthenticationStatus.NONE;
+    private static final long serialVersionUID = -475378071790996008L;
+
+    private transient List<String> messages = new ArrayList<String>();
+    private transient AuthenticationStatus status = AuthenticationStatus.NONE;
+
     private Principal principal;
+
+    public AuthenticationResult() {
+    }
+
+    public AuthenticationResult(AuthenticationStatus status) {
+        this.status = status;
+    }
 
     /**
      * @return the messages
      */
     public List<String> getMessages() {
-        return messages;
+        return Collections.unmodifiableList(messages);
     }
 
     public void addMessage(String message) {
@@ -61,9 +73,10 @@ public class AuthenticationResult {
         return status;
     }
 
-    /**
-     * @param status the status to set
-     */
+    public Principal getPrincipal() {
+        return principal;
+    }
+
     public void setStatus(AuthenticationStatus status) {
         this.status = status;
     }
@@ -71,9 +84,4 @@ public class AuthenticationResult {
     public void setPrincipal(Principal principal) {
         this.principal = principal;
     }
-
-    public Principal getPrincipal() {
-        return principal;
-    }
-
 }

@@ -60,36 +60,20 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
 
     @Override
     public AuthenticationResult authenticate(Credential credential) throws AuthenticationException {
-        AuthenticationResult result = new AuthenticationResult();
-        return performAuthentication(result, credential);
+        return performAuthentication(credential);
     }
 
-    /**
-     * <p>
-     * Populates the result with the informations after a successful authentication.
-     * </p>
-     * <p>
-     * This method should provide hooks or raise events for additional processing.
-     * </p>
-     *
-     * @param result
-     * @return
-     */
-    protected AuthenticationResult performSuccessfulAuthentication(AuthenticationResult result) {
-        result.setStatus(AuthenticationStatus.SUCCESS);
-        return result;
-    }
 
-    protected AuthenticationResult performFailedAuthentication(AuthenticationResult result) {
-        result.setStatus(AuthenticationStatus.FAILED);
-        return result;
-    }
 
-    protected AuthenticationResult performAuthentication(AuthenticationResult result, Credential credential)
+
+
+    protected AuthenticationResult performAuthentication(Credential credential)
             throws AuthenticationException {
         Principal principal = null;
+        AuthenticationResult result = new AuthenticationResult();
 
         try {
+
             principal = doAuthenticate(credential, result);
         } catch (AuthenticationException e) {
             throw new AuthenticationException(e);
@@ -97,9 +81,11 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
 
         if (principal != null) {
             result.setPrincipal(principal);
-            performSuccessfulAuthentication(result);
+            result.setStatus(AuthenticationStatus.SUCCESS);
         } else {
-            performFailedAuthentication(result);
+            if (result.getStatus() == null || result.getStatus().equals(AuthenticationStatus.NONE)) {
+                result.setStatus(AuthenticationStatus.FAILED);
+            }
         }
 
         return result;

@@ -22,10 +22,12 @@
 
 package org.picketbox.core;
 
+import java.security.Principal;
+
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationResult;
-import org.picketbox.core.authentication.AuthenticationStatus;
+import org.picketbox.core.authentication.credential.TrustedUsernameCredential;
 import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.authentication.impl.PicketBoxAuthenticationProvider;
 import org.picketbox.core.authorization.AuthorizationManager;
@@ -67,6 +69,41 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         this.configuration = configuration;
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.PicketBoxManager#authenticate(org.picketbox.core.PicketBoxSubject)
+     */
+    public PicketBoxSubject authenticate(PicketBoxSubject subject) throws AuthenticationException {
+        checkIfStarted();
+
+        PicketBoxSession userSession = restoreSession(subject);
+
+        // if there is a valid session associate it with the subject and performs a silent authentication, trusting the provided principal.
+        if (userSession != null) {
+            PicketBoxSubject restoredSubject = userSession.getSubject();
+            Principal restoredPrincipal = restoredSubject.getPrincipal(false);
+
+            TrustedUsernameCredential credential = new TrustedUsernameCredential(restoredPrincipal.getName());
+
+            subject = new PicketBoxSubject(credential);
+        }
+
+        // performs the authentication
+        performAuthentication(subject);
+
+        if (subject.isAuthenticated()) {
+            // creates a fresh new session if none was retrieved from the session manager
+            if (userSession == null) {
+                userSession = createSession(subject);
+            }
+
+            performSuccessfulAuthentication(subject, userSession);
+        } else {
+            performUnsuccessfulAuthentication(subject);
+        }
+
+        return subject;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -82,85 +119,6 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         } else {
             throw PicketBoxMessages.MESSAGES.invalidUserSession();
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.picketbox.core.PicketBoxManager#authenticate(org.picketbox.core.PicketBoxSubject)
-     */
-    public PicketBoxSubject authenticate(PicketBoxSubject subject) throws AuthenticationException {
-        checkIfStarted();
-
-        PicketBoxSession session = null;
-
-        if (this.sessionManager != null) {
-            if (subject.getSession() != null && subject.getSession().getId() != null) {
-                session = this.sessionManager.retrieve(subject.getSession().getId());
-            }
-
-            if (subject.isAuthenticated()) {
-                if (session == null || !session.isValid()) {
-                    throw PicketBoxMessages.MESSAGES.invalidUserSession();
-                }
-            }
-        }
-
-        // if there is a valid session associate with the subject and performs a silent authentication.
-        if (session != null) {
-            AuthenticationResult result = new AuthenticationResult();
-
-            result.setStatus(AuthenticationStatus.SUCCESS);
-
-            getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
-
-            subject = session.getSubject();
-            subject.setSession(session);
-        } else {
-            Credential credential = subject.getCredential();
-
-            if (credential == null) {
-                throw PicketBoxMessages.MESSAGES.failedToValidateCredentials();
-            }
-
-            if (doPreAuthentication(subject)) {
-                AuthenticationResult result = null;
-
-                String[] mechanisms = this.authenticationProvider.getSupportedMechanisms();
-
-                for (String mechanismName : mechanisms) {
-                    AuthenticationMechanism mechanism = this.authenticationProvider.getMechanism(mechanismName);
-
-                    if (mechanism.supports(credential)) {
-                        try {
-                            result = mechanism.authenticate(credential);
-                        } catch (AuthenticationException e) {
-                            throw PicketBoxMessages.MESSAGES.authenticationFailed(e);
-                        }
-                    }
-                }
-
-                if (result == null) {
-                    throw PicketBoxMessages.MESSAGES.failedToValidateCredentials();
-                }
-
-                subject.setAuthenticated(result.getStatus().equals(AuthenticationStatus.SUCCESS));
-
-                if (subject.isAuthenticated()) {
-                    subject.setPrincipal(result.getPrincipal());
-
-                    subject = this.subjectPopulator.getIdentity(subject);
-
-                    subject.setCredential(null);
-
-                    createSession(subject);
-
-                    getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
-                } else {
-                    getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
-                }
-            }
-        }
-
-        return subject;
     }
 
     /*
@@ -192,6 +150,101 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     }
 
     /**
+     * <p>Performs the authentication using the provided {@link Credential}.</p>
+     *
+     * @param subject
+     * @return
+     * @throws AuthenticationException
+     */
+    private void performAuthentication(PicketBoxSubject subject) throws AuthenticationException {
+        Credential credential = subject.getCredential();
+
+        if (credential == null) {
+            throw PicketBoxMessages.MESSAGES.failedToValidateCredentials();
+        }
+
+        AuthenticationResult result = null;
+
+        if (doPreAuthentication(subject)) {
+            String[] mechanisms = this.authenticationProvider.getSupportedMechanisms();
+
+            for (String mechanismName : mechanisms) {
+                AuthenticationMechanism mechanism = this.authenticationProvider.getMechanism(mechanismName);
+
+                if (mechanism.supports(credential)) {
+                    try {
+                        result = mechanism.authenticate(credential);
+                    } catch (AuthenticationException e) {
+                        throw PicketBoxMessages.MESSAGES.authenticationFailed(e);
+                    }
+                }
+            }
+        }
+
+        if (result == null) {
+            result = new AuthenticationResult();
+        }
+
+        subject.setAuthenticationResult(result);
+    }
+
+    /**
+     * <p>Performs some post authentication steps when the authentication is successfull.</p>
+     *
+     * @param session
+     * @return
+     */
+    protected PicketBoxSubject performSuccessfulAuthentication(PicketBoxSubject subject, PicketBoxSession session) {
+        if (!subject.isAuthenticated()) {
+            throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
+        }
+
+        subject.setSession(session);
+        subject.setCredential(null);
+
+        PicketBoxSubject populatedSubject = this.subjectPopulator.getIdentity(subject);
+
+        performUnsuccessfulAuthentication(subject);
+
+        return populatedSubject;
+    }
+
+    /**
+     * <p>Performs some post authentication steps when the authentication fail.</p>
+     *
+     * @param subject
+     */
+    protected void performUnsuccessfulAuthentication(PicketBoxSubject subject) {
+        getEventManager().raiseEvent(new UserAuthenticatedEvent(subject));
+    }
+
+
+    /**
+     * <p>Tries to restore the session associated with the given {@link PicketBoxSubject}.</p>
+     *
+     * @param subject
+     * @return
+     */
+    private PicketBoxSession restoreSession(PicketBoxSubject subject) {
+        PicketBoxSession session = null;
+
+        if (this.sessionManager != null) {
+            if (subject.getSession() != null && subject.getSession().getId() != null) {
+                session = this.sessionManager.retrieve(subject.getSession().getId());
+            }
+
+            // check if the provided subject is marked as authenticated and if there is a valid session
+            if (subject.isAuthenticated()) {
+                if (session == null || !session.isValid()) {
+                    throw PicketBoxMessages.MESSAGES.invalidUserSession();
+                }
+            }
+        }
+
+        return session;
+    }
+
+    /**
      * <p>
      * Creates a session for the authenticated {@link PicketBoxSubject}. The subject must be authenticated, its
      * isAuthenticated() method should return true.
@@ -199,21 +252,20 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      *
      * @param securityContext the security context with environment specific information
      * @param authenticatedSubject the authenticated subject
+     * @return
      *
      * @throws IllegalArgumentException in the case the subject is not authenticated.
      */
-    private void createSession(PicketBoxSubject authenticatedSubject) throws IllegalArgumentException {
+    private PicketBoxSession createSession(PicketBoxSubject authenticatedSubject) throws IllegalArgumentException {
         if (!authenticatedSubject.isAuthenticated()) {
             throw new IllegalArgumentException("Subject is not authenticated. Session can not be created.");
         }
 
         if (this.sessionManager == null) {
-            return;
+            return null;
         }
 
-        PicketBoxSession session = this.sessionManager.create(authenticatedSubject);
-
-        authenticatedSubject.setSession(session);
+        return this.sessionManager.create(authenticatedSubject);
     }
 
     /*

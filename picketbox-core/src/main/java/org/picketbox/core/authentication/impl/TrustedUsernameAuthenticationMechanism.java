@@ -31,7 +31,7 @@ import org.picketbox.core.PicketBoxPrincipal;
 import org.picketbox.core.authentication.AuthenticationInfo;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationResult;
-import org.picketbox.core.authentication.credential.CertificateCredential;
+import org.picketbox.core.authentication.credential.TrustedUsernameCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketlink.idm.model.User;
 
@@ -43,7 +43,7 @@ import org.picketlink.idm.model.User;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class CertificateAuthenticationMechanism extends AbstractAuthenticationMechanism {
+public class TrustedUsernameAuthenticationMechanism extends AbstractAuthenticationMechanism {
 
     /*
      * (non-Javadoc)
@@ -54,8 +54,8 @@ public class CertificateAuthenticationMechanism extends AbstractAuthenticationMe
     public List<AuthenticationInfo> getAuthenticationInfo() {
         List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();
 
-        arrayList.add(new AuthenticationInfo("Certificate authentication service.",
-                "A authentication service using certificates.", CertificateCredential.class));
+        arrayList.add(new AuthenticationInfo("Trusts the provided username and check if it maps to a valid user account.",
+                "Trust the provided username and check if it maps to a valid user account.", TrustedUsernameCredential.class));
 
         return arrayList;
 
@@ -67,20 +67,12 @@ public class CertificateAuthenticationMechanism extends AbstractAuthenticationMe
     @Override
     protected Principal doAuthenticate(Credential credential,
             AuthenticationResult result) throws AuthenticationException {
-        boolean isValidCredential = false;
-
         User user = getIdentityManager().getUser(credential.getUserName());
 
         if (user != null) {
-            CertificateCredential userCredential = (CertificateCredential) credential;
-
-            isValidCredential = getIdentityManager().validateCertificate(user, userCredential.getCertificates()[0]);
+            return new PicketBoxPrincipal(user.getKey());
         }
 
-        if (!isValidCredential) {
-            return null;
-        }
-
-        return new PicketBoxPrincipal(user.getKey());
+        return null;
     }
 }
