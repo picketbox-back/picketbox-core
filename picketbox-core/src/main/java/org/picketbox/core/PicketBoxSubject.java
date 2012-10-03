@@ -75,6 +75,7 @@ public class PicketBoxSubject implements Serializable {
         if (sessionId == null) {
             throw PicketBoxMessages.MESSAGES.invalidUserSession();
         }
+        this.session = new PicketBoxSession(sessionId);
     }
 
     /**

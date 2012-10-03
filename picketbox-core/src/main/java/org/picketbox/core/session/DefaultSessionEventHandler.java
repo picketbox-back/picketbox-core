@@ -24,6 +24,7 @@ package org.picketbox.core.session;
 
 import org.picketbox.core.event.PicketBoxEvent;
 import org.picketbox.core.event.PicketBoxEventHandler;
+import org.picketbox.core.exceptions.PicketBoxSessionException;
 import org.picketbox.core.session.event.SessionEvent;
 import org.picketbox.core.session.event.SessionEventHandler;
 
@@ -53,12 +54,20 @@ public class DefaultSessionEventHandler implements SessionEventHandler {
 
     @Override
     public void onSetAttribute(SessionEvent sessionEvent, String key, Object val) {
-
+        this.sessionManager.update(sessionEvent.getSession());
     }
 
     @Override
     public void onGetAttribute(SessionEvent sessionEvent, String key) {
+        PicketBoxSession storedSession = this.sessionManager.retrieve(sessionEvent.getSession().getId());
 
+        if (storedSession != null) {
+            try {
+                sessionEvent.getSession().setAttribute(key, storedSession.getAttributes().get(key));
+            } catch (PicketBoxSessionException e) {
+                throw new IllegalStateException("Unable to update session with stored attribute.", e);
+            }
+        }
     }
 
     @Override

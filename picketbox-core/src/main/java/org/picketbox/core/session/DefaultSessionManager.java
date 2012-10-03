@@ -28,6 +28,7 @@ import org.picketbox.core.AbstractPicketBoxLifeCycle;
 import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.PicketBoxConfiguration;
+import org.picketbox.core.event.PicketBoxEventHandler;
 import org.picketbox.core.session.event.SessionEvent;
 import org.picketbox.core.session.event.SessionEventHandler;
 
@@ -41,6 +42,7 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
     private SessionStore sessionStore;
     private final SessionExpirationManager sessionExpirationManager;
     private PicketBoxManager picketBoxManager;
+    private PicketBoxEventHandler defaultSessionEventHandler = new DefaultSessionEventHandler(this);
 
     /**
      * Construct the session manager
@@ -58,6 +60,8 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
         if (this.sessionStore == null) {
             this.sessionStore = new InMemorySessionStore();
         }
+
+        registerDefaultEventHandler();
     }
 
     /*
@@ -139,7 +143,6 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
     }
 
     protected PicketBoxSession doCreateSession(PicketBoxSubject authenticatedSubject) {
-        this.picketBoxManager.getEventManager().addHandler(new DefaultSessionEventHandler(this));
         return new PicketBoxSession(authenticatedSubject, new DefaultSessionId(), this.picketBoxManager.getEventManager());
     }
 
@@ -167,4 +170,10 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
         this.picketBoxManager.getEventManager().raiseEvent(event);
     }
 
+    /**
+     * <p>Registers the default implementation for {@link SessionEventHandler}.</p>
+     */
+    private void registerDefaultEventHandler() {
+        this.picketBoxManager.getEventManager().addHandler(this.defaultSessionEventHandler );
+    }
 }

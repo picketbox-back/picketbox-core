@@ -225,6 +225,8 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      */
     @Override
     protected void doStart() {
+        this.eventManager = configuration.getEventManager().getEventManager();
+
         if (this.configuration != null) {
             this.authenticationProvider = new PicketBoxAuthenticationProvider(this, this.configuration);
 
@@ -250,8 +252,6 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             if (this.sessionManager != null) {
                 this.sessionManager.start();
             }
-
-            this.eventManager = configuration.getEventManager().getEventManager();
 
             doConfigure();
         }
