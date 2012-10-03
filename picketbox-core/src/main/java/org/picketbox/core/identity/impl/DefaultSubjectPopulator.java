@@ -44,6 +44,9 @@ public class DefaultSubjectPopulator implements PicketBoxSubjectPopulator {
         this.identityManager = identityManager;
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.identity.PicketBoxSubjectPopulator#getIdentity(org.picketbox.core.PicketBoxSubject)
+     */
     @Override
     public PicketBoxSubject getIdentity(PicketBoxSubject authenticatedSubject) {
         if (authenticatedSubject == null) {
