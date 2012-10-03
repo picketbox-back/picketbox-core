@@ -57,7 +57,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     private AuthenticationProvider authenticationProvider;
     private AuthorizationManager authorizationManager;
     private SessionManager sessionManager;
-    private EntitlementsManager entitlementsManager;
+    private EntitlementsManager entitlementsManager; // TODO: handle entitlements
     private PicketBoxSubjectPopulator subjectPopulator;
     private IdentityManager identityManager;
     private PicketBoxConfiguration configuration;
@@ -98,22 +98,20 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             }
 
             if (subject.isAuthenticated()) {
-                if (session != null && session.isValid()) {
-                    AuthenticationResult result = new AuthenticationResult();
-
-                    result.setStatus(AuthenticationStatus.SUCCESS);
-
-                    getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
-
-                    return subject;
-                } else {
-                    throw new IllegalArgumentException(
-                            "User is authenticated, but no associated session was found or it was invalid. Session: " + session);
+                if (session == null || !session.isValid()) {
+                    throw PicketBoxMessages.MESSAGES.invalidUserSession();
                 }
             }
         }
 
+        // if there is a valid session associate with the subject and performs a silent authentication.
         if (session != null) {
+            AuthenticationResult result = new AuthenticationResult();
+
+            result.setStatus(AuthenticationStatus.SUCCESS);
+
+            getEventManager().raiseEvent(new UserAuthenticatedEvent(result));
+
             subject = session.getSubject();
             subject.setSession(session);
         } else {
