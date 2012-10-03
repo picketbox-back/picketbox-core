@@ -25,16 +25,16 @@ package org.picketbox.test.session;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.picketbox.core.DefaultPicketBoxManager;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
-import org.picketbox.core.session.PicketBoxSessionListener;
 import org.picketbox.core.session.SessionManager;
 
 /**
@@ -49,45 +49,19 @@ public class SessionManagerTestCase {
 
     private SessionManager sessionManager;
 
-    private boolean onSetAttributeCalled;
-    private boolean onGetAttributeCalled;
-    private boolean onInvalidateCalled;
-    private boolean onExpirationCalled;
-    private boolean onCreateCalled;
-
     @Before
     public void onSetup() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder.sessionManager().listener(new PicketBoxSessionListener() {
+        builder
+            .sessionManager()
+                .inMemorySessionStore();
 
-            @Override
-            public void onSetAttribute(PicketBoxSession session, String key, Object value) {
-                onSetAttributeCalled = true;
-            }
+        PicketBoxManager picketBoxManager = new DefaultPicketBoxManager(builder.build());
 
-            @Override
-            public void onInvalidate(PicketBoxSession session) {
-                onInvalidateCalled = true;
-            }
+        picketBoxManager.start();
 
-            @Override
-            public void onGetAttribute(PicketBoxSession picketBoxSession) {
-                onGetAttributeCalled = true;
-            }
-
-            @Override
-            public void onExpiration(PicketBoxSession session) {
-                onExpirationCalled = true;
-            }
-
-            @Override
-            public void onCreate(PicketBoxSession session) {
-                onCreateCalled = true;
-            }
-        });
-
-        this.sessionManager = new DefaultSessionManager(builder.build());
+        this.sessionManager = picketBoxManager.getSessionManager();
     }
 
     /**
@@ -105,8 +79,6 @@ public class SessionManagerTestCase {
         assertNotNull(session.getId());
         assertNotNull(session.getId().getId());
         assertNotNull(getStoredSession(session));
-
-        assertTrue(this.onCreateCalled);
     }
 
     /**
@@ -123,13 +95,10 @@ public class SessionManagerTestCase {
 
         session.setAttribute("test", "test");
 
-        assertTrue(onSetAttributeCalled);
-
         PicketBoxSession storedSession = getStoredSession(session);
 
         assertNotNull(storedSession.getAttribute("test"));
         assertEquals("test", storedSession.getAttribute("test"));
-        assertTrue(onGetAttributeCalled);
     }
 
     /**
@@ -146,7 +115,6 @@ public class SessionManagerTestCase {
 
         session.invalidate();
 
-        assertTrue(onInvalidateCalled);
         assertFalse(session.isValid());
 
         Assert.assertNull(getStoredSession(session));
@@ -166,7 +134,6 @@ public class SessionManagerTestCase {
 
         session.expire();
 
-        assertTrue(onExpirationCalled);
         assertFalse(session.isValid());
 
         Assert.assertNull(getStoredSession(session));

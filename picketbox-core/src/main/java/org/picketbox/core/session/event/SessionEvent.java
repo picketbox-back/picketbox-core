@@ -20,37 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.config;
+package org.picketbox.core.session.event;
 
-import org.picketbox.core.session.SessionManager;
-import org.picketbox.core.session.SessionStore;
+import org.picketbox.core.event.PicketBoxEvent;
+import org.picketbox.core.session.PicketBoxSession;
+
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class SessionManagerConfig {
+public abstract class SessionEvent implements PicketBoxEvent<SessionEventHandler> {
 
-    private SessionManager manager;
-    private SessionStore store;
-    private int sessionTimeout;
+    private PicketBoxSession session;
 
-    public SessionManagerConfig(SessionManager manager, SessionStore store, int sessionTimeout) {
-        this.manager = manager;
-        this.store = store;
-        this.sessionTimeout = sessionTimeout;
+    public SessionEvent(PicketBoxSession session) {
+        this.session = session;
     }
 
-    public SessionManager getManager() {
-        return manager;
+    public PicketBoxSession getSession() {
+        return session;
     }
-
-    public SessionStore getStore() {
-        return this.store;
-    }
-
-    public int getSessionTimeout() {
-        return this.sessionTimeout;
-    }
-
 }

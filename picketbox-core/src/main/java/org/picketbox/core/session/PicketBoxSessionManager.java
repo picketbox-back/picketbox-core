@@ -74,19 +74,6 @@ public class PicketBoxSessionManager {
     }
 
     /**
-     * Create a new instance of {@link PicketBoxSession}
-     *
-     * @return
-     */
-    public static PicketBoxSession create(PicketBoxSessionListener listener) {
-        PicketBoxSession session = new PicketBoxSession(new DefaultSessionId());
-        setTimer(session);
-        session.addListener(listener);
-        listener.onCreate(session);
-        return session;
-    }
-
-    /**
      * Create a {@link PicketBoxSession}
      *
      * @param fqn Fully Qualified Class Name of a {@link PicketBoxSessionCreator}
@@ -105,22 +92,6 @@ public class PicketBoxSessionManager {
             throw PicketBoxMessages.MESSAGES.unableToInstantiate(fqn);
         }
         return sessionCreator.create();
-    }
-
-    /**
-     * Create a {@link PicketBoxSession}
-     *
-     * @param fqn Fully Qualified Class Name of a {@link PicketBoxSessionCreator}
-     * @param listener {@link PicketBoxSessionListener}
-     * @return
-     * @throws {@link IllegalStateException} when instantiation of {@link PicketBoxSessionCreator} fails
-     */
-    public static PicketBoxSession create(String fqn, PicketBoxSessionListener listener) {
-        PicketBoxSession session = create(fqn);
-
-        session.addListener(listener);
-        listener.onCreate(session);
-        return session;
     }
 
     /**

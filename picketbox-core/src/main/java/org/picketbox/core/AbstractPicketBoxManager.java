@@ -54,13 +54,13 @@ import org.picketlink.idm.internal.DefaultIdentityManager;
  */
 public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycle implements PicketBoxManager {
 
-    protected AuthenticationProvider authenticationProvider;
-    protected AuthorizationManager authorizationManager;
-    protected SessionManager sessionManager;
-    protected EntitlementsManager entitlementsManager;
-    protected PicketBoxSubjectPopulator subjectPopulator;
+    private AuthenticationProvider authenticationProvider;
+    private AuthorizationManager authorizationManager;
+    private SessionManager sessionManager;
+    private EntitlementsManager entitlementsManager;
+    private PicketBoxSubjectPopulator subjectPopulator;
     private IdentityManager identityManager;
-    protected PicketBoxConfiguration configuration;
+    private PicketBoxConfiguration configuration;
     private PicketBoxEventManager eventManager;
 
     public AbstractPicketBoxManager(PicketBoxConfiguration configuration) {
@@ -75,20 +75,17 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     @Override
     public void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException {
         checkIfStarted();
+
         if (authenticatedUser.isAuthenticated()) {
-            if (this.sessionManager != null) {
-                this.sessionManager.remove(authenticatedUser.getSession());
-            }
-            authenticatedUser.setAuthenticated(false);
+            authenticatedUser.invalidate();
             getEventManager().raiseEvent(new UserLoggedOutEvent());
         } else {
             throw PicketBoxMessages.MESSAGES.invalidUserSession();
         }
     }
 
-    /**
-     * @param authenticationCallbackHandler
-     * @throws AuthenticationException
+    /* (non-Javadoc)
+     * @see org.picketbox.core.PicketBoxManager#authenticate(org.picketbox.core.PicketBoxSubject)
      */
     public PicketBoxSubject authenticate(PicketBoxSubject subject) throws AuthenticationException {
         checkIfStarted();
@@ -247,7 +244,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             this.sessionManager = this.configuration.getSessionManager().getManager();
 
             if (this.sessionManager == null && this.configuration.getSessionManager().getStore() != null) {
-                this.sessionManager = new DefaultSessionManager(this.configuration);
+                this.sessionManager = new DefaultSessionManager(this);
             }
 
             if (this.sessionManager != null) {
@@ -311,4 +308,25 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     public IdentityManager getIdentityManager() {
         return this.identityManager;
     }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.PicketBoxManager#getConfiguration()
+     */
+    @Override
+    public PicketBoxConfiguration getConfiguration() {
+        return this.configuration;
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.PicketBoxManager#getSessionManager()
+     */
+    @Override
+    public SessionManager getSessionManager() {
+        return this.sessionManager;
+    }
+
+    protected void setSessionManager(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
+
 }

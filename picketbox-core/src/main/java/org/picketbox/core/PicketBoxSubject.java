@@ -30,6 +30,7 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
+import org.picketbox.core.exceptions.PicketBoxSessionException;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionId;
 import org.picketlink.idm.model.Group;
@@ -71,7 +72,9 @@ public class PicketBoxSubject implements Serializable {
     }
 
     public PicketBoxSubject(SessionId<? extends Serializable> sessionId) {
-        this.session = new PicketBoxSession(sessionId);
+        if (sessionId == null) {
+            throw PicketBoxMessages.MESSAGES.invalidUserSession();
+        }
     }
 
     /**
@@ -169,11 +172,25 @@ public class PicketBoxSubject implements Serializable {
         this.credential = credential;
     }
 
+    /**
+     * <p>Invalidate the instance and clear its state.</p>
+     */
     public void invalidate() {
         this.authenticated = false;
         this.credential = null;
         this.contextData.clear();
         this.principal = null;
+        this.roles = null;
+        this.groups = null;
+        this.subject = null;
+        this.user = null;
+        if (this.session != null && this.session.isValid()) {
+            try {
+                this.session.invalidate();
+            } catch (PicketBoxSessionException e) {
+                throw PicketBoxMessages.MESSAGES.unableToInvalidateSession(e);
+            }
+        }
     }
 
     /**
