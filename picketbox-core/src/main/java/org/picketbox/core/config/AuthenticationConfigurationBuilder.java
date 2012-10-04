@@ -52,12 +52,10 @@ public class AuthenticationConfigurationBuilder extends AbstractConfigurationBui
 
     @Override
     protected void setDefaults() {
-        if (this.mechanisms.isEmpty()) {
-            this.mechanisms.add(new UserNamePasswordAuthenticationMechanism());
-            this.mechanisms.add(new DigestAuthenticationMechanism());
-            this.mechanisms.add(new CertificateAuthenticationMechanism());
-            this.mechanisms.add(new TrustedUsernameAuthenticationMechanism());
-        }
+        this.mechanisms.add(new UserNamePasswordAuthenticationMechanism());
+        this.mechanisms.add(new DigestAuthenticationMechanism());
+        this.mechanisms.add(new CertificateAuthenticationMechanism());
+        this.mechanisms.add(new TrustedUsernameAuthenticationMechanism());
     }
 
     @Override
