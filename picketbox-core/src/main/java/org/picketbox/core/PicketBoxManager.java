@@ -23,8 +23,11 @@
 package org.picketbox.core;
 
 import org.picketbox.core.authorization.Resource;
+import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.event.PicketBoxEventManager;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketbox.core.session.SessionManager;
+import org.picketlink.idm.IdentityManager;
 
 /**
  * <p>
@@ -68,6 +71,32 @@ public interface PicketBoxManager extends PicketBoxLifecycle {
      */
     void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException;
 
+    /**
+     * <p>Returns the configured {@link PicketBoxEventManager} instance.</p>
+     *
+     * @return
+     */
     PicketBoxEventManager getEventManager();
+
+    /**
+     * <p>Returns the configured {@link IdentityManager} instance.</p>
+     *
+     * @return
+     */
+    IdentityManager getIdentityManager();
+
+    /**
+     * <p>Returns the configuration used to build and start an instance.</p>
+     *
+     * @return
+     */
+    PicketBoxConfiguration getConfiguration();
+
+    /**
+     * <p>Returns the configured {@link SessionManager} instance.</p>
+     *
+     * @return
+     */
+    SessionManager getSessionManager();
 
 }

@@ -35,26 +35,29 @@ import org.picketbox.core.ctx.SecurityContextPropagation;
 
 /**
  * Unit test the {@link SecurityContextPropagation}
- *
+ * 
  * @author anil saldhana
  * @since Aug 22, 2012
  */
 public class SecurityContextPropagationTestCase {
     @Test
     public void testThreadLevelPropagation() throws Exception {
-        PicketBoxSubject subject = new PicketBoxSubject();
+        final Principal anil = new PicketBoxPrincipal("anil");
+
+        PicketBoxSubject subject = new PicketBoxSubject() {
+            @Override
+            public Principal getPrincipal() {
+                return anil;
+            }
+        };
 
         SecurityContext sc = new PicketBoxSecurityContext(subject);
-
-        Principal anil = new PicketBoxPrincipal("anil");
-        subject.setUser(anil);
-
         SecurityContextPropagation.setContext(sc);
 
         SecurityContext retrievedCtx = SecurityContextPropagation.getContext();
         assertEquals(sc, retrievedCtx);
 
-        assertEquals(anil, sc.getSubject().getUser());
+        assertEquals(anil, sc.getSubject().getPrincipal());
 
         SecurityContextPropagation.clear();
 

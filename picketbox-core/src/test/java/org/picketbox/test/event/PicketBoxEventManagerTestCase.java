@@ -50,7 +50,7 @@ public class PicketBoxEventManagerTestCase {
 
     /**
      * <p>Tests is the {@link UserAuthenticatedEvent} is properly handled when the user is successfully authenticated.</p>
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -95,10 +95,10 @@ public class PicketBoxEventManagerTestCase {
         Assert.assertTrue(subject.isAuthenticated());
         Assert.assertEquals("SUCCESS", eventStatus.toString());
     }
-    
+
     /**
      * <p>Tests is the {@link UserAuthenticatedEvent} is properly handled when the user authentication fail.</p>
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -143,24 +143,24 @@ public class PicketBoxEventManagerTestCase {
         Assert.assertFalse(subject.isAuthenticated());
         Assert.assertEquals("FAILED", eventStatus.toString());
     }
-    
+
     /**
      * <p>Tests is the {@link UserLoggedOutEvent} is properly handled when the user is logged out.</p>
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testUserLoggedOutEvent() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
         final StringBuffer eventStatus = new StringBuffer();
-        
+
         builder.authentication().eventManager().handler(new UserLoggedOutEventHandler() {
-            
+
             @Override
             public Class<? extends PicketBoxEvent<? extends PicketBoxEventHandler>> getEventType() {
                 return UserLoggedOutEvent.class;
             }
-            
+
             @Override
             public void onLogOut(UserLoggedOutEvent userLogOutEvent) {
                 eventStatus.append("LOGGED_OUT");
@@ -181,9 +181,9 @@ public class PicketBoxEventManagerTestCase {
 
         Assert.assertNotNull(subject);
         Assert.assertTrue(subject.isAuthenticated());
-        
+
         picketBoxManager.logout(subject);
-        
+
         Assert.assertEquals("LOGGED_OUT", eventStatus.toString());
     }
 

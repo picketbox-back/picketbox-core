@@ -20,37 +20,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.config;
+package org.picketbox.core.authentication.credential;
 
-import org.picketbox.core.session.SessionManager;
-import org.picketbox.core.session.SessionStore;
+import org.picketbox.core.AbstractCredential;
 
 /**
+ * <p>
+ * Credential that uses only the username to validate the user.
+ * </p>
+ *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class SessionManagerConfig {
+public class TrustedUsernameCredential extends AbstractCredential {
 
-    private SessionManager manager;
-    private SessionStore store;
-    private int sessionTimeout;
-
-    public SessionManagerConfig(SessionManager manager, SessionStore store, int sessionTimeout) {
-        this.manager = manager;
-        this.store = store;
-        this.sessionTimeout = sessionTimeout;
-    }
-
-    public SessionManager getManager() {
-        return manager;
-    }
-
-    public SessionStore getStore() {
-        return this.store;
-    }
-
-    public int getSessionTimeout() {
-        return this.sessionTimeout;
+    public TrustedUsernameCredential(String userName) {
+        super.setUserName(userName);
     }
 
 }

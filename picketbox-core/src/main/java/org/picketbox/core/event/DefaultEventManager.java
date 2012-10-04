@@ -40,7 +40,7 @@ public class DefaultEventManager implements PicketBoxEventManager {
 
     public DefaultEventManager(List<PicketBoxEventHandler> handlers) {
         for (PicketBoxEventHandler handler : handlers) {
-            addHandler(handler.getEventType(), handler);
+            addHandler(handler);
         }
     }
 
@@ -55,6 +55,10 @@ public class DefaultEventManager implements PicketBoxEventManager {
     public void raiseEvent(PicketBoxEvent event) {
         List<PicketBoxEventHandler> handlers = this.observers.get(event.getClass());
 
+        if (handlers == null) {
+            handlers = this.observers.get(event.getClass().getSuperclass());
+        }
+
         if (handlers != null) {
             for (PicketBoxEventHandler authenticationEventHandler : handlers) {
                 event.dispatch(authenticationEventHandler);
@@ -63,13 +67,14 @@ public class DefaultEventManager implements PicketBoxEventManager {
     }
 
     @SuppressWarnings("rawtypes")
-    private void addHandler(Class<? extends PicketBoxEvent> eventType, PicketBoxEventHandler handler) {
-        if (!this.observers.containsKey(eventType)) {
-            this.observers.put(eventType, new ArrayList<PicketBoxEventHandler>());
+    public void addHandler(PicketBoxEventHandler handler) {
+        if (!this.observers.containsKey(handler.getEventType())) {
+            this.observers.put(handler.getEventType(), new ArrayList<PicketBoxEventHandler>());
         }
 
-        List<PicketBoxEventHandler> handlers = this.observers.get(eventType);
+        List<PicketBoxEventHandler> handlers = this.observers.get(handler.getEventType());
 
         handlers.add(handler);
     }
+
 }

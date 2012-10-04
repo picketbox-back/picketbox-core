@@ -172,4 +172,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 51, value = "User not authenticated.")
     IllegalStateException userNotAuthenticated();
+
+    @Message(id = 52, value = "Unable to invalidate session.")
+    IllegalStateException unableToInvalidateSession(@Cause Throwable t);
 }

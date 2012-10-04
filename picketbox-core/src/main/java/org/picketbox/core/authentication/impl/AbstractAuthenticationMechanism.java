@@ -27,12 +27,11 @@ import java.util.List;
 import org.picketbox.core.Credential;
 import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.authentication.AuthenticationInfo;
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
-import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.AuthenticationStatus;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketlink.idm.IdentityManager;
 
 /**
  * <p>
@@ -45,7 +44,6 @@ import org.picketbox.core.exceptions.AuthenticationException;
 public abstract class AbstractAuthenticationMechanism implements AuthenticationMechanism {
 
     private PicketBoxManager picketBoxManager;
-    private AuthenticationProvider authenticationProvider;
 
     @Override
     public boolean supports(Credential credential) {
@@ -62,61 +60,38 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
 
     @Override
     public AuthenticationResult authenticate(Credential credential) throws AuthenticationException {
-        AuthenticationResult result = new AuthenticationResult();
-        return performAuthentication(result, credential);
+        return performAuthentication(credential);
     }
 
-    /**
-     * <p>
-     * Populates the result with the informations after a successful authentication.
-     * </p>
-     * <p>
-     * This method should provide hooks or raise events for additional processing.
-     * </p>
-     *
-     * @param result
-     * @return
-     */
-    protected AuthenticationResult performSuccessfulAuthentication(AuthenticationResult result) {
-        result.setStatus(AuthenticationStatus.SUCCESS);
-        return result;
-    }
 
-    protected AuthenticationResult performFailedAuthentication(AuthenticationResult result) {
-        result.setStatus(AuthenticationStatus.FAILED);
-        return result;
-    }
 
-    protected AuthenticationResult performAuthentication(AuthenticationResult result, Credential credential)
+
+
+    protected AuthenticationResult performAuthentication(Credential credential)
             throws AuthenticationException {
         Principal principal = null;
+        AuthenticationResult result = new AuthenticationResult();
 
-        for (AuthenticationManager authenticationManager : this.authenticationProvider.getAuthenticationManagers()) {
-            if (supports(credential)) {
-                try {
-                    principal = doAuthenticate(authenticationManager, credential, result);
-                } catch (AuthenticationException e) {
-                    throw new AuthenticationException(e);
-                }
+        try {
 
-                if (principal != null) {
-                    break;
-                }
-            }
+            principal = doAuthenticate(credential, result);
+        } catch (AuthenticationException e) {
+            throw new AuthenticationException(e);
         }
 
         if (principal != null) {
             result.setPrincipal(principal);
-            performSuccessfulAuthentication(result);
+            result.setStatus(AuthenticationStatus.SUCCESS);
         } else {
-            performFailedAuthentication(result);
+            if (result.getStatus() == null || result.getStatus().equals(AuthenticationStatus.NONE)) {
+                result.setStatus(AuthenticationStatus.FAILED);
+            }
         }
 
         return result;
     }
 
-    protected abstract Principal doAuthenticate(AuthenticationManager authenticationManager, Credential credential,
-            AuthenticationResult result) throws AuthenticationException;
+    protected abstract Principal doAuthenticate(Credential credential, AuthenticationResult result) throws AuthenticationException;
 
     /**
      * <p>
@@ -166,15 +141,20 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
         return result;
     }
 
-    protected void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
-        this.authenticationProvider = authenticationProvider;
-    }
-
     protected void setPicketBoxManager(PicketBoxManager picketBoxManager) {
         this.picketBoxManager = picketBoxManager;
     }
 
     protected PicketBoxManager getPicketBoxManager() {
         return this.picketBoxManager;
+    }
+
+    /**
+     * <p>Returns the {@link IdentityManager} instance that can be used to retrieve informations from the identity store.</p>
+     *
+     * @return
+     */
+    protected IdentityManager getIdentityManager() {
+        return this.picketBoxManager.getIdentityManager();
     }
 }

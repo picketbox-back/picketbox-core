@@ -20,45 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.session;
+package org.picketbox.core.config;
+
+
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class PicketBoxSessionStoreListener implements PicketBoxSessionListener {
+public class JPAIdentityManagerConfigurationBuilder extends AbstractConfigurationBuilder<JPAIdentityManagerConfiguration> {
 
-    private SessionManager sessionManager;
+    private JPAIdentityManagerConfiguration configuration = new JPAIdentityManagerConfiguration();
 
-    PicketBoxSessionStoreListener(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
+    public JPAIdentityManagerConfigurationBuilder(IdentityManagerConfigurationBuilder identityManagerConfigurationBuilder) {
+        super(identityManagerConfigurationBuilder);
     }
 
     @Override
-    public void onSetAttribute(PicketBoxSession session, String key, Object value) {
-        sessionManager.update(session);
+    protected void setDefaults() {
     }
 
     @Override
-    public void onInvalidate(PicketBoxSession session) {
-        sessionManager.remove(session);
-    }
-
-    @Override
-    public void onExpiration(PicketBoxSession session) {
-        sessionManager.remove(session);
-    }
-
-    @Override
-    public void onCreate(PicketBoxSession session) {
-
-    }
-
-    @Override
-    public void onGetAttribute(PicketBoxSession currentSession) {
-        PicketBoxSession session = this.sessionManager.retrieve(currentSession.getId());
-
-        currentSession.attributes = session.attributes;
+    protected JPAIdentityManagerConfiguration doBuild() {
+        return this.configuration;
     }
 
 }

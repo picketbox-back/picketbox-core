@@ -23,11 +23,14 @@
 package org.picketbox.core.session;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.picketbox.core.AbstractPicketBoxLifeCycle;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.PicketBoxConfiguration;
+import org.picketbox.core.event.PicketBoxEventHandler;
+import org.picketbox.core.session.event.SessionEvent;
+import org.picketbox.core.session.event.SessionEventHandler;
 
 /**
  * Default implementation of the {@link SessionManager}
@@ -38,14 +41,19 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
 
     private SessionStore sessionStore;
     private final SessionExpirationManager sessionExpirationManager;
-    private final List<PicketBoxSessionListener> listeners;
+    private PicketBoxManager picketBoxManager;
+    private PicketBoxEventHandler defaultSessionEventHandler = new DefaultSessionEventHandler(this);
 
     /**
      * Construct the session manager
      *
      * @param configuration PicketBox Configuration
      */
-    public DefaultSessionManager(PicketBoxConfiguration configuration) {
+    public DefaultSessionManager(PicketBoxManager picketBoxManager) {
+        this.picketBoxManager = picketBoxManager;
+
+        PicketBoxConfiguration configuration = this.picketBoxManager.getConfiguration();
+
         this.sessionExpirationManager = new SessionExpirationManager(configuration);
         this.sessionStore = configuration.getSessionManager().getStore();
 
@@ -53,8 +61,7 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
             this.sessionStore = new InMemorySessionStore();
         }
 
-        this.listeners = configuration.getSessionManager().getListeners();
-        this.listeners.add(new PicketBoxSessionStoreListener(this));
+        registerDefaultEventHandler();
     }
 
     /*
@@ -64,12 +71,16 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
      */
     @Override
     public PicketBoxSession create(PicketBoxSubject authenticatedSubject) {
-        PicketBoxSession session = doCreateSession(authenticatedSubject);
+        checkIfStarted();
 
-        for (PicketBoxSessionListener listener : this.listeners) {
-            session.addListener(listener);
-            listener.onCreate(session);
-        }
+        final PicketBoxSession session = doCreateSession(authenticatedSubject);
+
+        fireEvent(new SessionEvent(session) {
+            @Override
+            public void dispatch(SessionEventHandler handler) {
+                handler.onCreate(this);
+            }
+        });
 
         if (session.getId() == null || session.getId().getId() == null) {
             throw new IllegalStateException("Invalid session id: " + session.getId());
@@ -96,10 +107,12 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
      */
     @Override
     public PicketBoxSession retrieve(SessionId<? extends Serializable> id) {
+        checkIfStarted();
+
         PicketBoxSession session = this.sessionStore.load(id);
 
-        if (session != null && !session.hasListener(PicketBoxSessionStoreListener.class)) {
-            session.addListener(new PicketBoxSessionStoreListener(this));
+        if (session != null) {
+            session.setEventManager(this.picketBoxManager.getEventManager());
         }
 
         return session;
@@ -112,18 +125,25 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
      */
     @Override
     public void remove(PicketBoxSession session) {
+        checkIfStarted();
+
         if (session != null) {
             this.sessionStore.remove(session.getId());
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.session.SessionManager#update(org.picketbox.core.session.PicketBoxSession)
+     */
     @Override
     public void update(PicketBoxSession session) {
+        checkIfStarted();
+
         this.sessionStore.update(session);
     }
 
     protected PicketBoxSession doCreateSession(PicketBoxSubject authenticatedSubject) {
-        return new PicketBoxSession(authenticatedSubject, new DefaultSessionId());
+        return new PicketBoxSession(authenticatedSubject, new DefaultSessionId(), this.picketBoxManager.getEventManager());
     }
 
     @Override
@@ -139,5 +159,21 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
     @Override
     protected void doStop() {
         this.sessionStore.stop();
+    }
+
+    /**
+     * <p>Fires the specified {@link SessionEvent}.</p>
+     *
+     * @param event
+     */
+    protected void fireEvent(SessionEvent event) {
+        this.picketBoxManager.getEventManager().raiseEvent(event);
+    }
+
+    /**
+     * <p>Registers the default implementation for {@link SessionEventHandler}.</p>
+     */
+    private void registerDefaultEventHandler() {
+        this.picketBoxManager.getEventManager().addHandler(this.defaultSessionEventHandler );
     }
 }

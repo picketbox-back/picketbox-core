@@ -24,7 +24,7 @@ package org.picketbox.core;
 
 /**
  * <p>
- * This class represents a specific credential type. Eg.: username/password, digest, certificate, etc.
+ * This class represents a specific credential type. Eg.: username/password, digest, certificate, security tokens, etc.
  * </p>
  * <p>
  * Each credential type is supported by some mechanism that knows how to get the necessary informations to proceed with the user

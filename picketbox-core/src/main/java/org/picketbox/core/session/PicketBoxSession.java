@@ -22,16 +22,17 @@
 package org.picketbox.core.session;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.picketbox.core.PicketBoxMessages;
 import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.event.PicketBoxEventManager;
 import org.picketbox.core.exceptions.PicketBoxSessionException;
+import org.picketbox.core.session.event.SessionEvent;
+import org.picketbox.core.session.event.SessionEventHandler;
 
 /**
  * A session that is capable of storing attributes
@@ -51,15 +52,16 @@ public class PicketBoxSession implements Serializable {
 
     protected PicketBoxSubject subject;
 
-    protected transient List<PicketBoxSessionListener> listeners = new ArrayList<PicketBoxSessionListener>();
+    private transient PicketBoxEventManager eventManager;
 
     public PicketBoxSession() {
         this(new DefaultSessionId());
     }
 
-    public PicketBoxSession(PicketBoxSubject subject, SessionId<? extends Serializable> id) {
+    public PicketBoxSession(PicketBoxSubject subject, SessionId<? extends Serializable> id, PicketBoxEventManager eventManager) {
         this(id);
         this.subject = subject;
+        this.eventManager = eventManager;
     }
 
     /**
@@ -95,12 +97,17 @@ public class PicketBoxSession implements Serializable {
      * @param val
      * @throws PicketBoxSessionException
      */
-    public void setAttribute(String key, Object val) throws PicketBoxSessionException {
+    public void setAttribute(final String key, final Object val) throws PicketBoxSessionException {
         checkIfIsInvalid();
+
         attributes.put(key, val);
-        for (PicketBoxSessionListener listener : listeners) {
-            listener.onSetAttribute(this, key, val);
-        }
+
+        this.eventManager.raiseEvent(new SessionEvent(this) {
+            @Override
+            public void dispatch(SessionEventHandler handler) {
+                handler.onSetAttribute(this, key, val);
+            }
+        });
     }
 
     /**
@@ -121,11 +128,16 @@ public class PicketBoxSession implements Serializable {
      * @return
      * @throws PicketBoxSessionException
      */
-    public Object getAttribute(String key) throws PicketBoxSessionException {
+    public Object getAttribute(final String key) throws PicketBoxSessionException {
         checkIfIsInvalid();
-        for (PicketBoxSessionListener listener : listeners) {
-            listener.onGetAttribute(this);
-        }
+
+        this.eventManager.raiseEvent(new SessionEvent(this) {
+            @Override
+            public void dispatch(SessionEventHandler handler) {
+                handler.onGetAttribute(this, key);
+            }
+        });
+
         return attributes.get(key);
     }
 
@@ -158,15 +170,18 @@ public class PicketBoxSession implements Serializable {
     public void invalidate(boolean raiseEvent) throws PicketBoxSessionException {
         checkIfIsInvalid();
         if (raiseEvent) {
-            for (PicketBoxSessionListener listener : listeners) {
-                listener.onInvalidate(this);
-            }
+            this.eventManager.raiseEvent(new SessionEvent(this) {
+                @Override
+                public void dispatch(SessionEventHandler handler) {
+                    handler.onInvalidate(this);
+                }
+            });
         }
         this.attributes.clear();
-        if (this.subject != null) {
+        this.invalid = true;
+        if (this.subject != null && this.subject.isAuthenticated()) {
             this.subject.invalidate();
         }
-        invalid = true;
     }
 
     /**
@@ -176,9 +191,12 @@ public class PicketBoxSession implements Serializable {
      */
     public void expire() throws PicketBoxSessionException {
         invalidate();
-        for (PicketBoxSessionListener listener : listeners) {
-            listener.onExpiration(this);
-        }
+        this.eventManager.raiseEvent(new SessionEvent(this) {
+            @Override
+            public void dispatch(SessionEventHandler handler) {
+                handler.onExpiration(this);
+            }
+        });
     }
 
     /**
@@ -186,25 +204,6 @@ public class PicketBoxSession implements Serializable {
      */
     public PicketBoxSubject getSubject() {
         return subject;
-    }
-
-    public boolean hasListener(Class<PicketBoxSessionStoreListener> class1) {
-        for (PicketBoxSessionListener listener : listeners) {
-            if (listener.getClass().equals(class1)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Add a session listener
-     *
-     * @param listener
-     */
-    protected void addListener(PicketBoxSessionListener listener) {
-        listeners.add(listener);
     }
 
     /**
@@ -217,6 +216,10 @@ public class PicketBoxSession implements Serializable {
     private void checkIfIsInvalid() throws PicketBoxSessionException {
         if (invalid)
             throw PicketBoxMessages.MESSAGES.invalidatedSession();
+    }
+
+    protected void setEventManager(PicketBoxEventManager eventManager) {
+        this.eventManager = eventManager;
     }
 
 }

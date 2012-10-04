@@ -22,7 +22,6 @@
 
 package org.picketbox.core.authentication;
 
-import java.util.List;
 
 /**
  * <p>
@@ -62,14 +61,5 @@ public interface AuthenticationProvider {
      * @return
      */
     AuthenticationMechanism getMechanism(String string);
-
-    /**
-     * <p>
-     * Returns the registered {@link AuthenticationManager} instances.
-     * </p>
-     *
-     * @return
-     */
-    List<AuthenticationManager> getAuthenticationManagers();
 
 }

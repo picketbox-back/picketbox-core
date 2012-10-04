@@ -23,16 +23,22 @@ package org.picketbox.core;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.Subject;
 
+import org.picketbox.core.authentication.AuthenticationResult;
+import org.picketbox.core.authentication.AuthenticationStatus;
+import org.picketbox.core.authentication.credential.TrustedUsernameCredential;
+import org.picketbox.core.exceptions.PicketBoxSessionException;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionId;
+import org.picketlink.idm.model.Group;
+import org.picketlink.idm.model.Role;
+import org.picketlink.idm.model.User;
 
 /**
  * An Application View of the authenticated/authorized Subject
@@ -44,10 +50,16 @@ public class PicketBoxSubject implements Serializable {
 
     private static final long serialVersionUID = -7767959770091515534L;
 
-    protected Subject subject;
-    protected Principal user;
-    protected List<String> roleNames = new ArrayList<String>();
-    protected Map<String, Object> attributes = new HashMap<String, Object>();
+    private Subject subject;
+    private Principal principal;
+    private User user;
+
+    @SuppressWarnings("unchecked")
+    private Collection<Role> roles = Collections.EMPTY_LIST;
+
+    @SuppressWarnings("unchecked")
+    private Collection<Group> groups = Collections.EMPTY_LIST;
+
     protected transient Map<String, Object> contextData = new HashMap<String, Object>();
 
     private boolean authenticated;
@@ -56,6 +68,8 @@ public class PicketBoxSubject implements Serializable {
 
     private transient Credential credential;
 
+    private AuthenticationResult authenticationResult;
+
     // TODO: how to deal with groups/nested groups etc
 
     public PicketBoxSubject() {
@@ -63,7 +77,14 @@ public class PicketBoxSubject implements Serializable {
     }
 
     public PicketBoxSubject(SessionId<? extends Serializable> sessionId) {
+        if (sessionId == null) {
+            throw PicketBoxMessages.MESSAGES.invalidUserSession();
+        }
         this.session = new PicketBoxSession(sessionId);
+    }
+
+    public PicketBoxSubject(TrustedUsernameCredential credential) {
+        this.credential = credential;
     }
 
     /**
@@ -71,54 +92,32 @@ public class PicketBoxSubject implements Serializable {
      *
      * @return
      */
-    public Principal getUser() {
-        return user;
+    public Principal getPrincipal() {
+        return getPrincipal(true);
+    }
+
+    Principal getPrincipal(boolean userAuthenticatedRestriction) {
+        if (userAuthenticatedRestriction && !isAuthenticated()) {
+            throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
+        }
+
+        return this.authenticationResult.getPrincipal();
+    }
+
+
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return this.user;
     }
 
     /**
-     * Set the user
-     *
-     * @param user
+     * @param user the user to set
      */
-    public void setUser(Principal user) {
+    public void setUser(User user) {
         this.user = user;
-    }
-
-    /**
-     * Get the role names
-     *
-     * @return
-     */
-    public List<String> getRoleNames() {
-        return Collections.unmodifiableList(roleNames);
-    }
-
-    /**
-     * Set the role names of the user
-     *
-     * @param rolesNames
-     */
-    public void setRoleNames(List<String> rolesNames) {
-        this.roleNames.addAll(rolesNames);
-    }
-
-    /**
-     * Get the user attributes
-     *
-     * @return
-     */
-    public Map<String, Object> getAttributes() {
-        return Collections.unmodifiableMap(attributes);
-    }
-
-    /**
-     * Set the attributes
-     *
-     * @param attributes
-     */
-    public void setAttributes(Map<String, Object> attributes) {
-        this.attributes.clear();
-        this.attributes.putAll(attributes);
     }
 
     /**
@@ -165,7 +164,15 @@ public class PicketBoxSubject implements Serializable {
      * @return
      */
     public boolean isAuthenticated() {
-        return authenticated;
+        boolean isAuthenticated = this.authenticationResult != null && this.authenticationResult.getStatus().equals(AuthenticationStatus.SUCCESS);
+
+        if (isAuthenticated) {
+            if (session != null && !session.isValid()) {
+                isAuthenticated = false;
+            }
+        }
+
+        return isAuthenticated;
     }
 
     public void setSession(PicketBoxSession session) {
@@ -184,12 +191,27 @@ public class PicketBoxSubject implements Serializable {
         this.credential = credential;
     }
 
+    /**
+     * <p>Invalidate the instance and clear its state.</p>
+     */
     public void invalidate() {
         this.authenticated = false;
         this.credential = null;
         this.contextData.clear();
-        this.roleNames.clear();
+        this.principal = null;
+        this.roles = null;
+        this.groups = null;
+        this.subject = null;
         this.user = null;
+        this.authenticationResult = null;
+
+        if (this.session != null && this.session.isValid()) {
+            try {
+                this.session.invalidate();
+            } catch (PicketBoxSessionException e) {
+                throw PicketBoxMessages.MESSAGES.unableToInvalidateSession(e);
+            }
+        }
     }
 
     /**
@@ -202,6 +224,35 @@ public class PicketBoxSubject implements Serializable {
         if (!isAuthenticated()) {
             throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
         }
-        return this.roleNames.contains(role);
+
+        for (Role userRole: getRoles()) {
+            if (role.equals(userRole.getName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<Role> getRoles() {
+        if (this.roles == null) {
+            this.roles = Collections.EMPTY_LIST;
+        }
+
+        return Collections.unmodifiableCollection(this.roles);
+    }
+
+    protected void setAuthenticationResult(AuthenticationResult result) {
+        this.authenticationResult = result;
+    }
+
+    public AuthenticationResult getAuthenticationResult() {
+        return authenticationResult;
+    }
+
 }
