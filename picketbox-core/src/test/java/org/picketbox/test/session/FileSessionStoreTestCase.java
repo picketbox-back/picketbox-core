@@ -21,8 +21,8 @@
  */
 package org.picketbox.test.session;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -30,9 +30,10 @@ import java.io.File;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.picketbox.core.DefaultPicketBoxManager;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.ConfigurationBuilder;
-import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.FileSessionStore;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionManager;
@@ -44,15 +45,20 @@ import org.picketbox.core.session.SessionManager;
  * @since Aug 22, 2012
  */
 public class FileSessionStoreTestCase {
+    
     private SessionManager sessionManager;
 
     @Before
     public void onSetup() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
+        
         builder.sessionManager().fileSessionStore();
-        this.sessionManager = new DefaultSessionManager(builder.build());
-
-        this.sessionManager.start();
+        
+        PicketBoxManager picketBoxManager = new DefaultPicketBoxManager(builder.build());
+        
+        picketBoxManager.start();
+        
+        this.sessionManager = picketBoxManager.getSessionManager();
     }
 
     @Test

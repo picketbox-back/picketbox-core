@@ -22,28 +22,27 @@
 
 package org.picketbox.core.config;
 
-import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
+import org.picketbox.core.identity.PicketBoxSubjectPopulator;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class LDAPAuthenticationConfiguration {
+public class GlobalIdentityManagerConfiguration {
 
-    private BasicLDAPStoreConfig ldapStoreConfig = new BasicLDAPStoreConfig();
+    private IdentityManagerConfiguration identityManagerConfiguration;
+    private PicketBoxSubjectPopulator userPopulator;
 
-    /**
-     * @return the ldapStoreConfig
-     */
-    public BasicLDAPStoreConfig getLdapStoreConfig() {
-        return ldapStoreConfig;
+    public GlobalIdentityManagerConfiguration(IdentityManagerConfiguration identityManagerConfiguration, PicketBoxSubjectPopulator userPopulator) {
+        this.identityManagerConfiguration = identityManagerConfiguration;
+        this.userPopulator = userPopulator;
     }
 
-    /**
-     * @param ldapStoreConfig the ldapStoreConfig to set
-     */
-    public void setLdapStoreConfig(BasicLDAPStoreConfig ldapStoreConfig) {
-        this.ldapStoreConfig = ldapStoreConfig;
+    public IdentityManagerConfiguration getIdentityManagerConfiguration() {
+        return this.identityManagerConfiguration;
     }
 
+    public PicketBoxSubjectPopulator getUserPopulator() {
+        return this.userPopulator;
+    }
 }

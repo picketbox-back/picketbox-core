@@ -27,12 +27,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.picketbox.core.Credential;
+import org.picketbox.core.PicketBoxPrincipal;
 import org.picketbox.core.authentication.AuthenticationInfo;
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationResult;
 import org.picketbox.core.authentication.credential.DigestCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
+import org.picketbox.core.exceptions.FormatException;
+import org.picketbox.core.util.HTTPDigestUtil;
+import org.picketlink.idm.model.User;
+import org.picketlink.idm.password.PasswordValidator;
 
 /**
  * <p>
@@ -63,16 +67,32 @@ public class DigestAuthenticationMechanism extends AbstractAuthenticationMechani
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.picketbox.core.authentication.spi.AbstractAuthenticationService#doAuthenticate(org.picketbox.core.authentication.
-     * AuthenticationManager, org.picketbox.core.authentication.api.AuthenticationCallbackHandler,
-     * org.picketbox.core.authentication.api.AuthenticationResult)
+     * @see org.picketbox.core.authentication.impl.AbstractAuthenticationMechanism#doAuthenticate(org.picketbox.core.Credential,
+     * org.picketbox.core.authentication.AuthenticationResult)
      */
     @Override
-    protected Principal doAuthenticate(AuthenticationManager authenticationManager, Credential credential,
-            AuthenticationResult result) throws AuthenticationException {
-        DigestCredential digestCredential = (DigestCredential) credential;
+    protected Principal doAuthenticate(Credential credential, AuthenticationResult result) throws AuthenticationException {
+        final DigestCredential digestCredential = (DigestCredential) credential;
 
-        return authenticationManager.authenticate(digestCredential.getDigest());
+        User user = getIdentityManager().getUser(digestCredential.getUserName());
+
+        if (user != null) {
+            if (getIdentityManager().validatePassword(user, new PasswordValidator() {
+
+                @Override
+                public boolean validate(String userPassword) {
+                    try {
+                        return HTTPDigestUtil.matchCredential(digestCredential.getDigest(), userPassword.toCharArray());
+                    } catch (FormatException e) {
+                        throw new RuntimeException("Error validating digest credential.", e);
+                    }
+                }
+
+            })) {
+                return new PicketBoxPrincipal(user.getKey());
+            }
+        }
+
+        return null;
     }
 }

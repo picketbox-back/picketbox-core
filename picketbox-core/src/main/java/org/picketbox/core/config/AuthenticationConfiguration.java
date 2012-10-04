@@ -24,7 +24,6 @@ package org.picketbox.core.config;
 
 import java.util.List;
 
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 
 /**
@@ -34,23 +33,12 @@ import org.picketbox.core.authentication.AuthenticationMechanism;
  */
 public class AuthenticationConfiguration {
     private EventManagerConfiguration eventManager;
-    private List<AuthenticationManager> authManagers;
     private List<AuthenticationMechanism> mechanisms;
 
-    public AuthenticationConfiguration(List<AuthenticationMechanism> mechanisms, List<AuthenticationManager> authManagers,
+    public AuthenticationConfiguration(List<AuthenticationMechanism> mechanisms,
             EventManagerConfiguration eventManager) {
         this.eventManager = eventManager;
-        this.authManagers = authManagers;
         this.mechanisms = mechanisms;
-    }
-
-    /**
-     * Get a list of authentication managers
-     *
-     * @return
-     */
-    public List<AuthenticationManager> getAuthManagers() {
-        return authManagers;
     }
 
     /**

@@ -20,27 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.picketbox.core.identity;
+package org.picketbox.core.session.event;
 
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.event.PicketBoxEvent;
+import org.picketbox.core.session.PicketBoxSession;
+
 
 /**
- * <p>
- * Default implementation for the {@link IdentityManager} interface.
- * </p>
- *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
+ *
  */
-public class DefaultIdentityManager implements IdentityManager {
+public abstract class SessionEvent implements PicketBoxEvent<SessionEventHandler> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.IdentityManager#getIdentity()
-     */
-    @Override
-    public PicketBoxSubject getIdentity(PicketBoxSubject subject) {
-        return subject;
+    private PicketBoxSession session;
+
+    public SessionEvent(PicketBoxSession session) {
+        this.session = session;
     }
 
+    public PicketBoxSession getSession() {
+        return session;
+    }
 }

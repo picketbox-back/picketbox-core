@@ -19,43 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.core.session;
+
+package org.picketbox.core.config;
+
+import org.picketlink.idm.internal.file.FileBasedIdentityStore;
+import org.picketlink.idm.spi.IdentityStore;
+
+
 
 /**
- * A listener for the {@link PicketBoxSession}
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
- * @author anil saldhana
- * @since Jul 16, 2012
  */
-public interface PicketBoxSessionListener {
+public class FileIdentityManagerConfiguration implements IdentityManagerConfiguration {
 
-    /**
-     * Called when a session is created
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.IdentityManagerConfiguration#getIdentityStore()
      */
-    void onCreate(PicketBoxSession session);
+    @Override
+    public IdentityStore getIdentityStore() {
+        return new FileBasedIdentityStore();
+    }
 
-    /**
-     * Called when there is a set attribute call
-     *
-     * @param session
-     * @param key
-     * @param value
-     */
-    void onSetAttribute(PicketBoxSession session, String key, Object value);
-
-    /**
-     * Called when the session is invalidated
-     *
-     * @param session
-     */
-    void onInvalidate(PicketBoxSession session);
-
-    /**
-     * Called when the session expires
-     *
-     * @param session
-     */
-    void onExpiration(PicketBoxSession session);
-
-    void onGetAttribute(PicketBoxSession picketBoxSession);
 }

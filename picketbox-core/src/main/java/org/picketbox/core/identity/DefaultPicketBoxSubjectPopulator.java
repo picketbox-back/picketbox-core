@@ -19,40 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.core.identity.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+package org.picketbox.core.identity;
 
 import org.picketbox.core.PicketBoxSubject;
-import org.picketbox.core.identity.IdentityManager;
+
 
 /**
  * <p>
- * A Simple Identity Manager that just takes in a list of roles and passes it back to the subject. Use this
- * {@link IdentityManager} when you have great confidence in your authentication process and all your authenticated users need
- * to get the same set of roles.
+ * Default implementation for the {@link PicketBoxSubjectPopulator} interface.
  * </p>
  *
- * @author anil saldhana
- * @since Aug 16, 2012
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public class ConfiguredRolesIdentityManager implements IdentityManager {
-
-    private List<String> roles = new ArrayList<String>();
-
-    public ConfiguredRolesIdentityManager(List<String> roles) {
-        this.roles.addAll(roles);
-    }
+public class DefaultPicketBoxSubjectPopulator implements PicketBoxSubjectPopulator {
 
     /*
      * (non-Javadoc)
      *
-     * @see org.picketbox.core.identity.IdentityManager#getIdentity(org.picketbox.core.PicketBoxSubject)
+     * @see org.picketbox.core.IdentityManager#getIdentity()
      */
     @Override
-    public PicketBoxSubject getIdentity(PicketBoxSubject resultingSubject) {
-        resultingSubject.setRoleNames(roles);
-        return resultingSubject;
+    public PicketBoxSubject getIdentity(PicketBoxSubject authenticatedSubject) {
+        return authenticatedSubject;
     }
+
 }

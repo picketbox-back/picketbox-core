@@ -31,46 +31,45 @@ import org.picketbox.core.PicketBoxPrincipal;
 import org.picketbox.core.authentication.AuthenticationInfo;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationResult;
-import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
+import org.picketbox.core.authentication.credential.TrustedUsernameCredential;
 import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketlink.idm.model.User;
 
 /**
  * <p>
- * A {@link AuthenticationMechanism} implementation for a UserName/Password based authentication.
+ * A {@link AuthenticationMechanism} implementation for a X.509 Certificate based authentication.
  * </p>
  *
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class UserNamePasswordAuthenticationMechanism extends AbstractAuthenticationMechanism {
-
-    public List<AuthenticationInfo> getAuthenticationInfo() {
-        List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();
-
-        arrayList.add(new AuthenticationInfo("Username and Password authentication service.",
-                "A simple authentication service using a username and password as credentials.",
-                UsernamePasswordCredential.class));
-
-        return arrayList;
-    }
+public class TrustedUsernameAuthenticationMechanism extends AbstractAuthenticationMechanism {
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.picketbox.core.authentication.spi.AbstractAuthenticationService#doAuthenticate(org.picketbox.core.authentication.
-     * AuthenticationManager, org.picketbox.core.authentication.api.AuthenticationCallbackHandler,
-     * org.picketbox.core.authentication.api.AuthenticationResult)
+     * @see org.picketbox.core.authentication.api.AuthenticationService#getAuthenticationInfo()
+     */
+    @Override
+    public List<AuthenticationInfo> getAuthenticationInfo() {
+        List<AuthenticationInfo> arrayList = new ArrayList<AuthenticationInfo>();
+
+        arrayList.add(new AuthenticationInfo("Trusts the provided username and check if it maps to a valid user account.",
+                "Trust the provided username and check if it maps to a valid user account.", TrustedUsernameCredential.class));
+
+        return arrayList;
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.picketbox.core.authentication.impl.AbstractAuthenticationMechanism#doAuthenticate(org.picketbox.core.Credential, org.picketbox.core.authentication.AuthenticationResult)
      */
     @Override
     protected Principal doAuthenticate(Credential credential,
             AuthenticationResult result) throws AuthenticationException {
-        UsernamePasswordCredential userCredential = (UsernamePasswordCredential) credential;
+        User user = getIdentityManager().getUser(credential.getUserName());
 
-        User user = getIdentityManager().getUser(userCredential.getUserName());
-
-        if (user != null && getIdentityManager().validatePassword(user, userCredential.getPassword())) {
+        if (user != null) {
             return new PicketBoxPrincipal(user.getKey());
         }
 

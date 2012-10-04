@@ -22,8 +22,9 @@
 
 package org.picketbox.core.config;
 
-import org.picketbox.core.ldap.config.BasicLDAPStoreConfig;
-import org.picketbox.core.ldap.config.LDAPSearchConfig;
+import java.util.Properties;
+
+import org.picketlink.idm.internal.config.LDAPConfiguration;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -31,40 +32,64 @@ import org.picketbox.core.ldap.config.LDAPSearchConfig;
  */
 public class LDAPIdentityManagerConfigurationBuilder extends AbstractConfigurationBuilder<LDAPIdentityManagerConfiguration> {
 
-    private BasicLDAPStoreConfig storeConfig = new BasicLDAPStoreConfig();
-    private LDAPSearchConfig searchConfig = new LDAPSearchConfig();
+    private LDAPConfiguration ldapConfig = new LDAPConfiguration();
 
     public LDAPIdentityManagerConfigurationBuilder(IdentityManagerConfigurationBuilder identityManagerConfigurationBuilder) {
         super(identityManagerConfigurationBuilder);
     }
 
-    public LDAPIdentityManagerConfigurationBuilder storeURL(String storeUrl) {
-        this.storeConfig.setStoreURL(storeUrl);
+    public LDAPIdentityManagerConfigurationBuilder activeDirectory() {
+        this.ldapConfig.setActiveDirectory(true);
         return this;
     }
 
-    public LDAPIdentityManagerConfigurationBuilder userName(String userName) {
-        this.storeConfig.setUserName(userName);
+    public LDAPIdentityManagerConfigurationBuilder additionalProperties(Properties additionalProperties) {
+        this.ldapConfig.setAdditionalProperties(additionalProperties);
         return this;
     }
 
-    public LDAPIdentityManagerConfigurationBuilder factoryName(String factoryName) {
-        this.storeConfig.setFactoryName(factoryName);
+    public LDAPIdentityManagerConfigurationBuilder authType(String authType) {
+        this.ldapConfig.setAuthType(authType);
         return this;
     }
 
-    public LDAPIdentityManagerConfigurationBuilder userPassword(String password) {
-        this.storeConfig.setUserPassword(password);
+    public LDAPIdentityManagerConfigurationBuilder bindCredential(String bindCredential) {
+        this.ldapConfig.setBindCredential(bindCredential);
+        return this;
+    }
+
+    public LDAPIdentityManagerConfigurationBuilder bindDN(String bindDN) {
+        this.ldapConfig.setBindDN(bindDN);
+        return this;
+    }
+
+    public LDAPIdentityManagerConfigurationBuilder groupDNSuffix(String groupDNSuffix) {
+        this.ldapConfig.setGroupDNSuffix(groupDNSuffix);
+        return this;
+    }
+
+    public LDAPIdentityManagerConfigurationBuilder url(String ldapURL) {
+        this.ldapConfig.setLdapURL(ldapURL);
         return this;
     }
 
     public LDAPIdentityManagerConfigurationBuilder protocol(String protocol) {
-        this.storeConfig.setSecurityProtocol(protocol);
+        this.ldapConfig.setProtocol(protocol);
         return this;
     }
 
-    public LDAPIdentityManagerConfigurationBuilder userDN(String userDN) {
-        this.storeConfig.setUserDN(userDN);
+    public LDAPIdentityManagerConfigurationBuilder roleDNSuffix(String roleDNSuffix) {
+        this.ldapConfig.setRoleDNSuffix(roleDNSuffix);
+        return this;
+    }
+
+    public LDAPIdentityManagerConfigurationBuilder standardAttributesFileName(String standardAttributesFileName) {
+        this.ldapConfig.setStandardAttributesFileName(standardAttributesFileName);
+        return this;
+    }
+
+    public LDAPIdentityManagerConfigurationBuilder userDNSuffix(String userDNSuffix) {
+        this.ldapConfig.setUserDNSuffix(userDNSuffix);
         return this;
     }
 
@@ -74,42 +99,7 @@ public class LDAPIdentityManagerConfigurationBuilder extends AbstractConfigurati
 
     @Override
     protected LDAPIdentityManagerConfiguration doBuild() {
-        return new LDAPIdentityManagerConfiguration(this.storeConfig, this.searchConfig);
-    }
-
-    public LDAPIdentityManagerConfigurationBuilder searchSubtree() {
-        this.searchConfig.setScope("subtree");
-        return this;
-    }
-
-    public LDAPIdentityManagerConfigurationBuilder searchOneLevel() {
-        this.searchConfig.setScope("onelevel");
-        return this;
-    }
-
-    public LDAPIdentityManagerConfigurationBuilder searchBase() {
-        this.searchConfig.setScope("base");
-        return this;
-    }
-
-    public LDAPIdentityManagerConfigurationBuilder searchBase(String searchBase) {
-        this.searchConfig.setSearchBase(searchBase);
-        return this;
-    }
-
-    public LDAPIdentityManagerConfigurationBuilder searchAttributes(String[] attributes) {
-        this.searchConfig.setSearchAttributes(attributes);
-        return this;
-    }
-
-    public LDAPIdentityManagerConfigurationBuilder searchFilterExpression(String expression) {
-        this.searchConfig.setSearchFilterExpression(expression);
-        return this;
-    }
-
-    public LDAPIdentityManagerConfigurationBuilder searchFilterArgs(String[] filterArgs) {
-        this.searchConfig.setFilterArgs(filterArgs);
-        return this;
+        return new LDAPIdentityManagerConfiguration(this.ldapConfig);
     }
 
 }

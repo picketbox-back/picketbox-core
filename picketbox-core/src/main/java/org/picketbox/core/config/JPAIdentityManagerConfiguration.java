@@ -22,41 +22,45 @@
 
 package org.picketbox.core.config;
 
-import org.picketlink.idm.internal.LDAPIdentityStore;
-import org.picketlink.idm.internal.config.LDAPConfiguration;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
+import org.picketbox.core.identity.impl.EntityManagerContext;
+import org.picketlink.idm.internal.JPAIdentityStore;
+import org.picketlink.idm.internal.jpa.JPACallback;
+import org.picketlink.idm.internal.jpa.JPATemplate;
 import org.picketlink.idm.spi.IdentityStore;
+
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class LDAPIdentityManagerConfiguration implements IdentityManagerConfiguration {
+public class JPAIdentityManagerConfiguration implements IdentityManagerConfiguration {
 
-    private LDAPConfiguration ldapConfig = new LDAPConfiguration();
+    private EntityManagerFactory entityManagerFactory;
 
-    public LDAPIdentityManagerConfiguration(LDAPConfiguration ldapConfig) {
-        this.ldapConfig = ldapConfig;
+    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
     }
 
-    /**
-     * @return the storeConfig
-     */
-    public LDAPConfiguration getStoreConfig() {
-        return ldapConfig;
-    }
-
-    /**
-     * @return the searchConfig
-     */
-    public LDAPConfiguration getSearchConfig() {
-        return ldapConfig;
+    public EntityManagerFactory getEntityManagerFactory() {
+        return this.entityManagerFactory;
     }
 
     @Override
     public IdentityStore getIdentityStore() {
-        LDAPIdentityStore store = new LDAPIdentityStore();
+        JPAIdentityStore store = new JPAIdentityStore();
 
-        store.setConfiguration(this.ldapConfig);
+        JPATemplate jpaTemplate = new JPATemplate() {
+            @Override
+            public Object execute(JPACallback callback) {
+                EntityManager entityManager = EntityManagerContext.get();
+                return callback.execute(entityManager);
+            }
+        };
+
+        store.setJpaTemplate(jpaTemplate);
 
         return store;
     }

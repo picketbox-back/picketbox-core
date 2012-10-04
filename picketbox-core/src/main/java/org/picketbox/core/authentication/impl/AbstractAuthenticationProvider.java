@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.authentication.AuthenticationManager;
 import org.picketbox.core.authentication.AuthenticationMechanism;
 import org.picketbox.core.authentication.AuthenticationProvider;
 import org.picketbox.core.config.PicketBoxConfiguration;
@@ -41,12 +40,10 @@ import org.picketbox.core.config.PicketBoxConfiguration;
 public abstract class AbstractAuthenticationProvider implements AuthenticationProvider {
 
     private final List<AuthenticationMechanism> mechanisms = new ArrayList<AuthenticationMechanism>();
-    private final List<AuthenticationManager> authenticationManagers = new ArrayList<AuthenticationManager>();
     private PicketBoxManager picketBoxManager;
 
     public AbstractAuthenticationProvider(PicketBoxManager picketBoxManager, PicketBoxConfiguration configuration) {
         this.picketBoxManager = picketBoxManager;
-        this.authenticationManagers.addAll(configuration.getAuthentication().getAuthManagers());
         this.mechanisms.addAll(configuration.getAuthentication().getMechanisms());
     }
 
@@ -90,7 +87,6 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         for (AuthenticationMechanism currentMechanism : this.mechanisms) {
 
             if (currentMechanism instanceof AbstractAuthenticationMechanism) {
-                ((AbstractAuthenticationMechanism) currentMechanism).setAuthenticationProvider(this);
                 ((AbstractAuthenticationMechanism) currentMechanism).setPicketBoxManager(this.picketBoxManager);
             }
 
@@ -100,16 +96,6 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         }
 
         return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.authentication.api.AuthenticationProvider#getAuthenticationManagers()
-     */
-    @Override
-    public List<AuthenticationManager> getAuthenticationManagers() {
-        return this.authenticationManagers;
     }
 
 }

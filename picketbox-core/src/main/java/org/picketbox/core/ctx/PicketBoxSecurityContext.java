@@ -48,7 +48,7 @@ public class PicketBoxSecurityContext implements SecurityContext {
 
     @Override
     public Principal getPrincipal() {
-        return this.subject == null ? null : this.subject.getUser();
+        return this.subject == null ? null : this.subject.getPrincipal();
     }
 
     @Override

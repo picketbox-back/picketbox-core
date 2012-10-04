@@ -22,8 +22,7 @@
 
 package org.picketbox.core.authentication.event;
 
-import org.picketbox.core.authentication.AuthenticationResult;
-import org.picketbox.core.authentication.AuthenticationStatus;
+import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.event.PicketBoxEvent;
 
 /**
@@ -33,13 +32,13 @@ import org.picketbox.core.event.PicketBoxEvent;
  */
 public class UserAuthenticatedEvent implements PicketBoxEvent<UserAuthenticationEventHandler> {
 
-    private AuthenticationResult result;
+    private PicketBoxSubject subject;
 
     /**
-     * @param result
+     * @param subject
      */
-    public UserAuthenticatedEvent(AuthenticationResult result) {
-        this.result = result;
+    public UserAuthenticatedEvent(PicketBoxSubject subject) {
+        this.subject = subject;
     }
 
     /*
@@ -50,19 +49,14 @@ public class UserAuthenticatedEvent implements PicketBoxEvent<UserAuthentication
      */
     @Override
     public void dispatch(UserAuthenticationEventHandler handler) {
-        if (result.getStatus().equals(AuthenticationStatus.SUCCESS)) {
+        if (this.subject.isAuthenticated()) {
             handler.onSuccessfulAuthentication(this);
         } else {
             handler.onUnSuccessfulAuthentication(this);
         }
     }
 
-    /**
-     * Get the {@link AuthenticationResult}
-     *
-     * @return
-     */
-    public AuthenticationResult getResult() {
-        return result;
+    public PicketBoxSubject getSubject() {
+        return this.subject;
     }
 }

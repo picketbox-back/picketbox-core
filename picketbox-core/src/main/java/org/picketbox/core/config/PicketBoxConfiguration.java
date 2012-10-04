@@ -30,12 +30,12 @@ public class PicketBoxConfiguration {
 
     private AuthenticationConfiguration authentication;
     private AuthorizationConfiguration authorization;
-    private IdentityManagerConfiguration identityManager;
+    private GlobalIdentityManagerConfiguration identityManager;
     private SessionManagerConfig sessionManager;
     private EventManagerConfiguration eventManager;
 
     public PicketBoxConfiguration(AuthenticationConfiguration authentication, AuthorizationConfiguration authorization,
-            IdentityManagerConfiguration identityManager, SessionManagerConfig sessionManager, EventManagerConfiguration eventManager) {
+            GlobalIdentityManagerConfiguration identityManager, SessionManagerConfig sessionManager, EventManagerConfiguration eventManager) {
         this.authentication = authentication;
         this.authorization = authorization;
         this.identityManager = identityManager;
@@ -60,7 +60,7 @@ public class PicketBoxConfiguration {
     /**
      * @return the identityManager
      */
-    public IdentityManagerConfiguration getIdentityManager() {
+    public GlobalIdentityManagerConfiguration getIdentityManager() {
         return identityManager;
     }
 
