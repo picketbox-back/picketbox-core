@@ -36,6 +36,16 @@ public class FileIdentityManagerConfigurationBuilder extends AbstractConfigurati
         super(identityManagerConfigurationBuilder);
     }
 
+    public FileIdentityManagerConfigurationBuilder workingDir(String workingDir) {
+        this.configuration.setWorkingDir(workingDir);
+        return this;
+    }
+
+    public FileIdentityManagerConfigurationBuilder preserveState() {
+        this.configuration.setAlwaysCreateFiles(false);
+        return this;
+    }
+
     @Override
     protected void setDefaults() {
     }

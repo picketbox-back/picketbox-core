@@ -33,12 +33,22 @@ import org.picketlink.idm.spi.IdentityStore;
  */
 public class FileIdentityManagerConfiguration implements IdentityManagerConfiguration {
 
+    private String workingDir;
+    private boolean alwaysCreateFiles;
+
     /* (non-Javadoc)
      * @see org.picketbox.core.config.IdentityManagerConfiguration#getIdentityStore()
      */
     @Override
     public IdentityStore getIdentityStore() {
-        return new FileBasedIdentityStore();
+        return new FileBasedIdentityStore(this.workingDir, this.alwaysCreateFiles);
     }
 
+    protected void setWorkingDir(String workingDir) {
+        this.workingDir = workingDir;
+    }
+
+    protected void setAlwaysCreateFiles(boolean alwaysCreateFiles) {
+        this.alwaysCreateFiles = alwaysCreateFiles;
+    }
 }

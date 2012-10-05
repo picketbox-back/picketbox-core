@@ -25,18 +25,18 @@ package org.picketbox.test.event;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.picketbox.core.DefaultPicketBoxManager;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.authentication.event.UserAuthenticationEventHandler;
 import org.picketbox.core.config.ConfigurationBuilder;
-import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.event.PicketBoxEvent;
 import org.picketbox.core.event.PicketBoxEventHandler;
 import org.picketbox.core.event.PicketBoxEventManager;
 import org.picketbox.core.logout.UserLoggedOutEvent;
 import org.picketbox.core.logout.UserLoggedOutEventHandler;
+import org.picketbox.test.AbstractDefaultPicketBoxManagerTestCase;
 
 /**
  * <p>
@@ -46,7 +46,7 @@ import org.picketbox.core.logout.UserLoggedOutEventHandler;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class PicketBoxEventManagerTestCase {
+public class PicketBoxEventManagerTestCase extends AbstractDefaultPicketBoxManagerTestCase {
 
     /**
      * <p>Tests is the {@link UserAuthenticatedEvent} is properly handled when the user is successfully authenticated.</p>
@@ -55,10 +55,10 @@ public class PicketBoxEventManagerTestCase {
      */
     @Test
     public void testSuccesfulUserAuthenticatedEvent() throws Exception {
-        ConfigurationBuilder builder = new ConfigurationBuilder();
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         final StringBuffer eventStatus = new StringBuffer();
 
-        builder.authentication().eventManager().handler(new UserAuthenticationEventHandler() {
+        configurationBuilder.authentication().eventManager().handler(new UserAuthenticationEventHandler() {
 
             @Override
             public Class<? extends PicketBoxEvent<? extends PicketBoxEventHandler>> getEventType() {
@@ -79,11 +79,7 @@ public class PicketBoxEventManagerTestCase {
 
         });
 
-        PicketBoxConfiguration build = builder.build();
-
-        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
-
-        picketBoxManager.start();
+        PicketBoxManager picketBoxManager = getPicketBoxManager(configurationBuilder.build());
 
         PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
 
@@ -127,11 +123,7 @@ public class PicketBoxEventManagerTestCase {
 
         });
 
-        PicketBoxConfiguration build = builder.build();
-
-        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
-
-        picketBoxManager.start();
+        PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
 
         PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
 
@@ -167,11 +159,7 @@ public class PicketBoxEventManagerTestCase {
             }
         });
 
-        PicketBoxConfiguration build = builder.build();
-
-        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
-
-        picketBoxManager.start();
+        PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
 
         PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
 
