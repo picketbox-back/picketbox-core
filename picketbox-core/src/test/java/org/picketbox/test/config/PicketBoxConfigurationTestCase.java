@@ -25,26 +25,18 @@ package org.picketbox.test.config;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.picketbox.core.DefaultPicketBoxManager;
+import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
-import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketbox.test.AbstractDefaultPicketBoxManagerTestCase;
 import org.picketlink.idm.model.Role;
 import org.picketlink.idm.model.SimpleRole;
-
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
  * <p>
@@ -54,44 +46,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class PicketBoxConfigurationTestCase {
-
-    private static DataSource dataSource;
-
-    @BeforeClass
-    public static void setupDatabase() throws Exception {
-
-        // disable the c3p0 log messages.
-        System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
-        System.setProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF");
-
-        // setup the datasource that will be used in the tests.
-        ComboPooledDataSource ds = new ComboPooledDataSource();
-        ds.setDriverClass("org.h2.Driver");
-        ds.setJdbcUrl("jdbc:h2:mem:test");
-        ds.setUser("sa");
-        ds.setPassword("");
-        dataSource = ds;
-
-        // create the test table and add some test data.
-        Connection connection = dataSource.getConnection();
-        Statement statement = connection.createStatement();
-        statement.execute("CREATE TABLE USERS(username varchar2(20) not null, password varchar2(20) not null)");
-        statement.execute("INSERT INTO USERS(username, password) VALUES ('picketbox', 'goodpass')");
-        statement.close();
-        connection.close();
-    }
-
-    @AfterClass
-    public static void clearDatabase() throws Exception {
-
-        // get a connection from the datasource and drop the test table.
-        Connection connection = dataSource.getConnection();
-        Statement statement = connection.createStatement();
-        statement.execute("DROP TABLE USERS");
-        statement.close();
-        connection.close();
-    }
+public class PicketBoxConfigurationTestCase extends AbstractDefaultPicketBoxManagerTestCase {
 
     /**
      * <p>
@@ -104,11 +59,7 @@ public class PicketBoxConfigurationTestCase {
     public void testDefaultConfiguration() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
         
-        PicketBoxConfiguration build = builder.build();
-
-        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
-
-        picketBoxManager.start();
+        PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
 
         PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
 
@@ -128,7 +79,7 @@ public class PicketBoxConfigurationTestCase {
      * @throws Exception
      */
     @Test
-    public void testCustomIdentityManagerConfiguration() throws Exception {
+    public void testCustomSubjectPopulatorConfiguration() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
         builder.identityManager().userPopulator(new PicketBoxSubjectPopulator() {
@@ -145,11 +96,7 @@ public class PicketBoxConfigurationTestCase {
             }
         });
 
-        PicketBoxConfiguration build = builder.build();
-
-        DefaultPicketBoxManager picketBoxManager = new DefaultPicketBoxManager(build);
-
-        picketBoxManager.start();
+        PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
 
         PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
 

@@ -29,13 +29,13 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxManager;
 import org.picketbox.core.PicketBoxSubject;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
 import org.picketbox.core.session.SessionManager;
+import org.picketbox.test.AbstractDefaultPicketBoxManagerTestCase;
 
 /**
  * <p>
@@ -45,7 +45,7 @@ import org.picketbox.core.session.SessionManager;
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class SessionManagerTestCase {
+public class SessionManagerTestCase extends AbstractDefaultPicketBoxManagerTestCase {
 
     private SessionManager sessionManager;
 
@@ -57,9 +57,7 @@ public class SessionManagerTestCase {
             .sessionManager()
                 .inMemorySessionStore();
 
-        PicketBoxManager picketBoxManager = new DefaultPicketBoxManager(builder.build());
-
-        picketBoxManager.start();
+        PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
 
         this.sessionManager = picketBoxManager.getSessionManager();
     }
