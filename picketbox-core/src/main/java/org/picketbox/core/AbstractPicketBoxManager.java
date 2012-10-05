@@ -204,7 +204,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
 
         PicketBoxSubject populatedSubject = this.subjectPopulator.getIdentity(subject);
 
-        performUnsuccessfulAuthentication(subject);
+        getEventManager().raiseEvent(new UserAuthenticatedEvent(subject));
 
         return populatedSubject;
     }
