@@ -22,20 +22,45 @@
 
 package org.picketbox.test.identity;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
+import org.picketbox.core.PicketBoxManager;
+import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
+import org.picketbox.test.AbstractDefaultPicketBoxManagerTestCase;
 
 /**
+ * <p>Tests the configuration for the file-based identity store.</p>
+ * 
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  *
  */
-public class FileBasedIdentityManagerTestCase {
+public class FileBasedIdentityManagerTestCase extends AbstractDefaultPicketBoxManagerTestCase {
 
     @Test
     public void testIdentity() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
         
         builder.identityManager().fileStore();
+        
+        PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
+
+        PicketBoxSubject subject = new PicketBoxSubject();
+
+        subject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+
+        subject = picketBoxManager.authenticate(subject);
+
+        assertNotNull(subject);
+
+        // user was loaded by the identity manager ?
+        assertNotNull(subject.getUser());
+
+        assertTrue(subject.hasRole("admin"));
+        assertTrue(subject.hasRole("developer"));
     }
     
 }
