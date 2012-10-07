@@ -50,7 +50,6 @@
 					<includes>
 						<include>**/**TestCase.java</include>
 					</includes>
-					-
 					<forkMode>always</forkMode>
 					<useFile>false</useFile>
 					<trimStackTrace>false</trimStackTrace>
