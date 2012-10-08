@@ -39,6 +39,7 @@ import org.picketlink.idm.spi.IdentityStore;
 public class JPAIdentityManagerConfiguration implements IdentityManagerConfiguration {
 
     private EntityManagerFactory entityManagerFactory;
+    private JPATemplate template;
 
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -55,17 +56,23 @@ public class JPAIdentityManagerConfiguration implements IdentityManagerConfigura
     public IdentityStore getIdentityStore() {
         JPAIdentityStore store = new JPAIdentityStore();
 
-        JPATemplate jpaTemplate = new JPATemplate() {
-            @Override
-            public Object execute(JPACallback callback) {
-                EntityManager entityManager = EntityManagerContext.get();
-                return callback.execute(entityManager);
-            }
-        };
+        if (template == null) {
+            this.template = new JPATemplate() {
+                @Override
+                public Object execute(JPACallback callback) {
+                    EntityManager entityManager = EntityManagerContext.get();
+                    return callback.execute(entityManager);
+                }
+            };
+        }
 
-        store.setJpaTemplate(jpaTemplate);
+        store.setJpaTemplate(this.template);
 
         return store;
+    }
+
+    public void setTemplate(JPATemplate template) {
+        this.template = template;
     }
 
 }

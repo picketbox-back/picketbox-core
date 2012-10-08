@@ -22,6 +22,8 @@
 
 package org.picketbox.core.config;
 
+import org.picketlink.idm.internal.jpa.JPATemplate;
+
 
 
 /**
@@ -34,6 +36,11 @@ public class JPAIdentityManagerConfigurationBuilder extends AbstractConfiguratio
 
     public JPAIdentityManagerConfigurationBuilder(IdentityManagerConfigurationBuilder identityManagerConfigurationBuilder) {
         super(identityManagerConfigurationBuilder);
+    }
+
+    public JPAIdentityManagerConfigurationBuilder template(JPATemplate template) {
+        this.configuration.setTemplate(template);
+        return this;
     }
 
     @Override
