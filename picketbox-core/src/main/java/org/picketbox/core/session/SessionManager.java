@@ -25,7 +25,7 @@ package org.picketbox.core.session;
 import java.io.Serializable;
 
 import org.picketbox.core.PicketBoxLifecycle;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 
 /**
  * <p>
@@ -43,10 +43,10 @@ public interface SessionManager extends PicketBoxLifecycle {
     /**
      * Construct a session
      *
-     * @param authenticatedSubject
+     * @param authenticatedUserContext
      * @return
      */
-    PicketBoxSession create(PicketBoxSubject authenticatedSubject);
+    PicketBoxSession create(UserContext authenticatedUserContext);
 
     /**
      * <p>

@@ -21,7 +21,7 @@
  */
 package org.picketbox.core.authentication;
 
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 
 /**
  * Define all constants
@@ -95,7 +95,7 @@ public interface PicketBoxConstants {
 
     /**
      * <p>
-     * Defines the {@link HttpSession} attribute name used to store a {@link PicketBoxSubject} instance.
+     * Defines the {@link HttpSession} attribute name used to store a {@link UserContext} instance.
      * </p>
      */
     String SUBJECT = "SUBJECT";
@@ -116,7 +116,7 @@ public interface PicketBoxConstants {
 
     /**
      * <p>
-     * Defines the http session parameter name used to store the authenticated {@link PicketBoxSubject}.
+     * Defines the http session parameter name used to store the authenticated {@link UserContext}.
      * </p>
      */
     String USER_ATTRIBUTE_NAME = "org.picketbox.http.session.user.attribute";

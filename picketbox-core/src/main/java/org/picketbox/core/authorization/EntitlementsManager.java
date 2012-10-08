@@ -21,7 +21,7 @@
  */
 package org.picketbox.core.authorization;
 
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 
 /**
  * Unlike the {@link AuthorizationManager}, the {@link EntitlementsManager} is used to obtain all the entitlements with one
@@ -38,7 +38,7 @@ public interface EntitlementsManager {
      * @param subject subject (user/process) that is performing an action on the resource
      * @return
      */
-    Entitlement[] entitlements(Resource resource, PicketBoxSubject subject);
+    Entitlement[] entitlements(Resource resource, UserContext subject);
 
     /**
      * Marker interface to indicate an entitlement

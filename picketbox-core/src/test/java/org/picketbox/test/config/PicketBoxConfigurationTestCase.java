@@ -30,10 +30,10 @@ import java.util.List;
 
 import org.junit.Test;
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
-import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketbox.core.identity.UserContextPopulator;
 import org.picketbox.test.AbstractDefaultPicketBoxManagerTestCase;
 import org.picketlink.idm.model.Role;
 import org.picketlink.idm.model.SimpleRole;
@@ -61,11 +61,11 @@ public class PicketBoxConfigurationTestCase extends AbstractDefaultPicketBoxMana
         
         PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
 
-        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+        UserContext authenticatingUserContext = new UserContext();
 
-        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+        authenticatingUserContext.setCredential(new UsernamePasswordCredential("admin", "admin"));
 
-        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
+        UserContext subject = picketBoxManager.authenticate(authenticatingUserContext);
 
         assertNotNull(subject);
         assertTrue(subject.isAuthenticated());
@@ -79,30 +79,30 @@ public class PicketBoxConfigurationTestCase extends AbstractDefaultPicketBoxMana
      * @throws Exception
      */
     @Test
-    public void testCustomSubjectPopulatorConfiguration() throws Exception {
+    public void testCustomUserContextPopulatorConfiguration() throws Exception {
         ConfigurationBuilder builder = new ConfigurationBuilder();
 
-        builder.identityManager().userPopulator(new PicketBoxSubjectPopulator() {
+        builder.identityManager().userPopulator(new UserContextPopulator() {
 
             @Override
-            public PicketBoxSubject getIdentity(PicketBoxSubject authenticatedSubject) {
+            public UserContext getIdentity(UserContext authenticatedUserContext) {
                 List<Role> roles = new ArrayList<Role>();
 
                 roles.add(new SimpleRole("test"));
 
-                authenticatedSubject.setRoles(roles);
+                authenticatedUserContext.setRoles(roles);
 
-                return authenticatedSubject;
+                return authenticatedUserContext;
             }
         });
 
         PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
 
-        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+        UserContext authenticatingUserContext = new UserContext();
 
-        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+        authenticatingUserContext.setCredential(new UsernamePasswordCredential("admin", "admin"));
 
-        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
+        UserContext subject = picketBoxManager.authenticate(authenticatingUserContext);
 
         assertNotNull(subject);
         assertTrue(subject.isAuthenticated());

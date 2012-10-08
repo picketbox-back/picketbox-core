@@ -30,7 +30,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
@@ -138,7 +138,7 @@ public class SessionManagerTestCase extends AbstractDefaultPicketBoxManagerTestC
     }
 
     private PicketBoxSession createSession() {
-        PicketBoxSubject subject = new PicketBoxSubject() {
+        UserContext subject = new UserContext() {
 
             private static final long serialVersionUID = 1L;
 

@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.identity.impl.EntityManagerContext;
@@ -74,7 +74,7 @@ public class JPABasedIdentityManagerTestcase extends AbstractJPAIdentityManagerT
         identityManager.grantRole(roleDeveloper, adminUser, groupCoreDeveloper);
         identityManager.grantRole(roleAdmin, adminUser, groupCoreDeveloper);
 
-        PicketBoxSubject subject = new PicketBoxSubject();
+        UserContext subject = new UserContext();
 
         subject.setCredential(new UsernamePasswordCredential("admin", "123"));
 

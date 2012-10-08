@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 import org.picketbox.core.AbstractPicketBoxLifeCycle;
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.event.PicketBoxEventHandler;
 import org.picketbox.core.session.event.SessionEvent;
@@ -64,16 +64,14 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
         registerDefaultEventHandler();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.session.SessionManager#create(org.picketbox.core.PicketBoxSubject)
+    /* (non-Javadoc)
+     * @see org.picketbox.core.session.SessionManager#create(org.picketbox.core.UserContext)
      */
     @Override
-    public PicketBoxSession create(PicketBoxSubject authenticatedSubject) {
+    public PicketBoxSession create(UserContext authenticatedUserContext) {
         checkIfStarted();
 
-        final PicketBoxSession session = doCreateSession(authenticatedSubject);
+        final PicketBoxSession session = doCreateSession(authenticatedUserContext);
 
         fireEvent(new SessionEvent(session) {
             @Override
@@ -91,7 +89,7 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
             throw new IllegalStateException("Duplicate session id: " + session.getId());
         }
 
-        authenticatedSubject.setSession(session);
+        authenticatedUserContext.setSession(session);
 
         this.sessionStore.store(session);
 
@@ -142,8 +140,8 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
         this.sessionStore.update(session);
     }
 
-    protected PicketBoxSession doCreateSession(PicketBoxSubject authenticatedSubject) {
-        return new PicketBoxSession(authenticatedSubject, new DefaultSessionId(), this.picketBoxManager.getEventManager());
+    protected PicketBoxSession doCreateSession(UserContext authenticatedUserContext) {
+        return new PicketBoxSession(authenticatedUserContext, new DefaultSessionId(), this.picketBoxManager.getEventManager());
     }
 
     @Override
