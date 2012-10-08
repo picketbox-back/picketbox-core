@@ -36,8 +36,8 @@ import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.config.PicketBoxConfiguration;
 import org.picketbox.core.event.PicketBoxEventManager;
 import org.picketbox.core.exceptions.AuthenticationException;
-import org.picketbox.core.identity.PicketBoxSubjectPopulator;
-import org.picketbox.core.identity.impl.DefaultSubjectPopulator;
+import org.picketbox.core.identity.UserContextPopulator;
+import org.picketbox.core.identity.impl.DefaultUserContextPopulator;
 import org.picketbox.core.logout.UserLoggedOutEvent;
 import org.picketbox.core.session.DefaultSessionManager;
 import org.picketbox.core.session.PicketBoxSession;
@@ -59,32 +59,36 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
     private AuthenticationProvider authenticationProvider;
     private AuthorizationManager authorizationManager;
     private SessionManager sessionManager;
-    private EntitlementsManager entitlementsManager; // TODO: handle entitlements
-    private PicketBoxSubjectPopulator subjectPopulator;
+    private UserContextPopulator subjectPopulator;
     private IdentityManager identityManager;
     private PicketBoxConfiguration configuration;
     private PicketBoxEventManager eventManager;
+
+    @SuppressWarnings("unused")
+    //TODO: handle entitlements
+    private EntitlementsManager entitlementsManager;
 
     public AbstractPicketBoxManager(PicketBoxConfiguration configuration) {
         this.configuration = configuration;
     }
 
     /* (non-Javadoc)
-     * @see org.picketbox.core.PicketBoxManager#authenticate(org.picketbox.core.PicketBoxSubject)
+     * @see org.picketbox.core.PicketBoxManager#authenticate(org.picketbox.core.UserContext)
      */
-    public PicketBoxSubject authenticate(PicketBoxSubject subject) throws AuthenticationException {
+    @Override
+    public UserContext authenticate(UserContext subject) throws AuthenticationException {
         checkIfStarted();
 
         PicketBoxSession userSession = restoreSession(subject);
 
         // if there is a valid session associate it with the subject and performs a silent authentication, trusting the provided principal.
         if (userSession != null) {
-            PicketBoxSubject restoredSubject = userSession.getSubject();
-            Principal restoredPrincipal = restoredSubject.getPrincipal(false);
+            UserContext restoredUserContext = userSession.getUserContext();
+            Principal restoredPrincipal = restoredUserContext.getPrincipal(false);
 
             TrustedUsernameCredential credential = new TrustedUsernameCredential(restoredPrincipal.getName());
 
-            subject = new PicketBoxSubject(credential);
+            subject = new UserContext(credential);
         }
 
         // performs the authentication
@@ -104,13 +108,11 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         return subject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.picketbox.core.PicketBoxManager#logout(org.picketbox.core.PicketBoxSubject)
+    /* (non-Javadoc)
+     * @see org.picketbox.core.PicketBoxManager#logout(org.picketbox.core.UserContext)
      */
     @Override
-    public void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException {
+    public void logout(UserContext authenticatedUser) throws IllegalStateException {
         checkIfStarted();
 
         if (authenticatedUser.isAuthenticated()) {
@@ -127,7 +129,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      * @see org.picketbox.core.PicketBoxManager#authorize(org.picketbox.core.PicketBoxSecurityContext)
      */
     @Override
-    public boolean authorize(PicketBoxSubject subject, Resource resource) {
+    public boolean authorize(UserContext subject, Resource resource) {
         checkIfStarted();
         try {
             if (this.authorizationManager == null || (subject == null || !subject.isAuthenticated())) {
@@ -145,7 +147,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      * @param authenticationCallbackHandler
      * @return
      */
-    protected boolean doPreAuthentication(PicketBoxSubject subject) {
+    protected boolean doPreAuthentication(UserContext subject) {
         return true;
     }
 
@@ -156,7 +158,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      * @return
      * @throws AuthenticationException
      */
-    private void performAuthentication(PicketBoxSubject subject) throws AuthenticationException {
+    private void performAuthentication(UserContext subject) throws AuthenticationException {
         Credential credential = subject.getCredential();
 
         if (credential == null) {
@@ -194,7 +196,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      * @param session
      * @return
      */
-    protected PicketBoxSubject performSuccessfulAuthentication(PicketBoxSubject subject, PicketBoxSession session) {
+    protected UserContext performSuccessfulAuthentication(UserContext subject, PicketBoxSession session) {
         if (!subject.isAuthenticated()) {
             throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
         }
@@ -202,11 +204,11 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
         subject.setSession(session);
         subject.setCredential(null);
 
-        PicketBoxSubject populatedSubject = this.subjectPopulator.getIdentity(subject);
+        UserContext populatedUserContext = this.subjectPopulator.getIdentity(subject);
 
         getEventManager().raiseEvent(new UserAuthenticatedEvent(subject));
 
-        return populatedSubject;
+        return populatedUserContext;
     }
 
     /**
@@ -214,18 +216,18 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      *
      * @param subject
      */
-    protected void performUnsuccessfulAuthentication(PicketBoxSubject subject) {
+    protected void performUnsuccessfulAuthentication(UserContext subject) {
         getEventManager().raiseEvent(new UserAuthenticatedEvent(subject));
     }
 
 
     /**
-     * <p>Tries to restore the session associated with the given {@link PicketBoxSubject}.</p>
+     * <p>Tries to restore the session associated with the given {@link UserContext}.</p>
      *
      * @param subject
      * @return
      */
-    private PicketBoxSession restoreSession(PicketBoxSubject subject) {
+    private PicketBoxSession restoreSession(UserContext subject) {
         PicketBoxSession session = null;
 
         if (this.sessionManager != null) {
@@ -246,26 +248,26 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
 
     /**
      * <p>
-     * Creates a session for the authenticated {@link PicketBoxSubject}. The subject must be authenticated, its
+     * Creates a session for the authenticated {@link UserContext}. The subject must be authenticated, its
      * isAuthenticated() method should return true.
      * </p>
      *
      * @param securityContext the security context with environment specific information
-     * @param authenticatedSubject the authenticated subject
+     * @param authenticatedUserContext the authenticated subject
      * @return
      *
      * @throws IllegalArgumentException in the case the subject is not authenticated.
      */
-    private PicketBoxSession createSession(PicketBoxSubject authenticatedSubject) throws IllegalArgumentException {
-        if (!authenticatedSubject.isAuthenticated()) {
-            throw new IllegalArgumentException("Subject is not authenticated. Session can not be created.");
+    private PicketBoxSession createSession(UserContext authenticatedUserContext) throws IllegalArgumentException {
+        if (!authenticatedUserContext.isAuthenticated()) {
+            throw new IllegalArgumentException("UserContext is not authenticated. Session can not be created.");
         }
 
         if (this.sessionManager == null) {
             return null;
         }
 
-        return this.sessionManager.create(authenticatedSubject);
+        return this.sessionManager.create(authenticatedUserContext);
     }
 
     /*
@@ -275,7 +277,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
      */
     @Override
     protected void doStart() {
-        this.eventManager = configuration.getEventManager().getEventManager();
+        this.eventManager = this.configuration.getEventManager().getEventManager();
 
         if (this.configuration != null) {
             this.authenticationProvider = new PicketBoxAuthenticationProvider(this, this.configuration);
@@ -290,7 +292,7 @@ public abstract class AbstractPicketBoxManager extends AbstractPicketBoxLifeCycl
             this.subjectPopulator = this.configuration.getIdentityManager().getUserPopulator();
 
             if (this.subjectPopulator == null) {
-                this.subjectPopulator = new DefaultSubjectPopulator(this.identityManager);
+                this.subjectPopulator = new DefaultUserContextPopulator(this.identityManager);
             }
 
             this.sessionManager = this.configuration.getSessionManager().getManager();

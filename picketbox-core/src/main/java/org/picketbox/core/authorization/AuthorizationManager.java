@@ -22,7 +22,7 @@
 package org.picketbox.core.authorization;
 
 import org.picketbox.core.PicketBoxLifecycle;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.exceptions.AuthorizationException;
 
 /**
@@ -41,6 +41,6 @@ public interface AuthorizationManager extends PicketBoxLifecycle {
      * @return
      * @throws AuthorizationException if some problem occurs during the authorization process.
      */
-    boolean authorize(Resource resource, PicketBoxSubject subject) throws AuthorizationException;
+    boolean authorize(Resource resource, UserContext subject) throws AuthorizationException;
 
 }

@@ -22,7 +22,7 @@
 
 package org.picketbox.core.config;
 
-import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketbox.core.identity.UserContextPopulator;
 
 /**
  * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
@@ -31,9 +31,9 @@ import org.picketbox.core.identity.PicketBoxSubjectPopulator;
 public class GlobalIdentityManagerConfiguration {
 
     private IdentityManagerConfiguration identityManagerConfiguration;
-    private PicketBoxSubjectPopulator userPopulator;
+    private UserContextPopulator userPopulator;
 
-    public GlobalIdentityManagerConfiguration(IdentityManagerConfiguration identityManagerConfiguration, PicketBoxSubjectPopulator userPopulator) {
+    public GlobalIdentityManagerConfiguration(IdentityManagerConfiguration identityManagerConfiguration, UserContextPopulator userPopulator) {
         this.identityManagerConfiguration = identityManagerConfiguration;
         this.userPopulator = userPopulator;
     }
@@ -42,7 +42,7 @@ public class GlobalIdentityManagerConfiguration {
         return this.identityManagerConfiguration;
     }
 
-    public PicketBoxSubjectPopulator getUserPopulator() {
+    public UserContextPopulator getUserPopulator() {
         return this.userPopulator;
     }
 }

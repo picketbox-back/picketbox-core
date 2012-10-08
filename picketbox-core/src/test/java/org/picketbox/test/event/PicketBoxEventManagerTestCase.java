@@ -26,7 +26,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.authentication.event.UserAuthenticatedEvent;
 import org.picketbox.core.authentication.event.UserAuthenticationEventHandler;
@@ -81,11 +81,11 @@ public class PicketBoxEventManagerTestCase extends AbstractDefaultPicketBoxManag
 
         PicketBoxManager picketBoxManager = getPicketBoxManager(configurationBuilder.build());
 
-        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+        UserContext authenticatingUserContext = new UserContext();
 
-        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+        authenticatingUserContext.setCredential(new UsernamePasswordCredential("admin", "admin"));
 
-        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
+        UserContext subject = picketBoxManager.authenticate(authenticatingUserContext);
 
         Assert.assertNotNull(subject);
         Assert.assertTrue(subject.isAuthenticated());
@@ -125,11 +125,11 @@ public class PicketBoxEventManagerTestCase extends AbstractDefaultPicketBoxManag
 
         PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
 
-        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+        UserContext authenticatingUserContext = new UserContext();
 
-        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "badpasswd"));
+        authenticatingUserContext.setCredential(new UsernamePasswordCredential("admin", "badpasswd"));
 
-        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
+        UserContext subject = picketBoxManager.authenticate(authenticatingUserContext);
 
         Assert.assertNotNull(subject);
         Assert.assertFalse(subject.isAuthenticated());
@@ -161,11 +161,11 @@ public class PicketBoxEventManagerTestCase extends AbstractDefaultPicketBoxManag
 
         PicketBoxManager picketBoxManager = getPicketBoxManager(builder.build());
 
-        PicketBoxSubject authenticatingSubject = new PicketBoxSubject();
+        UserContext authenticatingUserContext = new UserContext();
 
-        authenticatingSubject.setCredential(new UsernamePasswordCredential("admin", "admin"));
+        authenticatingUserContext.setCredential(new UsernamePasswordCredential("admin", "admin"));
 
-        PicketBoxSubject subject = picketBoxManager.authenticate(authenticatingSubject);
+        UserContext subject = picketBoxManager.authenticate(authenticatingUserContext);
 
         Assert.assertNotNull(subject);
         Assert.assertTrue(subject.isAuthenticated());

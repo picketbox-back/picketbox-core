@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.picketbox.core.PicketBoxMessages;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.authorization.AuthorizationManager;
 import org.picketbox.core.authorization.Resource;
 import org.picketbox.core.exceptions.AuthorizationException;
@@ -74,7 +74,7 @@ public class SimpleAuthorizationManager implements AuthorizationManager {
     }
 
     @Override
-    public boolean authorize(Resource resource, PicketBoxSubject subject) throws AuthorizationException {
+    public boolean authorize(Resource resource, UserContext subject) throws AuthorizationException {
         if (stopped) {
             throw PicketBoxMessages.MESSAGES.instanceAlreadyStopped();
         }

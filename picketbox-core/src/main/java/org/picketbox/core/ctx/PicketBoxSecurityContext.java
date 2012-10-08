@@ -23,7 +23,7 @@ package org.picketbox.core.ctx;
 
 import java.security.Principal;
 
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 
 /**
  * Default implementation of the {@link SecurityContext}
@@ -32,17 +32,17 @@ import org.picketbox.core.PicketBoxSubject;
  * @since Aug 22, 2012
  */
 public class PicketBoxSecurityContext implements SecurityContext {
-    protected PicketBoxSubject subject = null;
+    protected UserContext subject = null;
 
     public PicketBoxSecurityContext() {
     }
 
-    public PicketBoxSecurityContext(PicketBoxSubject theSubject) {
-        this.subject = theSubject;
+    public PicketBoxSecurityContext(UserContext theUserContext) {
+        this.subject = theUserContext;
     }
 
     @Override
-    public PicketBoxSubject getSubject() {
+    public UserContext getUserContext() {
         return subject;
     }
 

@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.picketbox.core.PicketBoxMessages;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.event.PicketBoxEventManager;
 import org.picketbox.core.exceptions.PicketBoxSessionException;
 import org.picketbox.core.session.event.SessionEvent;
@@ -50,7 +50,7 @@ public class PicketBoxSession implements Serializable {
 
     protected boolean invalid = false;
 
-    protected PicketBoxSubject subject;
+    protected UserContext subject;
 
     private transient PicketBoxEventManager eventManager;
 
@@ -58,7 +58,7 @@ public class PicketBoxSession implements Serializable {
         this(new DefaultSessionId());
     }
 
-    public PicketBoxSession(PicketBoxSubject subject, SessionId<? extends Serializable> id, PicketBoxEventManager eventManager) {
+    public PicketBoxSession(UserContext subject, SessionId<? extends Serializable> id, PicketBoxEventManager eventManager) {
         this(id);
         this.subject = subject;
         this.eventManager = eventManager;
@@ -202,7 +202,7 @@ public class PicketBoxSession implements Serializable {
     /**
      * @return the subject
      */
-    public PicketBoxSubject getSubject() {
+    public UserContext getUserContext() {
         return subject;
     }
 

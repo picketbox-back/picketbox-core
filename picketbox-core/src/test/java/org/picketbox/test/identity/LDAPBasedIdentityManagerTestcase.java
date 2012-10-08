@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.authentication.credential.UsernamePasswordCredential;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.test.ldap.AbstractLDAPTest;
@@ -58,7 +58,7 @@ public class LDAPBasedIdentityManagerTestcase extends AbstractLDAPTest {
 
         picketBoxManager.start();
 
-        PicketBoxSubject subject = new PicketBoxSubject();
+        UserContext subject = new UserContext();
 
         subject.setCredential(new UsernamePasswordCredential("admin", "admin"));
 

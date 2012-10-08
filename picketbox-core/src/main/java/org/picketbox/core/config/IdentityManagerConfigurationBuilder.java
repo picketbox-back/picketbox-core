@@ -22,7 +22,7 @@
 
 package org.picketbox.core.config;
 
-import org.picketbox.core.identity.PicketBoxSubjectPopulator;
+import org.picketbox.core.identity.UserContextPopulator;
 import org.picketlink.idm.IdentityManager;
 import org.picketlink.idm.internal.DefaultIdentityManager;
 
@@ -41,7 +41,7 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
     private JPAIdentityManagerConfigurationBuilder jpaIdentityManagerManager;
     private FileIdentityManagerConfigurationBuilder fileIdentityManagerManager;
 
-    private PicketBoxSubjectPopulator userPopulator;
+    private UserContextPopulator userPopulator;
 
     public IdentityManagerConfigurationBuilder(ConfigurationBuilder builder) {
         super(builder);
@@ -93,7 +93,7 @@ public class IdentityManagerConfigurationBuilder extends AbstractConfigurationBu
         return new GlobalIdentityManagerConfiguration(this.identityManagerBuilder.build(), this.userPopulator);
     }
 
-    public IdentityManagerConfigurationBuilder userPopulator(PicketBoxSubjectPopulator userPopulator) {
+    public IdentityManagerConfigurationBuilder userPopulator(UserContextPopulator userPopulator) {
         this.userPopulator = userPopulator;
         return this;
     }
