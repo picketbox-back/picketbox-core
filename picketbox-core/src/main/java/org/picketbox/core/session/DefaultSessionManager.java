@@ -71,7 +71,9 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
     public PicketBoxSession create(UserContext authenticatedUserContext) {
         checkIfStarted();
 
-        final PicketBoxSession session = doCreateSession(authenticatedUserContext);
+        PicketBoxSession session = doCreateSession(authenticatedUserContext);
+
+        session.setEventManager(this.picketBoxManager.getEventManager());
 
         fireEvent(new SessionEvent(session) {
             @Override
@@ -173,5 +175,9 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
      */
     private void registerDefaultEventHandler() {
         this.picketBoxManager.getEventManager().addHandler(this.defaultSessionEventHandler );
+    }
+
+    protected PicketBoxManager getPicketBoxManager() {
+        return picketBoxManager;
     }
 }
