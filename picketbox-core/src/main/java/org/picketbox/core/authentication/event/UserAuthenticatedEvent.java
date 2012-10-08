@@ -22,7 +22,7 @@
 
 package org.picketbox.core.authentication.event;
 
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.event.PicketBoxEvent;
 
 /**
@@ -32,12 +32,12 @@ import org.picketbox.core.event.PicketBoxEvent;
  */
 public class UserAuthenticatedEvent implements PicketBoxEvent<UserAuthenticationEventHandler> {
 
-    private PicketBoxSubject subject;
+    private UserContext subject;
 
     /**
      * @param subject
      */
-    public UserAuthenticatedEvent(PicketBoxSubject subject) {
+    public UserAuthenticatedEvent(UserContext subject) {
         this.subject = subject;
     }
 
@@ -56,7 +56,7 @@ public class UserAuthenticatedEvent implements PicketBoxEvent<UserAuthentication
         }
     }
 
-    public PicketBoxSubject getSubject() {
+    public UserContext getUserContext() {
         return this.subject;
     }
 }

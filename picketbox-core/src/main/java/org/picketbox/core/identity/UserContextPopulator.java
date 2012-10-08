@@ -19,39 +19,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.picketbox.core.ctx;
 
-import java.security.Principal;
+package org.picketbox.core.identity;
 
 import org.picketbox.core.UserContext;
 
 /**
- * Represents an encapsulate of the UserContext in operation
+ * <p>
+ * This interface defines the contract for Identity Manager implementations used to populate {@link UserContext} instances
+ * with the informations retrieved from an specific identity store or IDM solution.
+ * </p>
  *
- * @author anil saldhana
- * @since Aug 22, 2012
+ * @author <a href="mailto:psilva@redhat.com">Pedro Silva</a>
  */
-public interface SecurityContext {
+public interface UserContextPopulator {
 
     /**
-     * Get the {@link UserContext}
+     * <p>
+     * Used to populate a {@link UserContext} with additional information from some specific identity store.
+     * </p>
      *
+     * @param resultingUserContext
      * @return
      */
-    UserContext getUserContext();
-
-    /**
-     * <p>Returns the current {@link Principal}, if authenticated.</p>
-     *
-     * @return
-     */
-    Principal getPrincipal();
-
-    /**
-     * <p>Checks if the current user has the specified role.</p>
-     *
-     * @param role
-     * @return
-     */
-    boolean hasRole(String role);
+    UserContext getIdentity(UserContext authenticatedUserContext);
 }

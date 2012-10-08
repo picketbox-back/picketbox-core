@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.session.FileSessionStore;
 import org.picketbox.core.session.PicketBoxSession;
@@ -63,7 +63,7 @@ public class FileSessionStoreTestCase {
 
     @Test
     public void testStore() throws Exception {
-        PicketBoxSubject subject = new PicketBoxSubject();
+        UserContext subject = new UserContext();
 
         FileSessionStore store = new FileSessionStore();
         assertNotNull(store);

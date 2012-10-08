@@ -41,35 +41,35 @@ public interface PicketBoxManager extends PicketBoxLifecycle {
 
     /**
      * <p>
-     * Authenticates an {@link PicketBoxSubject}.
+     * Authenticates an {@link UserContext}.
      * </p>
      *
      * @param subject
      * @return
      * @throws AuthenticationException
      */
-    PicketBoxSubject authenticate(PicketBoxSubject subject) throws AuthenticationException;
+    UserContext authenticate(UserContext subject) throws AuthenticationException;
 
     /**
      * <p>
-     * Checks if the specified {@link PicketBoxSubject} is authorized to access the specified {@link Resource}.
+     * Checks if the specified {@link UserContext} is authorized to access the specified {@link Resource}.
      * </p>
      *
      * @param subject
      * @param resource
      * @return
      */
-    boolean authorize(PicketBoxSubject subject, Resource resource);
+    boolean authorize(UserContext subject, Resource resource);
 
     /**
      * <p>
-     * Logout the specified {@link PicketBoxSubject}.
+     * Logout the specified {@link UserContext}.
      * </p>
      *
      * @param authenticatedUser
      * @throws IllegalStateException
      */
-    void logout(PicketBoxSubject authenticatedUser) throws IllegalStateException;
+    void logout(UserContext authenticatedUser) throws IllegalStateException;
 
     /**
      * <p>Returns the configured {@link PicketBoxEventManager} instance.</p>

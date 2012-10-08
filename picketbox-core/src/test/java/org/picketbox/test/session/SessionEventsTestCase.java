@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.picketbox.core.DefaultPicketBoxManager;
 import org.picketbox.core.PicketBoxManager;
-import org.picketbox.core.PicketBoxSubject;
+import org.picketbox.core.UserContext;
 import org.picketbox.core.config.ConfigurationBuilder;
 import org.picketbox.core.event.PicketBoxEvent;
 import org.picketbox.core.event.PicketBoxEventHandler;
@@ -112,7 +112,7 @@ public class SessionEventsTestCase {
 
 
     private PicketBoxSession createSession() {
-        PicketBoxSubject subject = new PicketBoxSubject();
+        UserContext subject = new UserContext();
         
         PicketBoxSession session = this.sessionManager.create(subject);
 
