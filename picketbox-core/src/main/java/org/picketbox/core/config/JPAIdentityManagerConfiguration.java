@@ -48,6 +48,9 @@ public class JPAIdentityManagerConfiguration implements IdentityManagerConfigura
         return this.entityManagerFactory;
     }
 
+    /* (non-Javadoc)
+     * @see org.picketbox.core.config.IdentityManagerConfiguration#getIdentityStore()
+     */
     @Override
     public IdentityStore getIdentityStore() {
         JPAIdentityStore store = new JPAIdentityStore();
