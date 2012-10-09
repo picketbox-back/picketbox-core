@@ -143,7 +143,7 @@ public class DefaultSessionManager extends AbstractPicketBoxLifeCycle implements
     }
 
     protected PicketBoxSession doCreateSession(UserContext authenticatedUserContext) {
-        return new PicketBoxSession(authenticatedUserContext, new DefaultSessionId(), this.picketBoxManager.getEventManager());
+        return new PicketBoxSession(authenticatedUserContext, new DefaultSessionId());
     }
 
     @Override
