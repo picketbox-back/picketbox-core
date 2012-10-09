@@ -101,7 +101,7 @@ public class UserContext implements Serializable {
             throw PicketBoxMessages.MESSAGES.userNotAuthenticated();
         }
 
-        return this.authenticationResult.getPrincipal();
+        return this.authenticationResult != null ? this.authenticationResult.getPrincipal() : null;
     }
 
 

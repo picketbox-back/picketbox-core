@@ -58,10 +58,9 @@ public class PicketBoxSession implements Serializable {
         this(new DefaultSessionId());
     }
 
-    public PicketBoxSession(UserContext subject, SessionId<? extends Serializable> id, PicketBoxEventManager eventManager) {
+    public PicketBoxSession(UserContext subject, SessionId<? extends Serializable> id) {
         this(id);
         this.subject = subject;
-        this.eventManager = eventManager;
     }
 
     /**
