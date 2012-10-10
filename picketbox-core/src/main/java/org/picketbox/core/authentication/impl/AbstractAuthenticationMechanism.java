@@ -63,12 +63,7 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
         return performAuthentication(credential);
     }
 
-
-
-
-
-    protected AuthenticationResult performAuthentication(Credential credential)
-            throws AuthenticationException {
+    protected AuthenticationResult performAuthentication(Credential credential) throws AuthenticationException {
         Principal principal = null;
         AuthenticationResult result = new AuthenticationResult();
 
@@ -91,7 +86,8 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
         return result;
     }
 
-    protected abstract Principal doAuthenticate(Credential credential, AuthenticationResult result) throws AuthenticationException;
+    protected abstract Principal doAuthenticate(Credential credential, AuthenticationResult result)
+            throws AuthenticationException;
 
     /**
      * <p>
@@ -150,7 +146,9 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
     }
 
     /**
-     * <p>Returns the {@link IdentityManager} instance that can be used to retrieve informations from the identity store.</p>
+     * <p>
+     * Returns the {@link IdentityManager} instance that can be used to retrieve informations from the identity store.
+     * </p>
      *
      * @return
      */

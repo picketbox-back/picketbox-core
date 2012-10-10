@@ -61,12 +61,14 @@ public class CertificateAuthenticationMechanism extends AbstractAuthenticationMe
 
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.impl.AbstractAuthenticationMechanism#doAuthenticate(org.picketbox.core.Credential, org.picketbox.core.authentication.AuthenticationResult)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.impl.AbstractAuthenticationMechanism#doAuthenticate(org.picketbox.core.Credential,
+     * org.picketbox.core.authentication.AuthenticationResult)
      */
     @Override
-    protected Principal doAuthenticate(Credential credential,
-            AuthenticationResult result) throws AuthenticationException {
+    protected Principal doAuthenticate(Credential credential, AuthenticationResult result) throws AuthenticationException {
         boolean isValidCredential = false;
 
         User user = getIdentityManager().getUser(credential.getUserName());

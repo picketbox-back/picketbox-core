@@ -61,12 +61,14 @@ public class TrustedUsernameAuthenticationMechanism extends AbstractAuthenticati
 
     }
 
-    /* (non-Javadoc)
-     * @see org.picketbox.core.authentication.impl.AbstractAuthenticationMechanism#doAuthenticate(org.picketbox.core.Credential, org.picketbox.core.authentication.AuthenticationResult)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.picketbox.core.authentication.impl.AbstractAuthenticationMechanism#doAuthenticate(org.picketbox.core.Credential,
+     * org.picketbox.core.authentication.AuthenticationResult)
      */
     @Override
-    protected Principal doAuthenticate(Credential credential,
-            AuthenticationResult result) throws AuthenticationException {
+    protected Principal doAuthenticate(Credential credential, AuthenticationResult result) throws AuthenticationException {
         User user = getIdentityManager().getUser(credential.getUserName());
 
         if (user != null) {
