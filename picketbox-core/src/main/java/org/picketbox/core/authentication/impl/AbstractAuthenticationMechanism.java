@@ -45,6 +45,9 @@ public abstract class AbstractAuthenticationMechanism implements AuthenticationM
 
     private PicketBoxManager picketBoxManager;
 
+    public AbstractAuthenticationMechanism() {
+    }
+
     @Override
     public boolean supports(Credential credential) {
         List<AuthenticationInfo> authenticationInfo = getAuthenticationInfo();

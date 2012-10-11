@@ -175,4 +175,7 @@ public interface PicketBoxMessages {
 
     @Message(id = 52, value = "Unable to invalidate session.")
     IllegalStateException unableToInvalidateSession(@Cause Throwable t);
+
+    @Message(id = 53, value = "Unexpected credential type. Expected %s got %s.")
+    RuntimeException unexpectedCredentialType(Credential credential, Class<? extends Credential> class1);
 }
