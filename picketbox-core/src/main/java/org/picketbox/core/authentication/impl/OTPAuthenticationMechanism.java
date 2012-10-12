@@ -36,8 +36,6 @@ import org.picketbox.core.exceptions.AuthenticationException;
 import org.picketbox.core.util.TimeBasedOTP;
 import org.picketbox.core.util.TimeBasedOTPUtil;
 import org.picketlink.idm.IdentityManager;
-import org.picketlink.idm.model.Group;
-import org.picketlink.idm.model.Role;
 import org.picketlink.idm.model.User;
 
 /**
@@ -92,7 +90,7 @@ public class OTPAuthenticationMechanism extends AbstractAuthenticationMechanism 
                 if (seed != null) {
                     try {
                         if (algorithm.equals(TimeBasedOTP.HMAC_SHA1)) {
-                            validation = TimeBasedOTPUtil.validate( otp, seed.getBytes() , NUMBER_OF_DIGITS );
+                            validation = TimeBasedOTPUtil.validate(otp, seed.getBytes(), NUMBER_OF_DIGITS);
                         } else if (algorithm.equals(TimeBasedOTP.HMAC_SHA256)) {
                             validation = TimeBasedOTPUtil.validate256(otp, seed.getBytes(), NUMBER_OF_DIGITS);
                         } else if (algorithm.equals(TimeBasedOTP.HMAC_SHA512)) {
@@ -105,27 +103,8 @@ public class OTPAuthenticationMechanism extends AbstractAuthenticationMechanism 
             }
             if (validation) {
                 principal = new PicketBoxPrincipal(username);
-                checkUserInStore(principal);
             }
         }
         return principal;
-    }
-
-    private void checkUserInStore(Principal principal) {
-        IdentityManager identityManager = getIdentityManager();
-        if (identityManager != null) {
-            User newUser = null;
-
-            User storedUser = identityManager.getUser(principal.getName());
-            if (storedUser == null) {
-                newUser = identityManager.createUser(principal.getName());
-                newUser.setFirstName(principal.getName());
-
-                Role guest = identityManager.createRole("guest");
-                Group guests = identityManager.createGroup("Guests");
-
-                identityManager.grantRole(guest, newUser, guests);
-            }
-        }
     }
 }
