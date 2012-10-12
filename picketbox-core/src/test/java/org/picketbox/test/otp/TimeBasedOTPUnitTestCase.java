@@ -89,7 +89,7 @@ public class TimeBasedOTPUnitTestCase {
         String totp = TimeBasedOTP.generateTOTP(seed, NUMBER_OF_DIGITS);
 
         System.out.println("We are going to sleep for " + SLEEP_TIME + " secs");
-        Thread.sleep(SLEEP_TIME * 1000); // 10 secs
+        Thread.sleep(SLEEP_TIME * 5000); // 10 secs
 
         assertTrue("TOTP validated", TimeBasedOTPUtil.validate(totp, seed.getBytes(), 8));
     }
