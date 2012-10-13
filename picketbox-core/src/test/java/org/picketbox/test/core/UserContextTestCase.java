@@ -1,7 +1,8 @@
-package org.picketbox.core;
+package org.picketbox.test.core;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.picketbox.core.UserContext;
 import org.picketlink.idm.model.Role;
 import org.picketlink.idm.model.SimpleRole;
 
@@ -13,7 +14,15 @@ import java.util.List;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class UserContextTest {
+/**
+ * <p>
+ * Tests the {@link org.picketbox.core.UserContext}.
+ * </p>
+ *
+ * @author <a href="mailto:abstractj@redhat.com">Bruno Oliveira</a>
+ *
+ */
+public class UserContextTestCase {
 
     private UserContext userContext = new UserContext();
 

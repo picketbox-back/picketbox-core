@@ -23,12 +23,10 @@ package org.picketbox.core;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -238,6 +236,11 @@ public class UserContext implements Serializable {
         return false;
     }
 
+    /**
+     * Get the role names
+     *
+     * @return
+     */
     public Collection<String> getRoleNames() {
         Set<String> roleNames = new HashSet<String>();
         for (Role userRole: getRoles()) {
